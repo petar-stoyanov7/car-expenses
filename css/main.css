@@ -275,6 +275,22 @@ div.container>h3 {
 	box-shadow: 1px 1px 3px 0px rgba(0,0,0,0.75);
 }
 
+input.date {
+	-webkit-appearance: textfield;
+	background-color: white;
+	border-image-source: initial;
+	border-image-slice: initial;
+	border-image-width: initial;
+	border-image-outset: initial;
+	border-image-repeat: initial;
+	-webkit-rtl-ordering: logical;
+	-webkit-user-select: text;
+	cursor: auto;
+	padding: 1px;
+	border-width: 2px;
+	border-style: inset;
+	border-color: initial;
+}
 
 div.element {
 	margin: 5px;
@@ -283,6 +299,7 @@ div.element {
 	padding: 10px;
 }
 div.element>h4 {
+	display: inline-block;
 	margin: 3px;
 }
 
@@ -295,8 +312,39 @@ table.expenses {
     margin: 5px;
 }
 
+aside.info {
+	float: right;
+	padding-right: 30px;
+}
+
 table.expenses td, table.expenses th {
 	border: 1px solid black;
+}
+
+table.userlist {
+	/*padding: 5px;
+	margin: 5px;*/
+	border-spacing: 10px;
+	text-align: center;
+	border-bottom: 1px solid black;
+	border-top: 1px solid black;
+	border-collapse: collapse;
+	border-left: 1px solid black;
+	border-right: 1px solid black;
+}
+
+table.userlist tr {
+	padding: 5px;
+	border-bottom: 1px solid black;
+	border-top: 1px solid black;
+	border-collapse: collapse;
+}
+table.userlist a {
+	color: black;
+}
+table.userlist a:hover {
+	color: white;
+	background-color: black;
 }
 
 footer {
@@ -332,4 +380,42 @@ p.eula {
 
 table.user td {
 	padding: 0px 10px 5px 0px;
+}
+
+span.warn {
+	display: inline-block;
+	font-size: 1em;
+	font-weight: bold;
+	color: red;
+	background-color: #f2f2f2;
+	padding: 2px;
+	margin: 2px;
+	border: 1px solid black;
+	/*radius*/
+	-webkit-border-radius: 2px;
+	-moz-border-radius: 2px;
+	border-radius: 2px;
+	/*shadow*/
+	-webkit-box-shadow: 1px 1px 3px 0px rgba(0,0,0,0.75);
+	-moz-box-shadow: 1px 1px 3px 0px rgba(0,0,0,0.75);
+	box-shadow: 1px 1px 3px 0px rgba(0,0,0,0.75);
+}
+
+span.delete {
+	display: inline-block;
+	color: red;
+	background-color: yellow;
+	float: right;
+	padding: 1px;
+	border: 1px solid red;
+	/*radius*/
+	-webkit-border-radius: 1px;
+	-moz-border-radius: 1px;
+	border-radius: 1px;
+}
+
+form.yes {
+	display: inline-block;
+	float: left;
+	margin-left: 10px;
 }

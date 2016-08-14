@@ -2,50 +2,23 @@
 $title = "Нов разход";
 include("header.php");
 include("top-toolbar.php");
-?>
-<div class="container">
-	<h3>Нов Разход:</h3>
-	<form method="post" action="#">
-		<label for="mileage">Пробег:</label>
-		<input id="mileage" type="number" name="mileage" placeholder="> 18000"><br>
-		<label for="car-id">Автомобил:</label>
-		<select id="car-id" name="car-id">
-			<option value="car1">Volkswagen Golf</option>
-			<option value="car2">BMW M3</option>
-		</select><br>
-		<label for="expense-type">Тип Разход</label>
-		<select id="expense-type" name="expense-type">
-			<option value="fuel">Гориво</option>
-			<option value="insurance">Застраховка</option>
-			<option value="maintenance">Ремонт</option>
-			<option value="other">Други</option>
-		</select><br>
 
-		<label for="fuel-type">Тип Гориво</label>
-		<select id="fuel-type" name="fuel-type">
-			<option value="gas">Бензин</option>
-			<option value="lpg">Пропан</option>
-			<option value="methane">Метан</option>
-			<option value="diesel">Дизел</option>
-			<option value="electricity">Електричество</option>
-			<option value="other">Други</option>
-		</select><br>
-		<label for="liters">Литри:</label>
-		<input id="liters" type="number" name="liters"><br>
+if (empty($_GET)) {
+	$get = "other";
+} else {
+	$get = $_GET['type'];
+}
+echo "<div class='container'>";
+echo "<h3>Нов Разход:</h3>";
+display_new_expense($get,$_SESSION['user']['ID']);
 
-		<label for="insurance-type">Тип Застраховка</label>
-		<select id="insurance-type" name="insurance-type">
-			<option value="kasko">Каско</option>
-			<option value="go">Гражданска Отговорност</option>
-			<option value="other">Други</option>
-		</select><br>
+if (!empty($_POST)) {
+	$expense = new Expense($_POST['user-id'],$_POST['car-id'],$_POST['date'],$_POST['mileage'],$_POST['expense-type'],$_POST['price'],$_POST['fuel-type'],$_POST['liters'],$_POST['insurance-type'],$_POST['description']);
+	$expense_dao = new Expense_DAO();
+	$expense_dao->add_expense($expense);
+}
+echo "</div>";
 
-		<label for="value">Стойност:</label>
-		<input id="value" type="number" placeholder="стойност на разхода"><br>
-		<textarea id="description" name="description" placeholder="Допълнителна информация" rows="4" cols="53"></textarea><br><br>
-		<button type="submit">Добави</button>
-	</form>
-</div>
-<?php
+
 include("footer.php");
 ?>

@@ -5,12 +5,13 @@
 			<span class="tooltiptext">Начало</span>
 		</div>
 		<div class="tooltip">
-			<a href="new-expense.php?other"><img class="top-navigation" src="./img/icon-add.png"></a>
+			<a href="new-expense.php?type=other"><img class="top-navigation" src="./img/icon-add.png"></a>
 			<span class="tooltiptext">Нов Разход</span>
 			<div class="dropdown-content">
-				<a href="new-expense.php?fuel"><img class="top-navigation" src="./img/icon-fuel.png"></a>
-				<a href="new-expense.php?maintenance"><img class="top-navigation" src="./img/icon-maintenance.png"></a>
-				<a href="new-expense.php?insurance"><img class="top-navigation" src="./img/icon-insurance.png"></a>				
+				<a href="new-expense.php?type=fuel"><img class="top-navigation" src="./img/icon-fuel.png"></a>
+				<a href="new-expense.php?type=maintenance"><img class="top-navigation" src="./img/icon-maintenance.png"></a>
+				<a href="new-expense.php?type=insurance"><img class="top-navigation" src="./img/icon-insurance.png"></a>
+				<a href="new-expense.php?type=tax"><img class="top-navigation" src="./img/icon-tax.png"></a>				
 			</div>
 		</div>
 		<div class="tooltip">
@@ -21,4 +22,14 @@
 			<a href="profile.php"><img class="top-navigation" src="./img/icon-wheel2.png"></a>
 		  <span class="tooltiptext">Профил</span>
 		</div>
+		<?php
+			if(isset($_SESSION['user'])) {
+				if ($_SESSION['user']['Group'] == "admins") {
+					echo '<div class="tooltip">';
+					echo '<a href="admin.php"><img class="top-navigation" src="./img/icon-admin.png"></a>';
+					echo '<span class="tooltiptext">Админ панел</span>';
+					echo '</div>';
+				}
+			}
+		?>
 	</div>

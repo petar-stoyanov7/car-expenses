@@ -2,72 +2,84 @@
 $title = "Автомобилни разходи";
 include("header.php");
 include("top-toolbar.php");
-?>
-<!-- Content -->
-	<div class="container">
-		<h3>Добре дошъл, Иван Иванов!</h3>
-		Брой автомобили: 2<br>
-		Общо похарчени: 8200 лв.<br>
+if(!isset($_SESSION['user'])) {
+		header("Location: ./static/index.php");
+}
+	$car_dao = new Car_DAO();
+	$expense_dao = new Expense_DAO();
+	$statistics = new Statistics_DAO();
+	$cars = $car_dao->list_cars_by_user_id($_SESSION['user']['ID']);
+	$greet = $_SESSION['user']['Sex']=="male" ? "дошъл" : "дошла";
+
+	echo '<div class="container">
+		<h3>Добре '.$greet.', '.$_SESSION['user']['Fname'].' '.$_SESSION['user']['Lname'].'</h3>
+		Брой автомобили: '.$car_dao->count_cars_by_user_id($_SESSION['user']['ID']).'<br>
+		Общо похарчени за '.date('Y').': '.$statistics->count_year_expenses_by_uid($_SESSION["user"]["ID"]).' лв.<br>
 
 	</div>
 	<div class="container">
-	<h3>Автомобили:</h3>
-		<div class="element">
-		<h4>Автомобил 1:</h4>
-		BMW M3 2010<br>
-		<b>Километри</b>: 80000km<br>
-		<b>Похарчени:</b> 6800 лв.
-		</div>
+	<h3>Автомобили:</h3>';
+	$i = 1;
+	foreach ($cars as $car) {
+		echo '<div class="element">';
+		echo '<h4>Автомобил '.$i++.':</h4>';
+		echo $car['Brand'].' '.$car['Model'].' '.$car['Year'].'<br>';
+		echo '<b>Километри</b>: '.$car['Mileage'].' км<br>';
+		echo '<b>Похарчени за '.date('Y').' година:</b> '.$statistics->count_year_expenses_by_uid($_SESSION["user"]["ID"],$car['ID']).' лв.';
+		echo '</div>';
+	}
+	echo '</div>';
 
-		<div class="element">
-		<h4>Автомобил 2:</h4>
-		Wolkswagen Golf 2001<br>
-		<b>Километри:</b> 150000km<br>
-		<b>Похарчени:</b> 1400 лв.
-		</div>
-	</div>
+	echo '<div class="container">';
+	echo '<h3>Последни пет:</h3>';
+	echo '<table class="expenses">';
+	echo '<tr>';
+	echo 	'<th>Километри</th>';
+	echo 	'<th>Автомобил</th>';
+	echo 	'<th>Тип разход</th>';
+	echo 	'<th>Тип:</th>';
+	echo 	'<th>Стойност</th>';
+	echo 	'<th>Бележки</th>';
+	echo '</tr>';
 
-	<div class="container">
-		<h3>Последни пет:</h3>
-		<table class="expenses">
-			<tr>
-				<th>Километри</th>
-				<th>Автомобил</th>
-				<th>Тип разход</th>
-				<th>Стойност</th>
-			</tr>
-			<tr>
-				<td>78950</td>
-				<td>BMW M3</td>
-				<td>Гориво</td>
-				<td>99</td>				
-			</tr>
-			<tr>
-				<td>148950</td>
-				<td>Wolkswagen Golf</td>
-				<td>Винетка</td>
-				<td>97</td>
-			</tr>
-			<tr>
-				<td>78850</td>
-				<td>BMW M3</td>
-				<td>Ремонт</td>
-				<td>1200</td>
-			</tr>
-			<tr>
-				<td>147800</td>
-				<td>Wolkswagen Golf</td>
-				<td>Застраховка</td>
-				<td>100</td>
-			</tr>
-			<tr>
-				<td>147770</td>
-				<td>Wolkswagen Golf</td>
-				<td>Гориво</td>
-				<td>20</td>
-			</tr>
-		</table>
-	</div>
-<?php
+	$last_five_array = $statistics->get_last_five_by_uid($_SESSION['user']['ID']);
+	if (empty($last_five_array)) {
+		echo "<tr>";
+		echo "<td>Няма разходи</td>";
+		echo "<td>Няма разходи</td>";
+		echo "<td>Няма разходи</td>";
+		echo "<td>Няма разходи</td>";
+		echo "<td>Няма разходи</td>";
+		echo "<td>Няма разходи</td>";
+		echo "</tr>";
+	}
+	foreach ($last_five_array as $array) {
+		$car_name = $car_dao->get_car_name_by_id($array['CID']);
+		echo "<tr>";
+		echo "<td>".$array['Mileage']."</td>";
+		echo "<td>".$car_name."</td>";
+		$expense_name = $expense_dao->get_expense_name($array['Expense_ID']);
+		echo "<td>".translate($expense_name)."</td>";
+		switch ($array['Expense_ID']) {
+			case 1:
+				$expense_type = $car_dao->get_fuel_name($array['Fuel_ID']);
+				$expense_type = translate($expense_type);
+				break;
+			case 2:
+				$expense_type = $expense_dao->get_insurance_name($array['Insurance_ID']);
+				$expense_type = translate($expense_type);
+				break;			
+			default:
+				$expense_type = "";
+				break;
+		}
+		echo "<td>".$expense_type."</td>";
+		echo "<td>".$array['Price']. "лв.</td>";
+		echo "<td>".$array["Notes"]."</td>";
+		echo "</tr>";
+	}	
+	echo '</table>';
+	echo '</div>';
+
 include("footer.php");
 ?>

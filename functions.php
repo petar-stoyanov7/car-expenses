@@ -1,8 +1,319 @@
 <?php
-include("db.php");
 
-function display_new_expense() {
-	
+function display_warning($text) {
+	echo "<br>";
+	echo "<span class='warn'>";
+	echo $text."<br>";
+	echo "</span>";
 }
+
+function display_test($value) {
+	echo "<pre>";
+	print_r($value);
+	echo "<pre>";
+}
+
+function convert_date($date) {
+	$year = substr($date, 0,4);
+	$month = substr($date, 5,2);
+	$day = substr($date, 8,2);
+	$bgdate = $day.".".$month.".".$year;
+	return $bgdate;
+}
+
+function translate($str) {
+	switch ($str){
+		case "Fuel":
+			return "Гориво";
+			break;
+		case 'Insurance':
+			return "Застраховка";
+			break;
+		case 'Maintenance':
+			return "Ремонт";
+			break;
+		case 'Tax':
+			return "Данък";
+			break;
+		case 'Other':
+			return "Други";
+			break;
+		case 'Gas':
+			return "Бензин";
+			break;
+		case 'Diesel':
+			return "Дизел";
+			break;
+		case 'LPG':
+			return "Газ";
+			break;
+		case 'Methane':
+			return "Метан";
+			break;
+		case 'Electricity':
+			return "Електричество";
+			break;
+		case 'Fuel':
+			return "Гориво";
+			break;
+		case 'GO':
+			return "Гражданска Отговорност";
+			break;
+		case 'Kasko':
+			return "Каско";
+			break;
+		default:
+			return $str;			
+			break;
+	}
+}
+
+function display_edit_profile($profile,$auth=0) {
+	echo '<h3>Редактирай профил</h3>
+		<form method="post" action="#">
+		Редакция на профил: <b>'.$profile['Username'].'</b><br><br>';
+		echo '<input type="hidden" name="user" value="'.$profile['Username'].'">';
+		if ($auth==0) {
+			echo '<label for="old_password">Текуща парола:</label>';
+			echo '<input id="old_password" type="password" name="old_password"><br><br>';
+		}
+		echo '<label for="password1">Нова парола:</label>
+		<input id="password1" type="password" name="password1" placeholder="Ако не желаеш смяна на парола,"><br>
+		<label for="password2">Повтори паролата:</label>
+		<input id="password2" type="password" name="password2" placeholder="Остави полето празно"><br>
+
+		<label for="fname">Име:</label>
+		<input id="fname" name="fname" type="name" placeholder="Настоящо име: '.$profile['Fname'].'"><br>
+		<label for="lname">Фамилия</label>
+		<input id="lname" name="lname" type="name" placeholder="Настояща фамилия: '.$profile['Lname'].'"><br>
+		<label for="city">Град</label>
+		<input id="city" name="city" type="name" placeholder="Настоящ град: '.$profile['City'].'"><br>
+		<br>
+		<button type="submit">Редактирай</button>
+		</form>';
+}
+
+function display_statistics_input($uid) {
+	$car_dao = new Car_DAO();
+	$expense_dao = new Expense_DAO();
+	$cars = $car_dao->list_cars_by_user_id($uid);
+	$expenses = $expense_dao->get_expenses();
+	echo '<form method="post" action="#">';
+	echo '<label for="car">Автомобил</label>';
+	echo '<select id="car" name="car">';
+	echo '<option value="all">Всички</option>';
+	foreach ($cars as $car) {
+		echo '<option value="'.$car['ID'].'">'.$car['Brand'].' '.$car['Model'].'</option>';
+	}	
+	echo '</select><br>';
+	echo '<label for="expense-type">Тип разход</label>';
+	echo '<select id="expense-type" name="expense-type">';
+	echo '<option value="all">Всички</option>';
+	foreach ($expenses as $expense) {
+		echo '<option value="'.$expense['ID'].'">'.translate($expense['Name']).'</option>';
+	}
+	echo '</select><br>';
+	echo '<label for="from">От дата</label>';
+	echo '<input id="from" type="date" name="from" value="'.date('Y').'-01-01"><br>';
+	echo '<label for="to">До дата</label>';
+	echo '<input id="to" type="date" name="to" value="'.date('Y-m-d').'"><br>';
+	
+	echo '<button type="submit">Извлечи статистика</button>';
+	echo '</form>';
+}
+
+function display_detailed_statistics($raw_data) {
+	echo '<div class="container">';
+	echo '<h3>Детайлна Статистика</h3>';
+	$data = $raw_data['Raw'];
+	$car_dao = new Car_DAO();
+	$expense_dao = new Expense_DAO();
+	echo '<table class="expenses">';
+	echo '<tr>
+			<th>Пробег</th>
+			<th>Дата</th>
+			<th>Автомобил</th>
+			<th>Тип разход</th>
+			<th>Литри:</th>
+			<th>Стойност</th>
+			<th>Допълнителна информация</th>
+			<th>Изтрий</th>
+			<th>Детайли</th>
+		</tr>';
+	foreach ($data as $row) {
+		echo '<tr>';
+			echo '<td>'.$row['Mileage'].'</td>';
+			echo '<td> '.convert_date($row['Date']).'</td>';
+			echo '<td>'.$car_dao->get_car_name_by_id($row['CID']).'</td>';
+			echo '<td>'.translate($expense_dao->get_expense_name($row['Expense_ID'])).'</td>';
+			echo '<td>'.$row['Liters'].'</td>';
+			echo '<td>'.$row['Price'].'</td>';
+			echo '<td>'.substr($row['Notes'],0,18).'...</td>';
+			echo '<td> <a href="remove-expense.php?id='.$row['ID'].'&year='.substr($row['Date'], 0, 4).'">[x]</a> </td>';
+			echo '<td> <a href="detailed-info.php?id='.$row['ID'].'&year='.substr($row['Date'], 0, 4).'">[!]</a> </td>';
+		echo '</tr>';
+	}
+	echo '</table>';
+	echo '</div>';
+}
+function display_overall_statistics($raw_data) {
+	echo '<div class="container">';
+	echo '<h3>Общо:</h3>';
+	echo '<div class="element">';
+	$car = isset($raw_data['Car']) ? $raw_data['Car'] : "Всички";
+	echo '<b>Автомобил:</b> '.$car;
+	echo '<br>';
+	echo '<b>Изминати километри:</b>'.$raw_data['Mileage'];
+	echo '<br>';
+	echo '<b>Похарчени:</b> '.$raw_data['Summary'];
+	echo '<br>';
+	$ratio = $raw_data['Summary'] / $raw_data['Mileage'];
+	echo '<b>Лв/Км:</b>'.round($ratio,3);
+	echo '</div>';
+	echo '</div>';
+}
+
+function display_expense_details($id,$year) {
+	$statistics_dao = new Statistics_DAO();
+	$expense_dao = new Expense_DAO();
+	$car_dao = new Car_DAO();
+	$data = $statistics_dao->get_statistic_by_id($id,$year);
+
+	echo '<b>Дата: </b>'.convert_date($data['Date']).'<br>';
+	echo '<b>Пробег: </b>'.$data['Mileage'].' км. <br>';
+	echo '<b>Тип:</b>'.translate($expense_dao->get_expense_name($data['Expense_ID'])).'<br>';
+	if (!empty($data['Fuel_ID'])) {
+		echo '<b>Тип Гориво:</b> '.translate($car_dao->get_fuel_name($data['Fuel_ID'])).'<br>';
+		echo '<b>Литри:</b> '.$data['Liters'].'<br>';
+	}
+	if (!empty($data['Insurance_ID'])) {
+		echo '<b>Тип Застраховка:</b> '.translate($expense_dao->get_insurance_name($data['Insurance_ID'])).'<br>';
+	}
+	echo '<b>Стойност:</b>'.$data['Price'].'<br>';
+	echo '<b>Допълнителна информация:</b>'.$data['Notes'];
+}
+
+function fuel_options($uid="") {
+	$car_dao = new Car_DAO();
+	if (!empty($uid)) {
+		$fuel_list = $car_dao->get_user_fuel_types($uid);
+	} else {
+		$fuel_list = $car_dao->get_fuels();
+	}
+	foreach($fuel_list as $fuel) {
+		echo '<option value='.$fuel['ID'].'>'.translate($fuel['Name']).'</option>';		
+	}
+}
+
+
+function expense_options() {
+	$expense_dao = new Expense_DAO();
+	foreach($expense_dao->get_expenses() as $expense) {
+		echo '<option value='.$expense['ID'].'>'.translate($expense['Name']).'</option>';		
+	}
+}
+
+function insurance_options() {
+	$expense_dao = new Expense_DAO();	
+	foreach($expense_dao->get_insurance_id() as $id) {
+		switch ($id) {
+			case 1:
+				$name = "Гражданска Отговорност";
+				break;
+			case 2:
+				$name = "Каско";
+				break;
+			case 3:
+				$name = "Друга";
+				break;
+			default:							
+				break;
+		}
+		echo '<option value="'.$id.'">'.$name.'</option>';
+	}
+}
+
+
+function display_new_expense($type,$uid) {
+	$car_dao = new Car_DAO();
+	$cars = $car_dao->get_car_by_uid($uid);
+	switch ($type) {
+		case 'fuel':
+			$name = "Гориво";
+			$type_id = 1;
+			break;
+		case 'insurance':
+			$name = "Застраховка";
+			$type_id = 2;
+			break;
+		case 'maintenance':
+			$name = "Ремонт";
+			$type_id = 3;
+			break;
+		case 'tax':
+			$name = "Данък";
+			$type_id = 4;
+			break;
+		case 'other':
+			$name = "Други";
+			$type_id = 5;
+		default:			
+			break;
+	}	
+	echo '<form method="post" action="#">';
+	echo '<input type="hidden" name="user-id" value='.$uid.'>';
+	echo '<label>Тип разход: <b></label>'.$name.'</b><br>';
+	echo '<input type="hidden" name="expense-type" value='.$type_id.'>';
+	echo '<label for="date">Дата:</label>';
+	echo '<input type="date" name="date" value="'.date('Y-m-d').'"><br>';
+	//mileage info
+	echo '<aside class="info">';
+	echo '<b>Текущ пробег</b>: <br>';
+	echo '<select>';
+	foreach ($cars as $car) {
+		echo '<option>'.$car['Brand'].' '.$car['Model'].' : </label>'.$car['Mileage'].'</option>';
+	}
+	echo '</select>';
+	echo '</aside>';
+	//	
+	echo '<label for="car-id">Автомобил:</label>';
+	echo '<select id="car-id" name="car-id">';
+	foreach ($cars as $car) {
+		echo '<option value='.$car['ID'].'>'.$car['Brand'].' '.$car['Model'].'</option>';
+	}
+	echo '</select><br>';
+	
+	echo '<label for="mileage">Пробег:</label>';
+	echo '<input id="mileage" type="number" name="mileage" placeholder="> текущ пробег"><br>';	
+	if ($type == "fuel") {
+		echo '<label for="fuel-type">Тип Гориво</label>
+		<select id="fuel-type" name="fuel-type">';
+		fuel_options($uid);
+		echo '</select><br>';
+		echo '<label for="liters">Литри:</label>';
+		echo '<input id="liters" type="number" name="liters"><br>';
+		echo '<input type="hidden" name="insurance-type" value=NULL>';
+
+	}
+	elseif ($type == "insurance") {
+		echo '<label for="insurance-type">Тип Застраховка</label>';
+		echo '<select id="insurance-type" name="insurance-type">';
+		insurance_options();
+		echo '</select><br>';
+		echo '<input type="hidden" name="fuel-type" value=NULL>';
+		echo '<input type="hidden" name="liters" value=NULL>';
+	} else {
+		echo '<input type="hidden" name="fuel-type" value=NULL>';
+		echo '<input type="hidden" name="liters" value=NULL>';
+		echo '<input type="hidden" name="insurance-type" value=NULL>';
+	}
+	echo '<label for="value">Стойност:</label>';
+	echo '<input id="value" type="number" name="price" placeholder="стойност на разхода"><br>';
+	echo '<textarea id="description" name="description" placeholder="Допълнителна информация" rows="4" cols="53"></textarea><br><br>';
+	echo '<button type="submit">Добави</button>';
+	echo '</form>';
+}
+
+
 
 ?>
