@@ -12,6 +12,7 @@ echo '<div class="container">';
 echo '<h3>Детайлна Справка:</h3>';
 echo '<div class="element">';
 display_expense_details($id,$year);
+show_back_button();
 
 echo '</div>';
 echo "</div>";

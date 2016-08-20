@@ -84,7 +84,11 @@
 				$query = "SELECT SUM(`PRICE`) FROM `Expense_".$year."` WHERE `UID`=".$uid;
 			}
 			$array = $this->connection->get_data_from_database($query);
-			return $array[0]["SUM(`PRICE`)"];
+			if (empty($array[0]["SUM(`PRICE`)"])) {
+				return 0;
+			} else {
+				return $array[0]["SUM(`PRICE`)"];
+			}
 		}
 
 	}

@@ -127,6 +127,11 @@ img.top-navigation {
 	height: 40px;
 }
 
+img.icon {
+	width: 10px;
+	height: 10px;
+}
+
 .tooltip {
 	background: -moz-radial-gradient(center, ellipse cover,  rgba(247,247,247,1) 0%, rgba(247,247,247,0.66) 25%, rgba(247,247,247,0.31) 46%, rgba(247,247,247,0.28) 48%, rgba(247,247,247,0) 65%);
 	background: -webkit-radial-gradient(center, ellipse cover,  rgba(247,247,247,1) 0%,rgba(247,247,247,0.66) 25%,rgba(247,247,247,0.31) 46%,rgba(247,247,247,0.28) 48%,rgba(247,247,247,0) 65%);
@@ -401,17 +406,16 @@ span.warn {
 	box-shadow: 1px 1px 3px 0px rgba(0,0,0,0.75);
 }
 
-span.delete {
+span.edit {
 	display: inline-block;
-	color: red;
-	background-color: yellow;
 	float: right;
 	padding: 1px;
-	border: 1px solid red;
+	border: 1px solid black;
 	/*radius*/
 	-webkit-border-radius: 1px;
 	-moz-border-radius: 1px;
 	border-radius: 1px;
+	margin-left: 2px;
 }
 
 form.yes {

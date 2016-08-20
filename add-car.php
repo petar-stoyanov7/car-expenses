@@ -1,4 +1,5 @@
 <?php
+ob_start();
 $title = "Добави автомобил";
 include("header.php");
 include("top-toolbar.php");
@@ -15,7 +16,7 @@ include("top-toolbar.php");
 		<label for="color">Цвят</label>
 		<input id="color" type="text" name="color" placeholder="Черен"><br>
 		<label for="mileage">Пробег</label>
-		<input id="mileage" type="text" name="mileage" placeholder="15000"><br>
+		<input id="mileage" type="number" name="mileage" placeholder="15000"><br>
 		<label for="fuel_id1">Гориво</label>
 		<select id="fuel_id1" name="fuel_id1">
 			<?php fuel_options(); ?>
@@ -40,6 +41,7 @@ include("top-toolbar.php");
 		$car = new Car($uid, $_POST['brand'], $_POST['model'], $_POST['year'], $_POST['color'], $_POST['mileage'], $_POST['fuel_id1'], $_POST['fuel_id2'],$_POST['notes']);
 		$car_dao->add_car($car);
 	}
+	ob_end_flush();
 ?>
 </div>
 

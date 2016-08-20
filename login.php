@@ -1,4 +1,5 @@
 <?php
+ob_start();
 $title = "Вход";
 $auth_ignore = 1;
 include("header.php");
@@ -19,7 +20,7 @@ include("top-toolbar.php");
 		$user = new User($_POST['username'],$_POST['password']);
 		$user_dao = new User_DAO();
 		if ($user_dao->login($user)) {
-			header("Location: index.php");
+			header("Location: index.php");			
 		} else {
 			display_warning("Невалиден потребител/парола");
 		}
@@ -29,4 +30,5 @@ include("top-toolbar.php");
 
 <?php
 include("footer.php");
+ob_end_flush();
 ?>

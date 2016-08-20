@@ -21,7 +21,7 @@
 			$this->fuel_type = $fuel_type;
 			$this->liters = $liters;
 			$this->insurance_type = $insurance_type;
-			$this->notes = $notes;
+			$this->notes = sanitize($notes,1);
 		}
 
 		public function get_property($property) {

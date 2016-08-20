@@ -9,6 +9,8 @@ if (!empty($_GET['uid'])) {
 	$usr = $dao->get_user_by_id($uid);
 	display_edit_profile($usr,1);
 	$password="blank";
+	show_back_button();
+	
 } else {
 	display_edit_profile($_SESSION['user']);	
 }

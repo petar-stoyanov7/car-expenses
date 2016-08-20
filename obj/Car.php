@@ -12,14 +12,14 @@
 
 		public function __construct($user_id,$brand,$model,$year,$color,$mileage,$fuel_id,$fuel_id2="",$notes="") {
 			$this->user_id = $user_id;
-			$this->brand = $brand;
-			$this->model = $model;
-			$this->year = $year;
-			$this->color = $color;
+			$this->brand = sanitize($brand);
+			$this->model = sanitize($model);
+			$this->year = sanitize($year);
+			$this->color = sanitize($color);
 			$this->mileage = $mileage;
 			$this->fuel_id = $fuel_id;
 			$this->fuel_id2 = $fuel_id2;
-			$this->notes = $notes;
+			$this->notes = sanitize($notes,1);
 		}
 
 		//get the value of a property

@@ -13,7 +13,8 @@
 	$i = 1;
 	foreach ($cars as $car) {
 		echo "<div class='element'>";
-		echo "<a href='delete-car.php?id=".$car['ID']."'><span class='delete'>x</span></a>";
+		echo "<a href='delete-car.php?id=".$car['ID']."'><span class='edit'><img class='icon' src='./img/icon-delete.png'></span></a>";
+		echo "<a href='edit-car.php?id=".$car['ID']."'><span class='edit'><img class='icon' src='./img/icon-edit.png'></span></a>";
 		echo "<h4>Автомобил: ".$i++."</h4><br>";
 		echo "<b>Марка: </b>".$car['Brand']."<br>";
 		echo "<b>Модел: </b>".$car['Model']."<br>";

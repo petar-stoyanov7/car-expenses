@@ -125,8 +125,16 @@
 		}
 
 		public function remove_user($id) {
-			$query = "DELETE FROM `Users` WHERE `ID`=".$id;
-			$this->connection->execute_sql_query($query);
+			$expense_dao = new Expense_DAO();
+			$tables = $expense_dao->get_table_list();
+			$user = "DELETE FROM `Users` WHERE `ID`=".$id;
+			$cars = "DELETE FROM `Cars` WHERE `UID` =".$id;
+			foreach ($tables as $table) {
+				$query = "DELETE FROM `".$table."` WHERE `UID` = ".$id;
+				$this->connection->execute_sql_query($query);
+			}
+			$this->connection->execute_sql_query($user);
+			$this->connection->execute_sql_query($cars);
 		}
 	}
 ?>

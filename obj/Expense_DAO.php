@@ -32,6 +32,16 @@
 			$this->table = "";
 		}
 
+		public function get_table_list() {
+			$arrays = $this->connection->get_data_from_database("SHOW TABLES LIKE 'Expense_2%'");
+			$list = array();
+			foreach ($arrays as $array) {
+				$year = substr($array['Tables_in_pestart_car_expenses (Expense_2%)'], -4);
+				$list[$year] = $array['Tables_in_pestart_car_expenses (Expense_2%)'];
+			}
+			return $list;
+		}
+
 		public function create_table_year($year) {
 			$query = "CREATE TABLE IF NOT EXISTS `Expense_".$year."` (
 							`ID` int primary key auto_increment,
@@ -109,13 +119,18 @@
 			// if ($expense->get_property("mileage") < $car['Mileage']) {
 			// 	return display_warning("Пробегът не може да е по-малък от настоящия!");
 			// } 
-			if (($expense->get_property("expense_type") == 0) && 
+			if ($expense->get_property("price") < 0) {
+				return display_warning("Стойността на разхода не може да е отрицателна!");
+			}
+			elseif ($expense->get_property("liters") < 0) {
+				return display_warning("Стойността на литрите не може да е отрицателна!");
+			}
+			elseif (($expense->get_property("expense_type") == 0) && 
 				($expense->get_property("fuel_type") != $car['Fuel_ID'] && $expense->get_property("fuel_type") != $car['Fuel_ID2'])) {
 				return display_warning("Невалиден вид гориво!");
-			} elseif (empty($expense->get_property("price"))) {
+			} 
+			elseif (empty($expense->get_property("price"))) {
 				return display_warning("Не е въведена стойност на разхода!");
-			} elseif (empty($expense->get_property("price")) < 0) {
-				return display_warning("Стойността на разхода не може да е отрицателна!");
 			} else {
 				$query = "INSERT INTO `Expense_".$year."` (
 				`UID`, `CID`, `Date`, `Mileage`, `Expense_ID`, `Price`, `Fuel_ID`, `Insurance_ID`, `Liters`, `Notes`)
