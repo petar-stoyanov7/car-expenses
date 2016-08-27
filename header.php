@@ -1,4 +1,4 @@
-<?php	
+<?php
 	function __autoload($classname) {
 		require_once("./obj/".$classname.".php");
 	}

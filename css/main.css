@@ -17,11 +17,11 @@ body {
 #site-header {
 	position: center;
 	border: 1px solid black;
-	width: 75%;
+	width: 66%;
 	/*margin: 22px 0px 10px 0px auto;*/
 	margin: 22px 0px 10px 0px;
-	margin-left: 12%;
-	margin-right: 12%;
+	margin-left: 20%;
+	margin-right: 20%;
 	overflow: auto;
 	background-color: white;
 
@@ -85,8 +85,10 @@ div.login a:hover {
 
 
 #site-logo {
-	width: 200px;
-	height: 200px;
+	width: 15%;
+	height: 15%;
+	/*width: 200px;
+	height: 200px;*/
 	float: left;
 	background-color: white;
 	margin: 5px;
@@ -95,6 +97,7 @@ div.login a:hover {
 	-moz-border-radius: 20px;
 	border-radius: 20px;
 }
+
 
 div.header {
 	margin-left: 50px;

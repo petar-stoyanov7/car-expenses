@@ -38,20 +38,23 @@
 			$fuel_array = $this->connection->get_data_from_database($query);			
 			return $fuel_array;
 		}
+
+		public function get_uid_by_cid($cid) {
+			$query = "SELECT `UID` FROM `Cars` WHERE `ID` = ".$cid." LIMIT 1";
+			$data = $this->connection->get_data_from_database($query);
+			return $data[0]['UID'];
+		}
+
 		public function get_fuels() {
 			$query = "SELECT * FROM `Fuel_Types`";
 			$fuels = $this->connection->get_data_from_database($query);
 			return $fuels;
 		}
+		
 		public function get_fuel_name($id) {
 			$query = "SELECT `NAME` FROM `Fuel_Types` WHERE `ID`=".$id;
 			$result = $this->connection->get_data_from_database($query);
 			return $result[0]['NAME'];
-		}
-		
-		public function get_car_by_uid($uid) {
-			$cars_array = $this->connection->get_data_from_database("SELECT * FROM `Cars` WHERE `UID` = '".$uid."'");
-			return $cars_array;
 		}
 
 		public function get_car_by_id($id) {
@@ -89,7 +92,11 @@
 				return display_warning("Не е въведен модел!");
 			} elseif (empty($car->get_property("fuel_id"))) {
 				return display_warning("Не е въведено гориво!");
-			}
+			} elseif (empty($car->get_property("mileage"))) {
+				return display_warning("Не е въведен пробег!");
+			} elseif ($car->get_property("mileage") < 0) {
+				return display_warning("Невалиден пробег!");
+			} 
 			$query = "INSERT INTO `Cars` (`UID`, `Brand`, `Model`, `Year`, `Color`, `Mileage`, `Fuel_ID`, `Fuel_ID2`, `Notes`)
 								VALUES (".$car->get_property("user_id").",
 										'".$car->get_property("brand")."',
@@ -103,6 +110,29 @@
 			$this->connection->execute_sql_query($query);
 			display_warning("Автомобилът е добавен успешно!");
 			header("refresh:1;url=profile.php");
+		}
+
+		public function edit_car($car,$cid) {
+			$query = "UPDATE `Cars` SET ";
+			if ($car->get_property("mileage") < 0) {
+				return display_warning("Невалиден пробег!");
+			}
+			if (!empty($car->get_property("color"))) {
+				$query .= "`Color` = '".$car->get_property("color")."', ";
+			} 
+			if (!empty($car->get_property("fuel_id2"))) {
+				$query .= "`Fuel_ID2` = ".$car->get_property("fuel_id2").", ";
+			}
+			if (!empty($car->get_property("mileage"))) {
+				$query .= "`Mileage` = ".$car->get_property("mileage").", ";
+			}
+			if (!empty($car->get_property("notes"))) {
+				$qury .= "`Notes` = '".$car->get_property("notes")."', ";
+			}
+			$query .= "`UID` = ".$car->get_property('user_id')." ";
+			$query .= "WHERE `ID` = ".$cid;
+			$this->connection->execute_sql_query($query);
+			display_warning("Промените са направени успешно!");
 		}
 
 		public function remove_car_by_id($id) {

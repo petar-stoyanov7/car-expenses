@@ -32,34 +32,58 @@
 			$end_year = substr($end, 0, 4);
 			$tables = $this->get_table_list();
 			$data = array();
-			$where = "WHERE `Date` >= '".$start."' AND `Date` <= '".$end."' AND `UID` = ".$uid;
+			$where = "WHERE `Date` >= '".$start."' AND `Date` <= '".$end."' AND `UID` = ".$uid." ";
 			$overall = "";
-			$sum = "SELECT SUM(`Overall`) as `Sum` FROM ( ";
-			$mileage = "SELECT SUM(`Distance`) as `Sum` FROM ( ";
-			if ($cid!="all") {
-				$where = $where." AND `CID` = ".$cid;
-				$data['Car'] = $car_dao->get_car_name_by_id($cid);
+			$sum = "";
+			$mileage = "";
+			$where_exp = "";			
+			$data['Cars'] = array();		
+			if ($cid == "all") {
+				$cars = $car_dao->list_cars_by_user_id($uid);
+				$where_car = "";
+			} else {
+				$cars = array();
+				$car = $car_dao->get_car_by_id($cid);
+				array_push($cars, $car);
+				$where_car = "AND `CID` = ".$cid." ";
 			}
+
 			if ($expense_id!="all") {
-				$where = $where." AND `Expense_ID` = ".$expense_id;
+				$where_exp .= " AND `Expense_ID` = ".$expense_id." ";
 				$data['Expense'] = $expense_dao->get_expense_name($expense_id);
-			}
+			} else {
+				$where_exp = "";
+			}	
 			foreach ($tables as $year => $table) {
 				if ($year < $end_year) {
-					$overall .= "SELECT * FROM `".$table."` ".$where." UNION ALL ";
-					$sum .= "SELECT Sum(`Price`) as `Overall` FROM `".$table."` ".$where." UNION ALL ";
-					$mileage .= "SELECT Max(`Mileage`) - Min(`Mileage`) AS `Distance` FROM `".$table."` ".$where." UNION ALL ";
+					$overall .= "SELECT * FROM `".$table."` ".$where.$where_exp.$where_car." UNION ALL ";
 				} elseif ($year = $end_year) {
-					$overall .= "SELECT * FROM `".$table."` ".$where;
-					$sum .= "SELECT Sum(`Price`) as `Overall` FROM `".$table."` ".$where." ) as SubQuery";
-					$mileage .= "SELECT Max(`Mileage`) - Min(`Mileage`) AS `Distance` FROM `".$table."` ".$where." ) as SubQuery";
+					$overall .= "SELECT * FROM `".$table."` ".$where.$where_exp.$where_car;
 				}
-			}		
+			}
+			foreach ($cars as $car) {
+				$summary_query = "SELECT SUM(`Overall`) as `Sum` FROM ( ";
+				$mileage_query = "SELECT SUM(`Distance`) as `Sum` FROM ( ";
+				$where_car = " AND `CID` = ".$car['ID']." ";
+				foreach ($tables as $year => $table) {
+					if ($year < $start_year) {
+						continue;
+					} elseif ($year > $start_year && $year < $end_year) {
+						$summary_query .= "SELECT Sum(`Price`) as `Overall` FROM `".$table."` ".$where.$where_exp.$where_car." UNION ALL ";
+						$mileage_query .= "SELECT Max(`Mileage`) - Min(`Mileage`) AS `Distance` FROM `".$table."` ".$where.$where_car." UNION ALL ";
+					} elseif ($year = $end_year) {
+						$summary_query .= "SELECT Sum(`Price`) as `Overall` FROM `".$table."` ".$where.$where_exp.$where_car." ) as SubQuery";
+						$mileage_query .= "SELECT Max(`Mileage`) - Min(`Mileage`) AS `Distance` FROM `".$table."` ".$where.$where_car." ) as SubQuery";
+					}
+				}
+				$name = $car_dao->get_car_name_by_id($car['ID']);				
+				$summary = $this->connection->get_data_from_database($summary_query);
+				$mileage = $this->connection->get_data_from_database($mileage_query);				
+				$temp = array("Name" => $name, "Summary" => $summary[0]['Sum'], "Mileage" => $mileage[0]['Sum']);
+				array_push($data['Cars'], $temp);
+
+			}
 			$raw_data = $this->connection->get_data_from_database($overall);
-			$summary = $this->connection->get_data_from_database($sum);
-			$mileage = $this->connection->get_data_from_database($mileage);
-			$data['Summary'] = $summary[0]['Sum'];
-			$data['Mileage'] = $mileage[0]['Sum'];
 			$data['Raw'] = $raw_data;
 
 			return $data;

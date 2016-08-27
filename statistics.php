@@ -16,7 +16,7 @@ include("top-toolbar.php");
 	echo '</div>';
 	
 	if(!empty($_POST)) {
-		$data = $statistics_dao->get_statistic_for_period($_POST['from'],$_POST['to'],$_SESSION['user']['ID'],$_POST['car'],$_POST['expense-type']);
+		$data = $statistics_dao->get_statistic_for_period($_POST['from'],$_POST['to'],$uid,$_POST['car'],$_POST['expense-type']);
 		display_overall_statistics($data);
 		display_detailed_statistics($data);
 	}

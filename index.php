@@ -1,4 +1,5 @@
 <?php
+ob_start();
 $title = "Автомобилни разходи";
 include("header.php");
 include("top-toolbar.php");
@@ -82,4 +83,5 @@ if(!isset($_SESSION['user'])) {
 	echo '</div>';
 
 include("footer.php");
+ob_end_flush();
 ?>

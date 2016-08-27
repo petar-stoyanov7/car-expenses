@@ -1,4 +1,5 @@
 <?php
+ob_start();
 $title = "Изтриване на автомобил";
 include("header.php");
 include("top-toolbar.php");
@@ -7,9 +8,9 @@ include("top-toolbar.php");
 <h3>Изтриване на автомобил:</h3>
 <?php
 $car_dao = new Car_DAO();
-$id = isset($_GET['id']) ? $_GET['id']  : NULL;
+$id = isset($_GET['cid']) ? $_GET['cid']  : NULL;
 $car = $car_dao->get_car_by_id($id);
-if (isset($_GET['id'])) {
+if (isset($_GET['cid'])) {
 	display_warning("Сиурен ли сте, че искате да изтриете този автомобил:<br>".$car['Brand']." ".$car['Model'].", ".$car['Year']);
 	echo "<p></p>";
 	echo "<form class='yes' method='post' action='delete-car.php'>
@@ -30,4 +31,5 @@ if (isset($_POST['id']) && isset($_POST['choice'])) {
 
 <?php
 include("footer.php");
+ob_end_flush();
 ?>

@@ -1,4 +1,5 @@
 <?php
+ob_start();
 $title = "Детайлна справка";
 include("header.php");
 include("top-toolbar.php");
@@ -17,4 +18,5 @@ show_back_button();
 echo '</div>';
 echo "</div>";
 include("footer.php");
+ob_end_flush();
 ?>

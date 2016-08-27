@@ -197,6 +197,29 @@ function display_edit_profile($profile,$auth=0) {
 		</form>';
 }
 
+function display_edit_car($car) {
+	echo '<h3>Редактирай автомобил</h3>
+		<form method="post" action="#">
+		Редакция на автомобил: <b>'.$car['Brand'].' '.$car['Model'].'</b><br><br>';
+		echo '<input type="hidden" name="uid" value="'.$car['UID'].'">';
+		echo '<input type="hidden" name="cid" value="'.$car['ID'].'">';
+		echo '<label for="color">Цвят</label>';
+		echo '<input id="color" type="text" name="color" placeholder="Настоящ цвят: '.$car['Color'].'"><br>';
+		echo '<label for="mileage">Пробег</label>';
+		echo '<input id="mileage" type="number" name="mileage" placeholder="Настоящ пробег: '.$car['Mileage'].'"><br>';
+		echo '<label for="fuel_id2">Втори вид гориво:</label>';
+		echo '<select id="fuel_id2" name="fuel_id2">';
+		echo '<option value="NULL">Няма</option>';
+ 		fuel_options();
+		echo '</select><br>';		
+		echo '<label for="info">Бележки:</label><br>';
+		echo '<textarea id="info" cols="55" rows="5" name="notes"></textarea><br><br>';
+		echo '<button type="submit">Редактирай</button>';
+		echo '</form>'; 
+}
+
+
+
 function display_statistics_input($uid) {
 	$car_dao = new Car_DAO();
 	$expense_dao = new Expense_DAO();
@@ -263,17 +286,18 @@ function display_detailed_statistics($raw_data) {
 function display_overall_statistics($raw_data) {
 	echo '<div class="container">';
 	echo '<h3>Общо:</h3>';
-	echo '<div class="element">';
-	$car = isset($raw_data['Car']) ? $raw_data['Car'] : "Всички";
-	echo '<b>Автомобил:</b> '.$car;
-	echo '<br>';
-	echo '<b>Изминати километри:</b>'.$raw_data['Mileage'];
-	echo '<br>';
-	echo '<b>Похарчени:</b> '.$raw_data['Summary'];
-	echo '<br>';
-	$ratio = $raw_data['Summary'] / $raw_data['Mileage'];
-	echo '<b>Лв/Км:</b>'.round($ratio,3);
-	echo '</div>';
+	
+	//$car = isset($raw_data['Car']) ? $raw_data['Car'] : "Всички";
+	$cars = $raw_data['Cars'];
+	foreach ($cars as $car) {
+		echo '<div class="element">';
+		echo '<b>Автомобил:</b> '.$car['Name'].'<br>';
+		echo '<b>Изминати километри:</b>'.$car['Mileage'];
+		echo '<br>';echo '<b>Похарчени:</b> '.$car['Summary'].'<br>';
+		$ratio = $car['Summary'] / $car['Mileage'];
+		echo '<b>Лв/Км:</b>'.round($ratio,3);
+		echo '</div>';
+	}	
 	echo '</div>';
 }
 
@@ -340,7 +364,7 @@ function insurance_options() {
 
 function display_new_expense($type,$uid) {
 	$car_dao = new Car_DAO();
-	$cars = $car_dao->get_car_by_uid($uid);
+	$cars = $car_dao->list_cars_by_user_id($uid);
 	switch ($type) {
 		case 'fuel':
 			$name = "Гориво";
