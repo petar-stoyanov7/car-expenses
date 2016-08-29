@@ -98,7 +98,8 @@
 					$query = "UPDATE `Users` SET `Fname` = '".$post['fname']."', 
 											`Lname` = '".$post['lname']."',
 											`City` = '".$post['city']."',
-											`Password` = '".password_hash($post['password1'], PASSWORD_DEFAULT)."'";
+											`Password` = '".password_hash($post['password1'], PASSWORD_DEFAULT)."'
+											WHERE `ID` = ".$user_array['ID'];
 					$this->connection->execute_sql_query($query);
 					$_SESSION['Fname'] = $post['fname'];
 					$_SESSION['Lname'] = $post['lname'];

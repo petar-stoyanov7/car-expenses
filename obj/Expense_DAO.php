@@ -121,16 +121,15 @@
 			// } 
 			if ($expense->get_property("price") < 0) {
 				return display_warning("Стойността на разхода не може да е отрицателна!");
-			}
-			elseif ($expense->get_property("liters") < 0) {
+			} elseif ($expense->get_property("liters") < 0) {
 				return display_warning("Стойността на литрите не може да е отрицателна!");
-			}
-			elseif (($expense->get_property("expense_type") == 0) && 
+			} elseif (($expense->get_property("expense_type") == 0) && 
 				($expense->get_property("fuel_type") != $car['Fuel_ID'] && $expense->get_property("fuel_type") != $car['Fuel_ID2'])) {
 				return display_warning("Невалиден вид гориво!");
-			} 
-			elseif (empty($expense->get_property("price"))) {
+			} elseif (empty($expense->get_property("price"))) {
 				return display_warning("Не е въведена стойност на разхода!");
+			} elseif (empty($expense->get_property("mileage"))) {
+				return display_warning("Не е въведен пробег!");
 			} else {
 				$query = "INSERT INTO `Expense_".$year."` (
 				`UID`, `CID`, `Date`, `Mileage`, `Expense_ID`, `Price`, `Fuel_ID`, `Insurance_ID`, `Liters`, `Notes`)

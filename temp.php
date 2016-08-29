@@ -17,10 +17,8 @@ echo "<div class='container'>";
 ######################################
 // $stat = $stat_dao->get_statistic_for_period(2016-01-01,2016-08-27,1,"all","all");
 // display_test($stat);
-$cars = $car_dao->list_cars_by_user_id(7);
-foreach ($cars as $car) {
-	display_test($car);
-}
+$user_array = $user_dao->get_user_by_name("nadia3");
+display_test($user_array);
 
 // $stat = $stat_dao->get_statistic_for_period("2015-01-01","2016-09-09",7,"all","all");
 // display_test($stat);
