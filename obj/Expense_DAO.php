@@ -10,9 +10,28 @@
 		public function __construct() {
 			$this->connection = new database_connection();
 			$this->car_dao = new Car_DAO();
+			$year = getdate()['year'];
+			$query = "CREATE TABLE IF NOT EXISTS `Expense_".$year."` (
+							`ID` int primary key auto_increment,
+							`UID` int references `Users`(`ID`),
+							`CID` int references `Cars`(`ID`),
+							`Date` date,
+							`Mileage` int,
+							`Price` int,
+							`Expense_ID` int references `Expense_Types`(`ID`),
+							`Fuel_ID` int references `Fuel_Types`(`ID`),
+							`Insurance_ID` int references `Insurance_Types`(`ID`),
+							`Liters` int,
+							`Notes` text
+							) CHARSET=utf8";				
+			$this->connection->execute_sql_query($query);
+			/*
+			#creates new table if month is november
+			#for now I'm disabling it, as it doesn't work if nobody accesses the site in nov, dec.
 			$newyear = getdate()['year']+1;
 			$month = getdate()['mon'];
-			if($month == 11) {
+			
+			if($month == 11 || $month == 12) {
 				$query = "CREATE TABLE IF NOT EXISTS `Expense_".$newyear."` (
 							`ID` int primary key auto_increment,
 							`UID` int references `Users`(`ID`),
@@ -28,6 +47,7 @@
 							) CHARSET=utf8";				
 				$this->connection->execute_sql_query($query);
 			}
+			*/
 			$this->year = "";
 			$this->table = "";
 		}

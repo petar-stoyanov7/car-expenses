@@ -20,12 +20,16 @@
 
 		public function get_last_five_by_uid($uid) {
 			$year = date('Y');
-			$query = "SELECT * FROM `Expense_".$year."` WHERE `UID`=".$uid." ORDER BY `Mileage` DESC LIMIT 5";
+			$last_year = $year-1;
+			$query = "SELECT * FROM `Expense_".$last_year."` WHERE `UID`=".$uid." 
+					UNION ALL
+					SELECT * FROM `Expense_".$year."` WHERE `UID`=".$uid."
+					ORDER BY `Mileage` DESC LIMIT 5";
 			$array = $this->connection->get_data_from_database($query);
 			return $array;
 		}
 
-		public function get_statistic_for_period($start,$end,$uid,$cid,$expense_id) {
+		public function get_statistic_for_period($start,$end,$uid,$cid,$expense_id) {			
 			$car_dao = new Car_DAO();
 			$expense_dao = new Expense_DAO();
 			$start_year = substr($start, 0, 4);
@@ -55,6 +59,10 @@
 				$where_exp = "";
 			}	
 			foreach ($tables as $year => $table) {
+				if ($start_year == $end_year) {
+					$overall = "SELECT * FROM `Expense_".$start_year."` ".$where.$where_exp.$where_car;
+					break;
+				}
 				if ($year < $end_year) {
 					$overall .= "SELECT * FROM `".$table."` ".$where.$where_exp.$where_car." UNION ALL ";
 				} elseif ($year = $end_year) {
@@ -71,18 +79,27 @@
 					} elseif ($year > $start_year && $year < $end_year) {
 						$summary_query .= "SELECT Sum(`Price`) as `Overall` FROM `".$table."` ".$where.$where_exp.$where_car." UNION ALL ";
 						$mileage_query .= "SELECT Max(`Mileage`) - Min(`Mileage`) AS `Distance` FROM `".$table."` ".$where.$where_car." UNION ALL ";
-					} elseif ($year = $end_year) {
+					} elseif ($year == $end_year) {
 						$summary_query .= "SELECT Sum(`Price`) as `Overall` FROM `".$table."` ".$where.$where_exp.$where_car." ) as SubQuery";
 						$mileage_query .= "SELECT Max(`Mileage`) - Min(`Mileage`) AS `Distance` FROM `".$table."` ".$where.$where_car." ) as SubQuery";
 					}
 				}
-				$name = $car_dao->get_car_name_by_id($car['ID']);				
+				// #display the query
+				// echo "summary";
+				// display_test($summary_query);
+				// echo "mileage";
+				// display_test($mileage_query);
+
+				$name = $car_dao->get_car_name_by_id($car['ID']);
 				$summary = $this->connection->get_data_from_database($summary_query);
-				$mileage = $this->connection->get_data_from_database($mileage_query);				
+				$mileage = $this->connection->get_data_from_database($mileage_query);
 				$temp = array("Name" => $name, "Summary" => $summary[0]['Sum'], "Mileage" => $mileage[0]['Sum']);
+				
 				array_push($data['Cars'], $temp);
 
 			}
+			// echo "overall";
+			// display_test($overall);
 			$raw_data = $this->connection->get_data_from_database($overall);
 			$data['Raw'] = $raw_data;
 

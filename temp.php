@@ -17,8 +17,11 @@ echo "<div class='container'>";
 ######################################
 // $stat = $stat_dao->get_statistic_for_period(2016-01-01,2016-08-27,1,"all","all");
 // display_test($stat);
-$user_array = $user_dao->get_user_by_name("nadia3");
-display_test($user_array);
+// $user_array = $user_dao->get_user_by_name("nadia3");
+// display_test($user_array);
+$year = date('Y');
+$lyear = $year - 1;
+echo $lyear;
 
 // $stat = $stat_dao->get_statistic_for_period("2015-01-01","2016-09-09",7,"all","all");
 // display_test($stat);
