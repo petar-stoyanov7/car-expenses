@@ -5,14 +5,15 @@
 			<span class="tooltiptext">Начало</span>
 		</div>
 		<div class="tooltip">
-			<a href="new-expense.php?type=other"><img class="top-navigation" src="./img/icon-add.png"></a>
+			<a href="new-expense.php"><img class="top-navigation" src="./img/icon-add.png"></a>
 			<span class="tooltiptext">Нов Разход</span>
-			<div class="dropdown-content">
-				<a href="new-expense.php?type=fuel"><img class="top-navigation" src="./img/icon-fuel.png"></a>
-				<a href="new-expense.php?type=maintenance"><img class="top-navigation" src="./img/icon-maintenance.png"></a>
-				<a href="new-expense.php?type=insurance"><img class="top-navigation" src="./img/icon-insurance.png"></a>
-				<a href="new-expense.php?type=tax"><img class="top-navigation" src="./img/icon-tax.png"></a>				
-			</div>
+            <!-- keeping it as a reference, might decide to use it later -->
+<!--            <div class="dropdown-content">-->
+<!--                <a href="new-expense.php?type=fuel"><img class="top-navigation" src="./img/icon-fuel.png"></a>-->
+<!--                <a href="new-expense.php?type=maintenance"><img class="top-navigation" src="./img/icon-maintenance.png"></a>-->
+<!--                <a href="new-expense.php?type=insurance"><img class="top-navigation" src="./img/icon-insurance.png"></a>-->
+<!--                <a href="new-expense.php?type=tax"><img class="top-navigation" src="./img/icon-tax.png"></a>-->
+<!--            </div>-->
 		</div>
 		<div class="tooltip">
 			<a href="statistics.php"><img class="top-navigation" src="./img/icon-euro.png"></a>

@@ -96,10 +96,12 @@
 			}
 			return $expense_array;
 		}
+
 		public function get_expenses() {
 			$expense_list = $this->connection->get_data_from_database("SELECT * FROM `Expense_Types`");
 			return $expense_list;
 		}
+		
 		public function get_expense_name($id) {
 			$query = "SELECT `Name` FROM `Expense_Types` WHERE `ID`=".$id;
 			$result = $this->connection->get_data_from_database($query);

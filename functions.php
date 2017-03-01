@@ -333,6 +333,20 @@ function fuel_options($uid="") {
 	}
 }
 
+function fuel_options2($uid="") {
+    $car_dao = new Car_DAO();
+    if (!empty($uid)) {
+        $fuel_list = $car_dao->get_user_fuel_types($uid);
+    } else {
+        $fuel_list = $car_dao->get_fuels();
+    }
+    $arr = array();
+    foreach($fuel_list as $fuel) {
+        $arr[$fuel['ID']] = $fuel['Name'];
+    }
+    return $arr;
+}
+
 
 function expense_options() {
 	$expense_dao = new Expense_DAO();
@@ -361,40 +375,25 @@ function insurance_options() {
 	}
 }
 
-
-function display_new_expense($type,$uid) {
+function display_new_expense($uid) {
 	$car_dao = new Car_DAO();
+	$expense_dao = new Expense_DAO();
+	$expense_list = $expense_dao->get_expenses();
 	$cars = $car_dao->list_cars_by_user_id($uid);
-	switch ($type) {
-		case 'fuel':
-			$name = "Гориво";
-			$type_id = 1;
-			break;
-		case 'insurance':
-			$name = "Застраховка";
-			$type_id = 2;
-			break;
-		case 'maintenance':
-			$name = "Ремонт";
-			$type_id = 3;
-			break;
-		case 'tax':
-			$name = "Данък";
-			$type_id = 4;
-			break;
-		case 'other':
-			$name = "Други";
-			$type_id = 5;
-		default:			
-			break;
-	}	
 	echo '<form method="post" action="#">';
 	echo '<input type="hidden" name="user-id" value='.$uid.'>';
-	echo '<label>Тип разход: <b></label>'.$name.'</b><br>';
-	echo '<input type="hidden" name="expense-type" value='.$type_id.'>';
+	echo '<label for="expense-type">Вид разход:</label>';
+	echo '<select id="expense-type" name="expense-type">';
+	foreach($expense_list as $expense) {
+		echo '<option value='.$expense['ID'].'>'.translate($expense['Name']).'</option>';
+	}
+	echo '</select>';
+	echo '<div id="expense-subtype">';
+	echo '</div>';
+	echo '</select>';
 	echo '<label for="date">Дата:</label>';
 	echo '<input type="date" name="date" value="'.date('Y-m-d').'"><br>';
-	//mileage info
+	// mileage info
 	echo '<aside class="info">';
 	echo '<b>Текущ пробег</b>: <br>';
 	echo '<select>';
@@ -403,7 +402,7 @@ function display_new_expense($type,$uid) {
 	}
 	echo '</select>';
 	echo '</aside>';
-	//	
+	// end	
 	echo '<label for="car-id">Автомобил:</label>';
 	echo '<select id="car-id" name="car-id">';
 	foreach ($cars as $car) {
@@ -412,36 +411,16 @@ function display_new_expense($type,$uid) {
 	echo '</select><br>';
 	
 	echo '<label for="mileage">Пробег:</label>';
-	echo '<input id="mileage" type="number" name="mileage" placeholder="> текущ пробег"><br>';	
-	if ($type == "fuel") {
-		echo '<label for="fuel-type">Тип Гориво</label>
-		<select id="fuel-type" name="fuel-type">';
-		fuel_options($uid);
-		echo '</select><br>';
-		echo '<label for="liters">Литри:</label>';
-		echo '<input id="liters" type="number" name="liters"><br>';
-		echo '<input type="hidden" name="insurance-type" value=NULL>';
-
-	}
-	elseif ($type == "insurance") {
-		echo '<label for="insurance-type">Тип Застраховка</label>';
-		echo '<select id="insurance-type" name="insurance-type">';
-		insurance_options();
-		echo '</select><br>';
-		echo '<input type="hidden" name="fuel-type" value=NULL>';
-		echo '<input type="hidden" name="liters" value=NULL>';
-	} else {
-		echo '<input type="hidden" name="fuel-type" value=NULL>';
-		echo '<input type="hidden" name="liters" value=NULL>';
-		echo '<input type="hidden" name="insurance-type" value=NULL>';
-	}
+	echo '<input id="mileage" type="number" name="mileage" placeholder="текущ пробег"><br>';
+	echo '<div id="optional">';
+	echo '</div>';
 	echo '<label for="value">Стойност:</label>';
 	echo '<input id="value" type="number" name="price" placeholder="стойност на разхода"><br>';
 	echo '<textarea id="description" name="description" placeholder="Допълнителна информация" rows="4" cols="53"></textarea><br><br>';
 	echo '<button type="submit">Добави</button>';
 	echo '</form>';
+	echo '<script src="./scripts/new-expense.js"></script>';
 }
-
 
 
 ?>
