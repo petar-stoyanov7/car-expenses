@@ -7,11 +7,11 @@
 		<div class="tooltip">
 			<a href="new-expense.php?other"><img class="top-navigation" src="../img/icon-add.png"></a>
 			<span class="tooltiptext">Нов Разход</span>
-			<div class="dropdown-content">
-				<a href="new-expense.php?fuel"><img class="top-navigation" src="../img/icon-fuel.png"></a>
-				<a href="new-expense.php?maintenance"><img class="top-navigation" src="../img/icon-maintenance.png"></a>
-				<a href="new-expense.php?insurance"><img class="top-navigation" src="../img/icon-insurance.png"></a>				
-			</div>
+<!--			<div class="dropdown-content">-->
+<!--				<a href="new-expense.php?fuel"><img class="top-navigation" src="../img/icon-fuel.png"></a>-->
+<!--				<a href="new-expense.php?maintenance"><img class="top-navigation" src="../img/icon-maintenance.png"></a>-->
+<!--				<a href="new-expense.php?insurance"><img class="top-navigation" src="../img/icon-insurance.png"></a>				-->
+<!--			</div>-->
 		</div>
 		<div class="tooltip">
 			<a href="statistics.php"><img class="top-navigation" src="../img/icon-euro.png"></a>
