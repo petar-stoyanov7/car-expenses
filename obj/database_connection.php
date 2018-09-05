@@ -1,27 +1,25 @@
 <?php
 	class database_connection {
 		private $connection;
+		private $host = "localhost";
+		private $db = "pestart_car_expenses";
+		private $usr = "pestart_expense";
+		private $pwd = "avto-r4zhod1";
 
 		public function __construct() {
-			//$this->connection = new mysqli("localhost","expense","avto-r4zhod1","car_expenses");
-			$this->connection = new mysqli("localhost","pestart_expense","avto-r4zhod1","pestart_car_expenses");
-		}
-
-		
-
-		public function get_connection() {
-			$this->connection;
-		}
+			try {
+				$this->connection = new PDO("mysql:host=$this->host; dbname=$this->db",$this->usr,$this->pwd);
+			} catch(PDOException $e) {
+				die("Could not connect: $e->getMessage()");
+			}
+		}		
 
 		public function get_data_from_database($sql) {
+			echo $query;
 			$data = array();
-			$result = $this->connection->query($sql);
-			if ($this->connection->error) {
-				die("Error in execution".$this->connection->error);
-			}
-			while ($row = $result->fetch_assoc()) {
-				array_push($data, $row);
-			}
+			$result = $this->connection->prepare($sql);
+			$result->execute();
+			$data = $result->fetchAll(PDO::FETCH_ASSOC);
 			return $data;
 		}
 

@@ -24,7 +24,7 @@
 			$query = "SELECT * FROM `Expense_".$last_year."` WHERE `UID`=".$uid." 
 					UNION ALL
 					SELECT * FROM `Expense_".$year."` WHERE `UID`=".$uid."
-					ORDER BY `Mileage` DESC LIMIT 5";
+					ORDER BY `Date` DESC LIMIT 5";					
 			$array = $this->connection->get_data_from_database($query);
 			return $array;
 		}
@@ -65,7 +65,7 @@
 				}
 				if ($year < $end_year) {
 					$overall .= "SELECT * FROM `".$table."` ".$where.$where_exp.$where_car." UNION ALL ";
-				} elseif ($year = $end_year) {
+				} elseif ($year == $end_year) {
 					$overall .= "SELECT * FROM `".$table."` ".$where.$where_exp.$where_car;
 				}
 			}
@@ -75,8 +75,8 @@
 				$where_car = " AND `CID` = ".$car['ID']." ";
 				foreach ($tables as $year => $table) {
 					if ($year < $start_year) {
-						continue;
-					} elseif ($year > $start_year && $year < $end_year) {
+						continue;					
+					} elseif ($year >= $start_year && $year < $end_year) {
 						$summary_query .= "SELECT Sum(`Price`) as `Overall` FROM `".$table."` ".$where.$where_exp.$where_car." UNION ALL ";
 						$mileage_query .= "SELECT Max(`Mileage`) - Min(`Mileage`) AS `Distance` FROM `".$table."` ".$where.$where_car." UNION ALL ";
 					} elseif ($year == $end_year) {
@@ -84,15 +84,16 @@
 						$mileage_query .= "SELECT Max(`Mileage`) - Min(`Mileage`) AS `Distance` FROM `".$table."` ".$where.$where_car." ) as SubQuery";
 					}
 				}
-				// #display the query
-				// echo "summary";
+				### DEBUGGING ###
+				// echo "<br>summary";
 				// display_test($summary_query);
 				// echo "mileage";
 				// display_test($mileage_query);
+				### /DEBUGGING ###
 
 				$name = $car_dao->get_car_name_by_id($car['ID']);
 				$summary = $this->connection->get_data_from_database($summary_query);
-				$mileage = $this->connection->get_data_from_database($mileage_query);
+				$mileage = $this->connection->get_data_from_database($mileage_query);				
 				$temp = array("Name" => $name, "Summary" => $summary[0]['Sum'], "Mileage" => $mileage[0]['Sum']);
 				
 				array_push($data['Cars'], $temp);
@@ -111,8 +112,8 @@
 				$year = date('Y');
 			}
 			$query = "SELECT * FROM `Expense_".$year."` WHERE `ID` = ".$id;
-			$data = $this->connection->get_data_from_database($query);
-			return $data[0];
+			$data = $this->connection->get_data_from_database($query)
+;			return $data[0];
 		}
 
 		public function count_year_expenses_by_uid($uid,$cid="",$year="") {

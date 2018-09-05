@@ -326,8 +326,9 @@ aside.info {
 }
 
 table.expenses td, table.expenses th {
-	border: 1px solid black;
+	border: 1px solid black;	
 }
+
 
 table.userlist {
 	/*padding: 5px;

@@ -29,8 +29,6 @@
 			$_SESSION['user'] = $array;
 		}
 
-
-
 		public function add_user($user) {
 			$users = $this->list_users();
 			if (empty($user->get_property("username"))) {
