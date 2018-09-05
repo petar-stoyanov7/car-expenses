@@ -1,7 +1,7 @@
 <?php
 	class database_connection {
 		private $connection;
-		private $host = "localhost";
+		private $host = "expenses_db";
 		private $db = "pestart_car_expenses";
 		private $usr = "pestart_expense";
 		private $pwd = "avto-r4zhod1";

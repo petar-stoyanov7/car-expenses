@@ -15,21 +15,7 @@ $stat_dao = new Statistics_DAO();
 //need to keep this - displays container
 // echo "<div class='container'>";
 //the rest is expendable
-
-$old = $connection->get_data_from_database("show tables");
-$new = $pdo->get_data_from_database("show tables");
-?>
-
-<table>
-	<tr>
-		<th>Old</th>
-		<th>New</th>
-	</tr>
-	<tr>
-		<td><?php display_test($old);?></td>
-		<td><?php display_test($new);?></td>
-	</tr>
-</table>
+#########
 
 
 //keep the shit bellow
