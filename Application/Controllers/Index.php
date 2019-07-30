@@ -2,6 +2,8 @@
 
 namespace Application\Controllers;
 
+use \Core\View;
+
 class Index
 {
     public function __construct()
@@ -11,7 +13,12 @@ class Index
 
     public function indexAction()
     {
-        echo 'INDEEEEX<br>';
+
+        View::render('index.php', [
+            'title' => 'Home page',
+            'name' => 'Pesho',
+            ]
+        );
     }
 
 

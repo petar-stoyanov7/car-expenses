@@ -47,9 +47,8 @@ class Router
     }
 
     public function processParams($params)
-    {
+    {        
         if (!is_array($params) || (sizeof($params) % 2 !== 0)) {
-            echo 'Invalid parameters';
             return null;
         }
 

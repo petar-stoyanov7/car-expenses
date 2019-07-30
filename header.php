@@ -15,14 +15,14 @@
 		<?php 
 		echo $title 
 		?>			
-		</title>
+	</title>
 	<meta http-equiv="content-type" content="text/html; charset=utf-8"/>
 	<link rel="stylesheet" type="text/css" href="./css/main.css">
 	<link rel="icon" href="./img/icon-wheel.png">
 </head>
 <body>
 	<!-- Top Bar -->
-	<div class="top-bar">
+	<div class="top-bar">		
 		<div class="top-links">
 		<a href="index.php">АВТО</a>
 		<a href="#">ДОМ</a>
