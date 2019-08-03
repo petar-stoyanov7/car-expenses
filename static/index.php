@@ -1,7 +1,7 @@
 <?php
 $title = "Автомобилни разходи";
-include("header.php");
-include("top-toolbar.php");
+// include("header.php");
+// include("top-toolbar.php");
 ?>
 <div class="container">
 <h3><font color="red" weight="bold">Това е примерна страница!</font></h3>
@@ -74,5 +74,5 @@ include("top-toolbar.php");
 		</table>
 	</div>
 <?php
-include("footer.php");
+// include("footer.php");
 ?>
