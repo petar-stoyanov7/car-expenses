@@ -3,14 +3,16 @@
 namespace Application\Models;
 
 use PDOException;
+use PDO;
 
 class dbModelAbstract
 {
     protected $connection;
     private $hostname;
-    private $db;
+    private $database;
     private $username;
     private $password;
+    private $options;
 
     public function __construct()
     {
@@ -20,12 +22,17 @@ class dbModelAbstract
         $this->username = $config['usr'];
         $this->password = $config['pwd'];
         $this->database = $config['db'];
+        $this->options = [
+            PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION, 
+            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+        ];
         try {
             $this->connection = new \PDO(
                 "mysql:host=$this->hostname; 
                 dbname=$this->database",
                 $this->username,
-                $this->password
+                $this->password,
+                $this->options
             );
         } catch(PDOException $e) {
             die("Could not connect: $e->getMessage()");
@@ -40,11 +47,20 @@ class dbModelAbstract
         return $data;
     }
 
-    public function execute($sql) {
-        try {
-            $this->connection->query($sql);
-        } catch (PDOException $e) {
-            die('Error in execution: ' . $e->getMessage());
+    public function execute($sql, $values = null) {
+        if (null !== $values) {
+            try {
+                $statement = $this->connection->prepare($sql, [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
+                $statement->execute($values);
+            } catch (PDOException $e) {
+                die('DB Error: '. $e->getMessage());
+            }
+        } else {
+            try {
+                $this->connection->query($sql);
+            } catch (PDOException $e) {
+                die('Error in execution: ' . $e->getMessage());
+            }
         }
     }
 }

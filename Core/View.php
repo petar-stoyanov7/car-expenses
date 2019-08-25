@@ -17,14 +17,15 @@ class View
             require($file);
             require('../Application/Views/Layout/footer.php');
         } else {
-            echo "$file not found";
+            echo "{$file} not found";
         }
     }
 
-    public static function displayPartial($file)
+    public static function displayPartial($file, $arguments = [])
     {
         $file = '../Application/Views/partials/' . $file;
         if (is_readable($file)) {
+            extract($arguments, EXTR_SKIP);
             require($file);
         } else {
             echo "{$file} not found";

@@ -5,7 +5,7 @@
         <span class="tooltiptext">Начало</span>
     </div>
     <div class="tooltip">
-        <a href="/new"><img class="top-navigation" src="/img/icon-add.png"></a>
+        <a href="/expense/new"><img class="top-navigation" src="/img/icon-add.png"></a>
         <span class="tooltiptext">Нов Разход</span>
     </div>
     <div class="tooltip">

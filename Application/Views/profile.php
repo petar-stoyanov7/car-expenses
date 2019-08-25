@@ -26,10 +26,8 @@ use \Core\View;
 		</tr>		
 	</table>
 	<br>
-	<form type="post" action="/account/profile">
-		<button type="submit">Редактирай</button>
-	</form>
+    <button type="button" onclick="location.href='/account/edit/'">Редактирай</button>
 	<br>
 	<h3>Автомобили:</h3>
-	<?php View::displayPartial("list-cars.php"); ?>
+	<?php View::displayPartial("list-cars.php", [$carModel]); ?>
 </div>

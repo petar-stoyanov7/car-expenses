@@ -61,60 +61,72 @@ class UserModel extends DbModelAbstract
                 '".$user->get_property("notes")."'
                 )";
         $this->execute($query);
-        echo "<a href=login.php>";
-        display_warning("Регистрацията е успешна! Може да влезнете с потребителското си име");
+        echo "<a href='/account/login'>";
+        display_success("Регистрацията е успешна! Може да влезнете с потребителското си име");
         echo "</a>";
     }
 
     public function edit_user($user,$post,$auth=0) {
-        $user_array = $this->get_user_by_name($user->get_property("username"));
+        $userArray = $this->get_user_by_name($post['user']);
         if (empty($user->get_property("password1"))) {
             return display_warning("Паролата е празна");
-        } 
-        if ($this->login($user) || $auth!=0) {
-            if ($post['password1'] != $post['password2']) {
-                return display_warning("Паролите не съвпадат");
-            } elseif (empty($post['password1'])) {
-                $post['password1'] = $user->get_property("password1");
-                $query = "UPDATE `Users` SET `Fname` = '".$post['fname']."', 
-                                        `Lname` = '".$post['lname']."',
-                                        `City` = '".$post['city']."'
-                                    WHERE `ID` = ".$user_array['ID'];
-                $this->execute($query);
-                $_SESSION['Fname'] = $post['fname'];
-                $_SESSION['Lname'] = $post['lname'];
-                $_SESSION['City'] = $post['city'];
-                header("refresh:5;url=logout.php");
-                echo "<a href='logout.php'>";
-                display_warning("Данните са променени успешно. Влезте повторно в профила си, за да бъдат активни");
-                echo "</a>";
-            } elseif (!empty($post['password1']) && strlen($post['password1']) < 6) {
-                return display_warning("Паролата е под шест символа!");
+        }        
+        if ($this->login($user, true) || $auth !== 0) {
+            $query = "UPDATE `Users` SET ";
+            $values = [];
+            if (!empty($post['password1']) && !empty($post['password2'])) {
+                if ($post['password1'] !== $post['password2']) {
+                    display_warning("Паролите не съвпадат! Запазва се старата");
+                    $post['passworc1'] = $user->get_property('password1');
+                } else {
+                    $query .= "`Password` = ?";
+                    $values[] = password_hash($post['password1'], PASSWORD_DEFAULT);
+                }
             } else {
-                $query = "UPDATE `Users` SET `Fname` = '".$post['fname']."', 
-                                        `Lname` = '".$post['lname']."',
-                                        `City` = '".$post['city']."',
-                                        `Password` = '".password_hash($post['password1'], PASSWORD_DEFAULT)."'
-                                        WHERE `ID` = ".$user_array['ID'];
-                $this->execute($query);
+                $post['passworc1'] = $user->get_property('password1');
+            }
+            $oldSession = $_SESSION;
+
+            if (!empty($post['fname'])) {
+                $query .= "`Fname` = ?, ";
+                $values[] = $post['fname'];
                 $_SESSION['Fname'] = $post['fname'];
+            }
+
+            if (!empty($post['lname'])) {
+                $query .= "`Lname` = ?, ";
+                $values[] = $post['lname'];
                 $_SESSION['Lname'] = $post['lname'];
+            }
+
+            if (!empty($post['city'])) {
+                $query .= "`City` = ?, ";
+                $values[] = $post['city'];
                 $_SESSION['City'] = $post['city'];
-                header("refresh:5;url=profile.php");
-                echo "<a href='logout.php'>";
-                display_warning("Данните са променени успешно. Влезте повторно в профила си, за да бъдат активни");
-                echo "</a>";
+            }
+            $query = rtrim($query, ', ');
+            $query .= " WHERE `ID` = ? ";
+            $values[] = $userArray['ID'];
+
+            echo $query;
+            
+            $this->execute($query, $values);
+
+            if ($_SESSION !== $oldSession) {
+                session_start();
             }
         } else {
             return display_warning("Некоректна парола!");
         }
     }
 
-    public function login($user) {
+    public function login($user, $justPasswordCheck = false) {
         $users = $this->list_users();
         foreach ($users as $usr) {
             if($user->get_property("username") === $usr["Username"] && password_verify($user->get_property("password1"), $usr["Password"])) {
-                $this->start_session($user->get_property("username"));
+                if (!$justPasswordCheck) {
+                    $this->start_session($user->get_property("username"));
+                }
                 return true;
             }
         }

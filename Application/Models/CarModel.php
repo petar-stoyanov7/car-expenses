@@ -96,51 +96,59 @@ class CarModel extends DbModelAbstract
         } elseif ($car->get_property("mileage") < 0) {
             return display_warning("Невалиден пробег!");
         } 
-        $query = "INSERT INTO `Cars` (`UID`, `Brand`, `Model`, `Year`, `Color`, `Mileage`, `Fuel_ID`, `Fuel_ID2`, `Notes`)
-                            VALUES (".$car->get_property("user_id").",
-                                    '".$car->get_property("brand")."',
-                                    '".$car->get_property("model")."',
-                                    '".$car->get_property("year")."',
-                                    '".$car->get_property("color")."',
-                                    ".$car->get_property("mileage").",
-                                    ".$car->get_property("fuel_id").",
-                                    ".$car->get_property("fuel_id2").",
-                                    '".$car->get_property("notes")."')";
-        $this->execute_sql_query($query);
-        display_warning("Автомобилът е добавен успешно!");
-        header("refresh:1;url=profile.php");
+        $query = "INSERT INTO `Cars` 
+            (`UID`, `Brand`, `Model`, `Year`, `Color`, `Mileage`, `Fuel_ID`, `Fuel_ID2`, `Notes`)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        $values = [
+            $car->get_property('user_id'),
+            $car->get_property('brand'),
+            $car->get_property('model'),
+            $car->get_property('year'),
+            $car->get_property('color'),
+            $car->get_property('mileage'),
+            $car->get_property('fuel_id'),
+            $car->get_property('fuel_id2'),
+            $car->get_property('notes'),
+        ];
+        $this->execute($query, $values);        
     }
 
     public function edit_car($car,$cid) {
         $query = "UPDATE `Cars` SET ";
+        $values = [];
         if ($car->get_property("mileage") < 0) {
             return display_warning("Невалиден пробег!");
         }
         if (!empty($car->get_property("color"))) {
-            $query .= "`Color` = '".$car->get_property("color")."', ";
+            $query .= "`Color` = ?, ";
+            $values[] = $car->get_property("color");
         } 
         if (!empty($car->get_property("fuel_id2"))) {
-            $query .= "`Fuel_ID2` = ".$car->get_property("fuel_id2").", ";
+            $query .= "`Fuel_ID2` = ?, ";
+            $values[] = $car->get_property("fuel_id2");
         }
         if (!empty($car->get_property("mileage"))) {
-            $query .= "`Mileage` = ".$car->get_property("mileage").", ";
+            $query .= "`Mileage` = ?, ";
+            $values[] = $car->get_property("mileage");
         }
         if (!empty($car->get_property("notes"))) {
-            $qury .= "`Notes` = '".$car->get_property("notes")."', ";
+            $query .= "`Notes` = ?, ";
+            $values[] = $car->get_property("notes");
         }
-        $query .= "`UID` = ".$car->get_property('user_id')." ";
-        $query .= "WHERE `ID` = ".$cid;
-        $this->execute_sql_query($query);
-        display_warning("Промените са направени успешно!");
+        $query .= "`UID` = ? ";
+        $values[] = $car->get_property('user_id');
+        $query .= "WHERE `ID` = ?";
+        $values[] = $cid;
+        $this->execute($query, $values);
     }
 
     public function remove_car_by_id($id) {
         $query = "DELETE FROM `Cars` WHERE `ID`=".$id;
-        $this->execute_sql_query($query);
+        $this->execute($query);
     }
 
     public function remove_car_by_uid($uid) {
         $query = "DELETE FROM `Cars` WHERE `UID` = ".$uid;
-        $this->execute_sql_query($query);
+        $this->execute($query);
     }
 }

@@ -37,5 +37,13 @@ class User
             die("Non existent property");
         }
     }
+
+	public function set_property($property, $value) {
+		if (property_exists($this, $property)) {
+			$this->$property = $value;
+		} else {
+			die("Non existent property");
+		}
+	}
 }
 ?>

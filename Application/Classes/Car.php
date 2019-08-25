@@ -26,13 +26,20 @@ class Car
         $this->notes = sanitize($notes,1);
     }
 
-    //get the value of a property
     public function get_property($property) {
-        if (property_exists('Car', $property)) {
+        if (property_exists($this, $property)) {
             return $this->$property;
         } else {
             die("Non existent property");
         }
     }
+
+	public function set_property($property, $value) {
+		if (property_exists($this, $property)) {
+			$this->$property = $value;
+		} else {
+			die("Non existent property");
+		}
+	}
 }
 ?>

@@ -18,11 +18,3 @@ $url = $_SERVER['REQUEST_URI'];
 $router->dispatch($url);
 
 ob_end_flush();
-
-function dt($text, $desc)
-{
-    echo '<pre>';
-    echo '################'.$desc.'######################<br>';
-    print_r($text);
-    echo '<br>################'.$desc.'######################<br>';
-}

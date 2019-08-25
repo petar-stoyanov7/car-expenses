@@ -88,12 +88,6 @@ class StatisticsModel extends DbModelAbstract
                     $mileage_query .= "SELECT Max(`Mileage`) - Min(`Mileage`) AS `Distance` FROM `".$table."` ".$where.$where_car." ) as SubQuery";
                 }
             }
-            ### DEBUGGING ###
-            // echo "<br>summary";
-            // display_test($summary_query);
-            // echo "mileage";
-            // display_test($mileage_query);
-            ### /DEBUGGING ###
 
             $name = $carModel->get_car_name_by_id($car['ID']);
             $summary = $this->getData($summary_query);

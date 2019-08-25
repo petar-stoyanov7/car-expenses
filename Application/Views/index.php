@@ -30,34 +30,34 @@ foreach ($cars as $car) : ?>
 </tr>
 
 <?php
-$last_five_array = $statModel->get_last_five_by_uid($_SESSION['user']['ID']);
-if (empty($last_five_array)) : ?>
+$lastFive = $statModel->get_last_five_by_uid($_SESSION['user']['ID']);
+if (empty($lastFive)) : ?>
     <tr>
         <?php for ($i=0; $i<=6; $i++) {
             echo "<td>Няма разходи</td>"; 
         }?>
     </tr>
 <?php endif; ?>
-<?php foreach ($last_five_array as $array) : ?>
+<?php foreach ($lastFive as $array) : ?>
     <tr>
     <td><?= $array['Mileage']; ?></td>
     <td><?= $carModel->get_car_name_by_id($array['CID']); ?></td>
-    <td><?= translate($expense_dao->get_expense_name($array['Expense_ID'])); ?>"</td>
+    <td><?= translate($expenseModel->get_expense_name($array['Expense_ID'])); ?>"</td>
     <?php switch ($array['Expense_ID']) {
         case 1:
-            $expense_type = $carModel->get_fuel_name($array['Fuel_ID']);
-            $expense_type = translate($expense_type);
+            $expenseType = $carModel->get_fuel_name($array['Fuel_ID']);
+            $expenseType = translate($expenseType);
             break;
         case 2:
-            $expense_type = $expense_dao->get_insurance_name($array['Insurance_ID']);
-            $expense_type = translate($expense_type);
+            $expenseType = $expenseModel->get_insurance_name($array['Insurance_ID']);
+            $expenseType = translate($expenseType);
             break;			
         default:
-            $expense_type = '';
+            $expenseType = '';
             break;
     }
     ?>
-    <td><?= $expense_type; ?></td>
+    <td><?= $expenseType; ?></td>
     <td><?= $array['Price']; ?> лв.</td>
     <td><?= $array["Notes"]; ?></td>
     </tr>

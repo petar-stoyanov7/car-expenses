@@ -12,7 +12,7 @@ class ExpenseModel extends DbModelAbstract
         parent::__construct();
         $this->carModel = new CarModel();
         $year = getdate()['year'];
-        $query = "CREATE TABLE IF NOT EXISTS `Expense_".$year."` (
+        $query = "CREATE TABLE IF NOT EXISTS `Expense_{$year}` (
                         `ID` int primary key auto_increment,
                         `UID` int references `Users`(`ID`),
                         `CID` int references `Cars`(`ID`),
@@ -41,7 +41,7 @@ class ExpenseModel extends DbModelAbstract
     }
 
     public function create_table_year($year) {
-        $query = "CREATE TABLE IF NOT EXISTS `Expense_".$year."` (
+        $query = "CREATE TABLE IF NOT EXISTS `Expense_{$year}` (
                         `ID` int primary key auto_increment,
                         `UID` int references `Users`(`ID`),
                         `CID` int references `Cars`(`ID`),
@@ -110,10 +110,14 @@ class ExpenseModel extends DbModelAbstract
 
     public function add_expense($expense) {
         $year = substr($expense->get_property("date"),0,4);
-        if ($year != getdate()['year']) {
+        $expenseTables = $this->get_table_list();
+        if (!array_key_exists($year, $expenseTables)) {
             $this->create_table_year($year);
         }
         $car = $this->carModel->get_car_by_id($expense->get_property("car_id"));
+        if (empty($expense->get_property("mileage"))) {
+            $expense->set_property('mileage', $car['Mileage']);
+        }
         if ($expense->get_property("price") < 0) {
             return display_warning("Стойността на разхода не може да е отрицателна!");
         } elseif ($expense->get_property("liters") < 0) {
@@ -123,38 +127,35 @@ class ExpenseModel extends DbModelAbstract
             return display_warning("Невалиден вид гориво!");
         } elseif (empty($expense->get_property("price"))) {
             return display_warning("Не е въведена стойност на разхода!");
-        } elseif (empty($expense->get_property("mileage"))) {
-            return display_warning("Не е въведен пробег!");
         } else {
-            $query = "INSERT INTO `Expense_".$year."` (
+            $query = "INSERT INTO `Expense_{$year}` (
             `UID`, `CID`, `Date`, `Mileage`, `Expense_ID`, `Price`, `Fuel_ID`, `Insurance_ID`, `Liters`, `Notes`)
-            VALUES (".$expense->get_property("user_id").", 
-                    ".$expense->get_property("car_id").",
-                    '".$expense->get_property("date")."',
-                    ".$expense->get_property("mileage").",
-                    ".$expense->get_property("expense_type").",
-                    ".$expense->get_property("price").",
-                    ".$expense->get_property("fuel_type").",
-                    ".$expense->get_property("insurance_type").",
-                    ".$expense->get_property("liters").",
-                    '".$expense->get_property("notes")."')";
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            $values = [
+                $expense->get_property("user_id"),
+                $expense->get_property("car_id"),
+                $expense->get_property("date"),
+                $expense->get_property("mileage"),
+                $expense->get_property("expense_type"),
+                $expense->get_property("price"),
+                $expense->get_property("fuel_type"),
+                $expense->get_property("insurance_type"),
+                $expense->get_property("liters"),
+                $expense->get_property("notes"),
+            ];
             if ($expense->get_property("mileage") > $car['Mileage']) {
-                $update = "UPDATE `Cars` SET `Mileage` = ".$expense->get_property("mileage")." WHERE `ID` = ".$expense->get_property("car_id");
-                $this->execute($update);
+                $update = "UPDATE `Cars` SET `Mileage` = ? WHERE `ID` = ?";
+                $updateValues = [$expense->get_property("mileage"), $expense->get_property("car_id")];
+                $this->execute($update, $updateValues);
             }
-            $this->execute($query);
-            header('Location: '.$_SERVER['REQUEST_URI']);
+            $this->execute($query, $values);
         }
     }
 
-    public function get_year() {
-        $this->year = getdate()['year'];
-        return $this->year;
-    }
-
     public function remove_expense($id,$year) {
-        $query = "DELETE FROM `Expense_".$year."` WHERE `ID`=".$id;
-        $this->execute($query);
-    }
+        $query = "DELETE FROM `Expense_{$year}` WHERE `ID`= ?";
+        $values = [$id];
+        $this->execute($query, $values);
+    }    
 }
 ?>
