@@ -134,16 +134,10 @@ class UserModel extends DbModelAbstract
     }
 
     public function remove_user($id) {
-        $expenseMapper = new ExpenseMapper();
-        $tables = $expenseMapper->get_table_list();
-        $user = "DELETE FROM `Users` WHERE `ID`=".$id;
-        $cars = "DELETE FROM `Cars` WHERE `UID` =".$id;
-        foreach ($tables as $table) {
-            $query = "DELETE FROM `".$table."` WHERE `UID` = ".$id;
-            $this->execute($query);
-        }
-        $this->execute($user);
-        $this->execute($cars);
+        $expenseModel = new ExpenseModel();
+        $tables = $expenseModel->get_table_list();
+        $query = "DELETE FROM `Users` WHERE `ID` = ?";
+        $this->execute($query, [$id]);
     }
 }
 

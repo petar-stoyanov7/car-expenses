@@ -23,8 +23,7 @@ class Cars
     }
 
     public function addAction($params)
-    {        
-        $title = "Добави автомобил";
+    {
         if (!empty($params['uid'])) {
             $userId = $params['uid'];
         } else {
@@ -49,9 +48,10 @@ class Cars
         }
 
         $viewParams = [
+            'title'    => 'Добави автомобил',
             'fuelList' => $this->getFuelOptions(),
         ];
-        View::render('add-car.php', $viewParams);
+        View::render('cars/add-car.php', $viewParams);
     }
 
     public function editAction($params)
@@ -70,10 +70,11 @@ class Cars
             }
 
             $viewParams = [
+                'title'     => 'Редакция',
                 'car'       => $car,
                 'fuelList'  => $this->getFuelOptions(),
             ];
-            View::render('edit-car.php', $viewParams);
+            View::render('cars/edit-car.php', $viewParams);
         } else {
             header('Location: /account/profile');
         }
@@ -81,7 +82,6 @@ class Cars
 
     public function deleteAction($params)
     {
-        $title = "Изтриване на автомобил";
         if (isset($params['cid'])) {
             $carId = isset($params['cid']) ? $params['cid']  : NULL;
             $car = $this->carModel->get_car_by_id($carId);
@@ -90,12 +90,28 @@ class Cars
                 header("Location: /account/profile");
             }
             $viewParams = [
+                'title' => "Изтриване на автомобил",
                 'car'   => $car,
                 'carId' => $carId,
             ];
-            View::render('delete-car.php', $viewParams);
+            View::render('cars/delete-car.php', $viewParams);
         } else {
             header('Location: /account/profile');
+        }
+    }
+
+    public function listCarsAction($params)
+    {
+        if (isset($params['user_id'])) {
+            $viewParams = [
+                'title'     => '',
+                'carModel'  => $this->carModel,
+                'userId'    => $params['user_id']
+            ];
+
+            View::render('cars/list-cars.php', $viewParams);
+        } else {
+            header('Location: /');
         }
     }
 

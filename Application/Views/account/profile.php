@@ -28,6 +28,14 @@ use \Core\View;
 	<br>
     <button type="button" onclick="location.href='/account/edit/'">Редактирай</button>
 	<br>
-	<h3>Автомобили:</h3>
-	<?php View::displayPartial("list-cars.php", [$carModel]); ?>
+	<h3>Автомобили:</h3>	
+	<?php 
+	View::displayPartial(
+		'list-cars.php', 
+		[
+			'carModel' 	=> $carModel, 
+			'userId' 	=> $userId
+		]
+	); 
+	?>
 </div>

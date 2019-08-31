@@ -63,7 +63,7 @@ class Expense
                 $this->expenseModel->add_expense($expense);
                 header('Location: /expense/new');
             }
-            View::render('new-expense.php', $viewParams);
+            View::render('expense/new-expense.php', $viewParams);
         } else {
             View::render('Static/new-expense.php');
         }
@@ -82,7 +82,7 @@ class Expense
                 'expenseModel' => $this->expenseModel,
                 'carModel' => $this->carModel,
             ];
-            View::render('detailed-info.php', $viewParams);
+            View::render('expense/detailed-info.php', $viewParams);
         } else {
             header("Location: /statistics");
         }
@@ -106,7 +106,7 @@ class Expense
                 'expenseModel'  => $this->expenseModel,
                 'carModel'      => $this->carModel,
             ];
-            View::render('remove-expense.php', $viewParams);
+            View::render('expense/remove-expense.php', $viewParams);
         } else {
             /** exit state */
             header('Location: /statistics');

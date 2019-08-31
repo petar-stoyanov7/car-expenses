@@ -1,17 +1,5 @@
 <?php
-
-use \Application\Models\CarModel;
-
-$title = "Списък с автомобили";
-
-if(!empty($_GET['uid'])) {
-    $uid = $_GET['uid'];
-} else {
-    $uid = $_SESSION['user']['ID'];
-}
-
-$carModel = new CarModel();
-$cars = $carModel->list_cars_by_user_id($uid);
+$cars = $carModel->list_cars_by_user_id($userId);
 $i = 1;
 foreach ($cars as $car) : ?>
     <div class='element'>
@@ -36,5 +24,5 @@ foreach ($cars as $car) : ?>
 <?php endforeach; ?>
 
 <div class="element">
-    <a href="/cars/add/uid/<?= $uid ?>"><img src="/img/icon-add.png" height="110 px" width="110 px"></a>
+    <a href="/cars/add/uid/<?= $userId ?>"><img src="/img/icon-add.png" height="110 px" width="110 px"></a>
 </div>

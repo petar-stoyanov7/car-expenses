@@ -25,7 +25,7 @@ class Account
     
     public function loginAction()
     {
-        $params['title'] = "Вход";
+        $viewParams['title'] = "Вход";
         
         if(isset($_POST['username']) && isset($_POST['password'])) {
             $User = new User($_POST['username'],$_POST['password']);
@@ -36,7 +36,7 @@ class Account
             }
         }        
 
-        View::render('login.php', $params);
+        View::render('/account/login.php', $viewParams);
     }
 
     public function logoutAction()
@@ -49,7 +49,7 @@ class Account
 
     public function registerAction()
     {        
-        $title = "Нова регистрация";
+        $viewParams['title'] = "Нова регистрация";
         if(isset($_POST['username']) && isset($_POST['password1']) && isset($_POST['email1'])) {
             if (!$_POST['checkbox']) {
                 display_warning("Трябва да се съгласите с условията!");
@@ -69,14 +69,15 @@ class Account
                 header("Location: /");
             }
         }
-        View::render('register.php');
+        View::render('account/register.php', $viewParams);
     }
 
     public function profileAction()
     {
         if (isset($_SESSION['user'])) {
-            $title = "Потребителски профил";
-            $params = [
+            $viewParams = [
+                'title'         => 'Потребителски профил',
+                'userId'        => $_SESSION['user']['ID'],
                 'user'          => $_SESSION['user']['Username'],
                 'firstName'     => $_SESSION['user']['Fname'],
                 'lastName'      => $_SESSION['user']['Lname'],
@@ -84,7 +85,7 @@ class Account
                 'email'         => $_SESSION['user']['Email'],
                 'carModel'      => $this->carModel,
             ];
-            View::render('profile.php', $params);
+            View::render('account/profile.php', $viewParams);
         } else {
             View::render('Static/profile.php');
         }
@@ -117,7 +118,8 @@ class Account
                     header('Location: ' . $_SERVER['HTTP_REFERER']);
                 }
             }
-            View::render('edit-profile.php', $viewParams);
+
+            View::render('account/edit-profile.php', $viewParams);
         } else {
             header("Location: /");
         }

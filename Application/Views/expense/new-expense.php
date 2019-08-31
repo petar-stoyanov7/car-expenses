@@ -14,14 +14,6 @@
 <label for="date">Дата:</label>
 <!-- <input type="date" name="date" value="<?= date('Y-m-d'); ?>"><br> -->
 <input type="date" name="date" value="2018-04-04"><br>
-<aside class="info">
-    <b>Текущ пробег</b>: <br>
-    <select>
-        <?php foreach ($cars as $car) : ?>
-            <option><?= $car['Brand'].' '.$car['Model']; ?>' : <?= $car['Mileage']; ?></option>
-        <?php endforeach; ?>
-    </select>
-</aside>
 <label for="car-id">Автомобил:</label>
 <select id="car-id" name="car-id">
 <?php foreach ($cars as $car) : ?>
@@ -30,7 +22,7 @@
 </select><br>
 
 <label for="mileage">Пробег:</label>
-<input id="mileage" type="number" name="mileage" placeholder="текущ пробег"><br>
+<input id="mileage" type="number" name="mileage" placeholder="текущ пробег" value="<?= $car['Mileage']; ?>"><br>
 <div id="optional">
 </div>
 <label for="value">Стойност:</label>
