@@ -1,8 +1,0 @@
-{
-    "db": {
-        "host": "localhost",
-        "db": "pestart_car_expenses",
-        "usr": "pestart_expense",
-        "pwd": "avto-r4zhod1"
-    }
-}
