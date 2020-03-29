@@ -17,8 +17,7 @@ use \Core\View;
 	<div class="top-bar">
 		<div class="top-links">
 		<a href="/">АВТО</a>
-		<a href="#">ДОМ</a>
-		<a href="http://www.pest-art.com">КАРИКАТУРИ</a>
+		<a href="/">ДОМ</a>
 		</div>
 		<div class="login">
 		<?php

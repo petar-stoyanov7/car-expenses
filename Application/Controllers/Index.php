@@ -19,12 +19,12 @@ class Index
             $greet = ($_SESSION['user']['Sex'] === 'male') ? 'дошъл' : 'дошла';
             $params = [
                 'userId'        => $userId,
-                'cars'          => $carModel->list_cars_by_user_id($userId),
+                'cars'          => $carModel->listCarsByUserId($userId),
                 'greet'         => $greet,
                 'title'         => 'Автомобилни разходи',
-                'lastFive'      => $statModel->get_last_five_by_uid($userId),
-                'countCars'     => $carModel->count_cars_by_user_id($userId),
-                'yearExpense'   => $statModel->count_year_expenses_by_uid($userId),
+                'lastFive'      => $statModel->getLastFiveByUserId($userId),
+                'countCars'     => $carModel->countCarsByUserId($userId),
+                'yearExpense'   => $statModel->countYearExpensesByUserId($userId),
                 'firstName'     => $_SESSION['user']['Fname'],
                 'lastName'      => $_SESSION['user']['Lname'],
                 'carModel'      => $carModel,

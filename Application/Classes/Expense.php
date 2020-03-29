@@ -4,31 +4,44 @@ namespace Application\Classes;
 
 class Expense 
 {
-	private $user_id;
-	private $car_id;
+	private $userId;
+	private $carId;
 	private $date;
 	private $mileage;
-	private $expense_type;
+	private $expenseType;
 	private $price;
-	private $fuel_type;
+	private $fuelType;
 	private $liters;
-	private $insurance_type;
+	private $insuranceType;
 	private $notes;
 
-	public function __construct($user_id,$car_id,$date,$mileage,$expense_type,$price,$fuel_type="",$liters="",$insurance_type="",$notes="") {
-		$this->user_id = $user_id;
-		$this->car_id = $car_id;
+	public function __construct(
+	    $userId,
+        $carId,
+        $date,
+        $mileage,
+        $expense_type,
+        $price,
+        $fuelType="",
+        $liters="",
+        $insurance_type="",
+        $notes=""
+    )
+    {
+		$this->userId = $userId;
+		$this->carId = $carId;
 		$this->date = $date;
 		$this->mileage = $mileage;
-		$this->expense_type = $expense_type;
+		$this->expenseType = $expense_type;
 		$this->price = $price;
-		$this->fuel_type = $fuel_type;
+		$this->fuelType = $fuelType;
 		$this->liters = $liters;
-		$this->insurance_type = $insurance_type;
+		$this->insuranceType = $insurance_type;
 		$this->notes = sanitize($notes,1);
 	}
 
-	public function get_property($property) {
+	public function getProperty($property)
+    {
 		if (property_exists($this, $property)) {
 			return $this->$property;
 		} else {
@@ -36,7 +49,8 @@ class Expense
 		}
 	}
 
-	public function set_property($property, $value) {
+	public function setProperty($property, $value)
+    {
 		if (property_exists($this, $property)) {
 			$this->$property = $value;
 		} else {

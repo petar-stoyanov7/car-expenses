@@ -31,8 +31,8 @@ class Statistics
         }
         
         $viewParams = [
-            'cars' => $this->carModel->list_cars_by_user_id($userId),
-            'expenses' => $this->expenseModel->get_expenses(),
+            'cars' => $this->carModel->listCarsByUserId($userId),
+            'expenses' => $this->expenseModel->getExpenses(),
         ];
 
         if (isset($_SESSION['user'])) {
@@ -45,7 +45,7 @@ class Statistics
                     echo "</div>";;
                 }
                 else {
-                    $viewParams['data'] = $this->statModel->get_statistic_for_period(
+                    $viewParams['data'] = $this->statModel->getStatisticForPeriod(
                         $_POST['from'],
                         $_POST['to'],
                         $userId,

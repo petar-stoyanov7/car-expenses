@@ -108,37 +108,4 @@ function translate($str) {
 			break;
 	}
 }
-
-function fuel_options($uid="") {
-	$car_dao = new Car_DAO();
-	if (!empty($uid)) {
-		$fuel_list = $car_dao->get_user_fuel_types($uid);
-	} else {
-		$fuel_list = $car_dao->get_fuels();
-	}
-	foreach($fuel_list as $fuel) {
-		echo '<option value='.$fuel['ID'].'>'.translate($fuel['Name']).'</option>';		
-	}
-}
-
-function insurance_options() {
-	$expense_dao = new Expense_DAO();	
-	foreach($expense_dao->get_insurance_id() as $id) {
-		switch ($id) {
-			case 1:
-				$name = "Гражданска Отговорност";
-				break;
-			case 2:
-				$name = "Каско";
-				break;
-			case 3:
-				$name = "Друга";
-				break;
-			default:							
-				break;
-		}
-		echo '<option value="'.$id.'">'.$name.'</option>';
-	}
-}
-
 ?>

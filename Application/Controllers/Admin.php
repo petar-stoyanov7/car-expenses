@@ -31,7 +31,7 @@ class Admin
     {
         $viewParams = [
             'title'     => 'Admin panel',
-            'userList'  => $this->userModel->list_users(),
+            'userList'  => $this->userModel->listUsers(),
             'carModel'  => $this->carModel,
         ];
 
@@ -39,7 +39,7 @@ class Admin
 		// 	$uid = $_GET['uid'];
 		// 	$user_dao = new User_DAO();
 		// 	$user_dao->remove_user($uid);
-		// 	display_warning("Потребителят ".$user_dao->get_user_by_id($uid)."е изтрит успешно");
+		// 	display_warning("Потребителят ".$user_dao->getUserByUserId($uid)."е изтрит успешно");
 		// 	header("Location: admin.php");
 		// }
 
@@ -50,7 +50,7 @@ class Admin
     {
         if (isset($params['user_id'])) {
             $userId = $params['user_id'];
-            $user = $this->userModel->get_user_by_id($userId);
+            $user = $this->userModel->getUserByUserId($userId);
             $canDelete = $userId === $_SESSION['user']['ID'] ? false : true;
             $canDelete = $userId === 1 ? false : $canDelete;
 
@@ -59,12 +59,12 @@ class Admin
                 'canDelete'     => $canDelete,
                 'userId'        => $userId,
                 'user'          => $user,
-                'carCount'      => $this->carModel->count_cars_by_user_id($userId),
-                'expenses'      => $this->statModel->count_year_expenses_by_uid($userId),
-                'user'          => $this->userModel->get_user_by_id($userId),
-                'cars'          => $this->carModel->list_cars_by_user_id($userId),
+                'carCount'      => $this->carModel->countCarsByUserId($userId),
+                'expenses'      => $this->statModel->countYearExpensesByUserId($userId),
+                'user'          => $this->userModel->getUserByUserId($userId),
+                'cars'          => $this->carModel->listCarsByUserId($userId),
                 'greet'         => $user['Sex'] === 'male' ? 'дошъл' : 'дошла',
-                'lastFive'      => $this->statModel->get_last_five_by_uid($userId),
+                'lastFive'      => $this->statModel->getLastFiveByUserId($userId),
                 'carModel'      => $this->carModel,
                 'expenseModel'  => $this->expenseModel,
             ];
@@ -79,8 +79,8 @@ class Admin
     {
         if (isset($params['user_id'])) {
             $userId = $params['user_id'];
-            $this->userModel->remove_user($userId);
-            display_warning("Потребителят ".$this->userModel->get_user_by_id($userId)['Username']." е изтрит успешно");
+            $this->userModel->removeUser($userId);
+            display_warning("Потребителят ".$this->userModel->getUserByUserId($userId)['Username']." е изтрит успешно");
             header("refresh:2;url=/admin");
             $viewParams = [
                 'title' => 'admin panel',

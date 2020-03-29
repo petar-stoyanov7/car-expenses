@@ -15,7 +15,7 @@
 			<td><a href="/admin/show-profile/user_id/<?= $user['ID']; ?>"><?= $user['ID']; ?></a></td>
 			<td><a href="/admin/show-profile/user_id/<?= $user['ID']; ?>"><?= $user['Username']; ?></a></td>
 			<td><a href="/admin/show-profile/user_id/<?= $user['ID']; ?>"><?= $user['Email']; ?></a></td>
-			<td><a href="/cars/list-cars/user_id/<?= $user['ID']; ?>"><?= $carModel->count_cars_by_user_id($user['ID']); ?></a></td>
+			<td><a href="/cars/list-cars/user_id/<?= $user['ID']; ?>"><?= $carModel->countCarsByUserId($user['ID']); ?></a></td>
 			<td><a href="/admin/show-profile/user_id/<?= $user['ID']; ?>"><?= $user['Fname']; ?></a></td>
 			<td><a href="/admin/show-profile/user_id/<?= $user['ID']; ?>"><?= $user['Lname']; ?></a></td>
 			<td>

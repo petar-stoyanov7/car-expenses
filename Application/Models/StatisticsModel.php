@@ -12,9 +12,10 @@ class StatisticsModel extends DbModelAbstract
         parent::__construct();        
     }
 
-    public function get_table_list() {
+    public function getTableList()
+    {
         $arrays = $this->getData("SHOW TABLES LIKE 'Expense_2%'");
-        $list = array();
+        $list = [];
         foreach ($arrays as $array) {
             $year = substr($array['Tables_in_pestart_car_expenses (Expense_2%)'], -4);
             $list[$year] = $array['Tables_in_pestart_car_expenses (Expense_2%)'];
@@ -22,76 +23,82 @@ class StatisticsModel extends DbModelAbstract
         return $list;
     }
 
-    public function get_last_five_by_uid($uid) {
+    public function getLastFiveByUserId($uid)
+    {
         $year = date('Y');
         $last_year = $year-1;
-        $query = "SELECT * FROM `Expense_".$last_year."` WHERE `UID`=".$uid." 
+        $query = "SELECT * FROM `Expense_{$last_year}` WHERE `UID`= ? 
                 UNION ALL
-                SELECT * FROM `Expense_".$year."` WHERE `UID`=".$uid."
-                ORDER BY `Date` DESC LIMIT 5";					
-        $array = $this->getData($query);
+                SELECT * FROM `Expense_{$year}` WHERE `UID` = ?
+                ORDER BY `Date` DESC LIMIT 5";
+        $values = [
+            $uid,
+            $uid
+        ];
+        $array = $this->getData($query, $values);
         return $array;
     }
 
-    public function get_statistic_for_period($start,$end,$uid,$cid,$expense_id) {			
+    public function getStatisticForPeriod($start, $end, $uid, $cid, $expense_id)
+    {
         $carModel = new CarModel();
         $expenseModel = new ExpenseModel();
-        $start_year = substr($start, 0, 4);
-        $end_year = substr($end, 0, 4);
-        $tables = $this->get_table_list();
-        $data = array();
+        $startYear = date("Y", strtotime($start));
+        $endYear = date("Y", strtotime($end));
+        $tables = $this->getTableList();
+        $data = [];
         $where = "WHERE `Date` >= '".$start."' AND `Date` <= '".$end."' AND `UID` = ".$uid." ";
         $overall = "";
         $sum = "";
         $mileage = "";
-        $where_exp = "";			
-        $data['Cars'] = array();		
-        if ($cid == "all") {
-            $cars = $carModel->list_cars_by_user_id($uid);
-            $where_car = "";
+        $whereExpense = "";			
+        $data['Cars'] = [];		
+        if ($cid === "all") {
+            $cars = $carModel->listCarsByUserId($uid);
+            $whereCar = "";
         } else {
-            $cars = array();
-            $car = $carModel->get_car_by_id($cid);
+            $cars = [];
+            $car = $carModel->getCarById($cid);
             array_push($cars, $car);
-            $where_car = "AND `CID` = ".$cid." ";
+            $whereCar = "AND `CID` = ".$cid." ";
         }
 
-        if ($expense_id!="all") {
-            $where_exp .= " AND `Expense_ID` = ".$expense_id." ";
-            $data['Expense'] = $expenseModel->get_expense_name($expense_id);
+        if ($expense_id !== "all") {
+            $whereExpense .= " AND `Expense_ID` = ".$expense_id." ";
+            $data['Expense'] = $expenseModel->getExpenseName($expense_id);
         } else {
-            $where_exp = "";
+            $whereExpense = "";
         }	
         foreach ($tables as $year => $table) {
-            if ($start_year == $end_year) {
-                $overall = "SELECT * FROM `Expense_".$start_year."` ".$where.$where_exp.$where_car;
+            if ($startYear === $endYear) {
+                $overall = "SELECT * FROM `Expense_".$startYear."` ".$where.$whereExpense.$whereCar;
                 break;
             }
-            if ($year < $end_year) {
-                $overall .= "SELECT * FROM `".$table."` ".$where.$where_exp.$where_car." UNION ALL ";
-            } elseif ($year == $end_year) {
-                $overall .= "SELECT * FROM `".$table."` ".$where.$where_exp.$where_car;
+            if ($year < $endYear) {
+                $overall .= "SELECT * FROM `".$table."` ".$where.$whereExpense.$whereCar." UNION ALL ";
+            } elseif ($year == $endYear) {
+                $overall .= "SELECT * FROM `".$table."` ".$where.$whereExpense.$whereCar;
             }
         }
         foreach ($cars as $car) {
-            $summary_query = "SELECT SUM(`Overall`) as `Sum` FROM ( ";
-            $mileage_query = "SELECT SUM(`Distance`) as `Sum` FROM ( ";
-            $where_car = " AND `CID` = ".$car['ID']." ";
+            $summaryQuery = "SELECT SUM(`Overall`) as `Sum` FROM ( ";
+            $mileageQuery = "SELECT SUM(`Distance`) as `Sum` FROM ( ";
+            $whereCar = " AND `CID` = ".$car['ID']." ";
             foreach ($tables as $year => $table) {
-                if ($year < $start_year) {
+                if ($year < $startYear) {
                     continue;					
-                } elseif ($year >= $start_year && $year < $end_year) {
-                    $summary_query .= "SELECT Sum(`Price`) as `Overall` FROM `".$table."` ".$where.$where_exp.$where_car." UNION ALL ";
-                    $mileage_query .= "SELECT Max(`Mileage`) - Min(`Mileage`) AS `Distance` FROM `".$table."` ".$where.$where_car." UNION ALL ";
-                } elseif ($year == $end_year) {
-                    $summary_query .= "SELECT Sum(`Price`) as `Overall` FROM `".$table."` ".$where.$where_exp.$where_car." ) as SubQuery";
-                    $mileage_query .= "SELECT Max(`Mileage`) - Min(`Mileage`) AS `Distance` FROM `".$table."` ".$where.$where_car." ) as SubQuery";
+                } elseif ($year >= $startYear && $year < $endYear) {
+                    $summaryQuery .= "SELECT Sum(`Price`) as `Overall` FROM `{$table}` ".$where.$whereExpense.$whereCar." UNION ALL ";
+                    $mileageQuery .= "SELECT Max(`Mileage`) - Min(`Mileage`) AS `Distance` FROM `{$table}` ".$where.$whereCar." UNION ALL ";
+                } elseif ($year == $endYear) {
+                    $summaryQuery .= "SELECT Sum(`Price`) as `Overall` FROM `{$table}` ".$where.$whereExpense.$whereCar." ) as SubQuery";
+                    $mileageQuery .= "SELECT Max(`Mileage`) - Min(`Mileage`) AS `Distance` FROM `{$table}` ".$where.$whereCar." ) as SubQuery";
                 }
             }
 
-            $name = $carModel->get_car_name_by_id($car['ID']);
-            $summary = $this->getData($summary_query);
-            $mileage = $this->getData($mileage_query);				
+            $name = $carModel->getCarNameById($car['ID']);
+            $summary = $this->getData($summaryQuery);
+            $mileage = $this->getData($mileageQuery);				
             $temp = array("Name" => $name, "Summary" => $summary[0]['Sum'], "Mileage" => $mileage[0]['Sum']);
             
             array_push($data['Cars'], $temp);
@@ -99,13 +106,13 @@ class StatisticsModel extends DbModelAbstract
         }
         // echo "overall";
         // display_test($overall);
-        $raw_data = $this->getData($overall);
-        $data['Raw'] = $raw_data;
+        $data['Raw'] = $this->getData($overall);
 
         return $data;
     }
 
-    public function get_statistic_by_id($id,$year="") {
+    public function getStatisticById($id, $year="")
+    {
         if (empty($year)) {
             $year = date('Y');
         }
@@ -114,7 +121,8 @@ class StatisticsModel extends DbModelAbstract
 ;			return $data[0];
     }
 
-    public function count_year_expenses_by_uid($uid,$cid="",$year="") {
+    public function countYearExpensesByUserId($uid, $cid="", $year="")
+    {
         if (empty($year)) {
             $year = date('Y');
         }

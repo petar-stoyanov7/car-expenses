@@ -30,7 +30,7 @@ class ExpenseModel extends DbModelAbstract
         $this->table = "";
     }
 
-    public function get_table_list() {
+    public function getTableList() {
         $arrays = $this->getData("SHOW TABLES LIKE 'Expense_2%'");
         $list = array();
         foreach ($arrays as $array) {
@@ -40,7 +40,7 @@ class ExpenseModel extends DbModelAbstract
         return $list;
     }
 
-    public function create_table_year($year) {
+    public function createTableYear($year) {
         $query = "CREATE TABLE IF NOT EXISTS `Expense_{$year}` (
                         `ID` int primary key auto_increment,
                         `UID` int references `Users`(`ID`),
@@ -57,102 +57,101 @@ class ExpenseModel extends DbModelAbstract
         $this->execute($query);
     }
     //might delete this
-    public function get_expense_names() {
-        $expense_list = $this->getData("SELECT `Name` FROM `Expense_Types`");
-        $expense_array = array();
-        foreach ($expense_list as $expense) {
-            array_push($expense_array, $expense['Name']);
+    public function getExpenseNames() {
+        $expenseList = $this->getData("SELECT `Name` FROM `Expense_Types`");
+        $expenseArray = array();
+        foreach ($expenseList as $expense) {
+            array_push($expenseArray, $expense['Name']);
         }
-        return $expense_array;
+        return $expenseArray;
     }
     //might delete this
-    public function get_expense_id() {
-        $expense_list = $this->getData("SELECT `ID` FROM `Expense_Types`");
-        $expense_array = array();
-        foreach ($expense_list as $expense) {
-            array_push($expense_array, $expense['ID']);
+    public function getExpenseId() {
+        $expenseList = $this->getData("SELECT `ID` FROM `Expense_Types`");
+        $expenseArray = array();
+        foreach ($expenseList as $expense) {
+            array_push($expenseArray, $expense['ID']);
         }
-        return $expense_array;
+        return $expenseArray;
     }
 
-    public function get_expenses() {
-        $expense_list = $this->getData("SELECT * FROM `Expense_Types`");
-        return $expense_list;
+    public function getExpenses() {
+        return $this->getData("SELECT * FROM `Expense_Types`");
     }
     
-    public function get_expense_name($id) {
+    public function getExpenseName($id) {
         $query = "SELECT `Name` FROM `Expense_Types` WHERE `ID`=".$id;
         $result = $this->getData($query);
         return $result[0]['Name'];
     }
 
-    public function get_insurance_names() {
-        $insurance_list = $this->getData("SELECT `Name` FROM `Insurance_Types`");
-        $insurance_array = array();
-        foreach ($insurance_list as $insurance) {
-            array_push($insurance_array, $insurance['Name']);
+    public function getInsuranceNames() {
+        $insuranceList = $this->getData("SELECT `Name` FROM `Insurance_Types`");
+        $insuranceArray = [];
+        foreach ($insuranceList as $insurance) {
+            array_push($insuranceArray, $insurance['Name']);
         }
-        return $insurance_array;
+        return $insuranceArray;
     }
-    public function get_insurance_id() {
-        $insurance_list = $this->getData("SELECT `ID` FROM `Insurance_Types`");
-        $insurance_array = array();
-        foreach ($insurance_list as $insurance) {
-            array_push($insurance_array, $insurance['ID']);
+    public function getInsuranceId() {
+        $insuranceList = $this->getData("SELECT `ID` FROM `Insurance_Types`");
+        $insuranceArray = array();
+        foreach ($insuranceList as $insurance) {
+            array_push($insuranceArray, $insurance['ID']);
         }
-        return $insurance_array;
+        return $insuranceArray;
     }
-    public function get_insurance_name($id) {
+    public function getInsuranceName($id) {
         $query = "SELECT `Name` FROM `Insurance_Types` WHERE `ID`=".$id;
         $result = $this->getData($query);
         return $result[0]['Name'];
     }
 
-    public function add_expense($expense) {
-        $year = substr($expense->get_property("date"),0,4);
-        $expenseTables = $this->get_table_list();
+    public function addExpense($expense) {
+        $year = substr($expense->getProperty("date"),0,4);
+        $expenseTables = $this->getTableList();
         if (!array_key_exists($year, $expenseTables)) {
-            $this->create_table_year($year);
+            $this->createTableYear($year);
         }
-        $car = $this->carModel->get_car_by_id($expense->get_property("car_id"));
-        if (empty($expense->get_property("mileage"))) {
-            $expense->set_property('mileage', $car['Mileage']);
+        $car = $this->carModel->getCarById($expense->getProperty("carId"));
+        if (empty($expense->getProperty("mileage"))) {
+            $expense->setProperty('mileage', $car['Mileage']);
         }
-        if ($expense->get_property("price") < 0) {
+        if ($expense->getProperty("price") < 0) {
             return display_warning("Стойността на разхода не може да е отрицателна!");
-        } elseif ($expense->get_property("liters") < 0) {
+        } elseif ($expense->getProperty("liters") < 0) {
             return display_warning("Стойността на литрите не може да е отрицателна!");
-        } elseif (($expense->get_property("expense_type") == 0) && 
-            ($expense->get_property("fuel_type") != $car['Fuel_ID'] && $expense->get_property("fuel_type") != $car['Fuel_ID2'])) {
+        } elseif (($expense->getProperty("expenseType") == 0) &&
+            ($expense->getProperty("fuelType") != $car['Fuel_ID'] && $expense->getProperty("fuelType") != $car['Fuel_ID2'])) {
             return display_warning("Невалиден вид гориво!");
-        } elseif (empty($expense->get_property("price"))) {
+        } elseif (empty($expense->getProperty("price"))) {
             return display_warning("Не е въведена стойност на разхода!");
         } else {
             $query = "INSERT INTO `Expense_{$year}` (
             `UID`, `CID`, `Date`, `Mileage`, `Expense_ID`, `Price`, `Fuel_ID`, `Insurance_ID`, `Liters`, `Notes`)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             $values = [
-                $expense->get_property("user_id"),
-                $expense->get_property("car_id"),
-                $expense->get_property("date"),
-                $expense->get_property("mileage"),
-                $expense->get_property("expense_type"),
-                $expense->get_property("price"),
-                $expense->get_property("fuel_type"),
-                $expense->get_property("insurance_type"),
-                $expense->get_property("liters"),
-                $expense->get_property("notes"),
+                $expense->getProperty("userId"),
+                $expense->getProperty("carId"),
+                $expense->getProperty("date"),
+                $expense->getProperty("mileage"),
+                $expense->getProperty("expenseType"),
+                $expense->getProperty("price"),
+                $expense->getProperty("fuelType"),
+                $expense->getProperty("insuranceType"),
+                $expense->getProperty("liters"),
+                $expense->getProperty("notes"),
             ];
-            if ($expense->get_property("mileage") > $car['Mileage']) {
+            if ($expense->getProperty("mileage") > $car['Mileage']) {
                 $update = "UPDATE `Cars` SET `Mileage` = ? WHERE `ID` = ?";
-                $updateValues = [$expense->get_property("mileage"), $expense->get_property("car_id")];
+                $updateValues = [$expense->getProperty("mileage"), $expense->getProperty("carId")];
                 $this->execute($update, $updateValues);
             }
             $this->execute($query, $values);
         }
     }
 
-    public function remove_expense($id,$year) {
+    public function removeExpense($id, $year) {
         $query = "DELETE FROM `Expense_{$year}` WHERE `ID`= ?";
         $values = [$id];
         $this->execute($query, $values);
