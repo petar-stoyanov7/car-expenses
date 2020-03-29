@@ -13,7 +13,7 @@ foreach ($cars as $car) : ?>
     <h4>Автомобил <?= $i++ ?> :</h4>
     <?= $car['Brand'] .' ' . $car['Model'] . ' ' . $car['Year']; ?><br>
     <b>Километри</b>: <?= $car['Mileage']; ?> км<br>
-    <b>Похарчени за <?= date('Y'); ?> година:</b> <?= $statModel->count_year_expenses_by_uid($userId,$car['ID']); ?> лв.
+    <b>Похарчени за <?= date('Y'); ?> година:</b> <?= $statModel->countYearExpensesByUserId($userId,$car['ID']); ?> лв.
     </div>
 <?php endforeach; ?>
 </div>
@@ -30,7 +30,7 @@ foreach ($cars as $car) : ?>
 </tr>
 
 <?php
-$lastFive = $statModel->get_last_five_by_uid($_SESSION['user']['ID']);
+$lastFive = $statModel->getLastFiveByUserId($_SESSION['user']['ID']);
 if (empty($lastFive)) : ?>
     <tr>
         <?php for ($i=0; $i<=6; $i++) {
@@ -41,15 +41,15 @@ if (empty($lastFive)) : ?>
 <?php foreach ($lastFive as $array) : ?>
     <tr>
     <td><?= $array['Mileage']; ?></td>
-    <td><?= $carModel->get_car_name_by_id($array['CID']); ?></td>
-    <td><?= translate($expenseModel->get_expense_name($array['Expense_ID'])); ?>"</td>
+    <td><?= $carModel->getCarNameById($array['CID']); ?></td>
+    <td><?= translate($expenseModel->getExpenseName($array['Expense_ID'])); ?>"</td>
     <?php switch ($array['Expense_ID']) {
         case 1:
-            $expenseType = $carModel->get_fuel_name($array['Fuel_ID']);
+            $expenseType = $carModel->getFuelName($array['Fuel_ID']);
             $expenseType = translate($expenseType);
             break;
         case 2:
-            $expenseType = $expenseModel->get_insurance_name($array['Insurance_ID']);
+            $expenseType = $expenseModel->getInsuranceName($array['Insurance_ID']);
             $expenseType = translate($expenseType);
             break;			
         default:

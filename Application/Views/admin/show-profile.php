@@ -50,22 +50,22 @@
 <?php endif; ?>
 <?php foreach ($lastFive as $array) : ?>
     <?php 
-        $car_name = $carModel->get_car_name_by_id($array['CID']);
-        $expense_name = $expenseModel->get_expense_name($array['Expense_ID']);
+        $carName = $carModel->getCarNameById($array['CID']);
+        $expenseName = $expenseModel->getExpenseName($array['Expense_ID']);
     ?>
     <tr>
     <td><?= $array['Mileage']; ?></td>
-    <td><?= $car_name; ?></td>
+    <td><?= $carName; ?></td>
     
-    <td><?= translate($expense_name); ?></td>
+    <td><?= translate($expenseName); ?></td>
     <?php
     switch ($array['Expense_ID']) {
         case 1:
-            $expense_type = $carModel->get_fuel_name($array['Fuel_ID']);
+            $expense_type = $carModel->getFuelName($array['Fuel_ID']);
             $expense_type = translate($expense_type);
             break;
         case 2:
-            $expense_type = $expenseModel->get_insurance_name($array['Insurance_ID']);
+            $expense_type = $expenseModel->getInsuranceName($array['Insurance_ID']);
             $expense_type = translate($expense_type);
             break;			
         default:

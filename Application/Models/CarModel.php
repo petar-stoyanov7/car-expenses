@@ -9,65 +9,79 @@ class CarModel extends DbModelAbstract
         parent::__construct();
     }
 
-    public function list_all_cars() {
+    public function listAllCars()
+    {
         $array = $this->getData('SELECT * FROM Cars');
         return $array;
     }
 
-    public function list_cars_by_user_id($uid) {
-        $cars_array = $this->getData("SELECT * FROM `Cars` WHERE `UID` = '".$uid."'");
-        return $cars_array;
+    public function listCarsByUserId($uid)
+    {
+        return $this->getData("SELECT * FROM `Cars` WHERE `UID` = ?", [$uid]);
     }
 
-    public function count_cars_by_user_id($uid) {
-        $count = $this->getData("SELECT COUNT(*) FROM `Cars` WHERE `UID` = '".$uid."'");
+    public function countCarsByUserId($uid)
+    {
+        $count = $this->getData("SELECT COUNT(*) FROM `Cars` WHERE `UID` = ?",[$uid]);
         return $count[0]["COUNT(*)"];
     }
 
-    public function get_user_fuel_types($uid) {
-        $query = "SELECT DISTINCT `Cars`.`Fuel_ID` AS `ID`, `Fuel_Types`.`Name` FROM `Cars`
+    public function getUserFuelTypes($uid, $secondary = null)
+    {
+        $query = "SELECT DISTINCT 
+                    `Cars`.`Fuel_ID` AS `ID`, 
+                    `Fuel_Types`.`Name` 
+                    FROM `Cars`
                     JOIN `Fuel_Types`
                     ON `Cars`.`Fuel_ID` = `Fuel_Types`.`ID`
-                    WHERE `Cars`.`UID` = ".$uid."
+                    WHERE `Cars`.`UID` = ?
                     UNION ALL
-                    SELECT DISTINCT `Cars`.`Fuel_ID2` AS `ID`, `Fuel_Types`.`Name` FROM `Cars`
+                    SELECT DISTINCT 
+                    `Cars`.`Fuel_ID2` AS `ID`, 
+                    `Fuel_Types`.`Name` FROM `Cars`
                     JOIN `Fuel_Types`
                     ON `Cars`.`Fuel_ID2` = `Fuel_Types`.`ID`
-                    WHERE `Cars`.`UID` = ".$uid." ORDER BY `ID` ASC";
-        $fuel_array = $this->getData($query);
+                    WHERE `Cars`.`UID` = ?";
+        if (null !== $secondary) {
+            $query .= " AND `Fuel_Types`.`ID` NOT IN (1,2)";
+        }
+        $query .= "ORDER BY `ID` ASC";
+        $fuel_array = $this->getData($query, [$uid, $uid]);
         return $fuel_array;
     }
 
-    public function get_uid_by_cid($cid) {
-        $query = "SELECT `UID` FROM `Cars` WHERE `ID` = ".$cid." LIMIT 1";
-        $data = $this->getData($query);
+    public function getUserIdByCarId($cid) {
+        $query = "SELECT `UID` FROM `Cars` WHERE `ID` = ? LIMIT 1";
+        $data = $this->getData($query, [$cid]);
         return $data[0]['UID'];
     }
 
-    public function get_fuels() {
+    public function getFuels($secondary = null) {
         $query = "SELECT * FROM `Fuel_Types`";
-        $fuels = $this->getData($query);
-        return $fuels;
+        if (null !== $secondary) {
+            $query .= " WHERE `ID` NOT IN (1,2)";
+        }
+        return $this->getData($query);
     }
     
-    public function get_fuel_name($id) {
-        $query = "SELECT `NAME` FROM `Fuel_Types` WHERE `ID`=".$id;
-        $result = $this->getData($query);
+    public function getFuelName($id) {
+        $query = "SELECT `NAME` FROM `Fuel_Types` WHERE `ID` = ?";
+        $result = $this->getData($query, [$id]);
         return $result[0]['NAME'];
     }
 
-    public function get_car_by_id($id) {
-        $car_array = $this->getData("SELECT * FROM `Cars` WHERE `ID` = '".$id."'");
+    public function getCarById($id) {
+        $car_array = $this->getData("SELECT * FROM `Cars` WHERE `ID` = ?",[$id]);
         return $car_array[0];
     }
 
-    public function get_car_name_by_id($id) {
-        $car_array = $this->getData("SELECT * FROM `Cars` WHERE `ID` = '".$id."'");
+    public function getCarNameById($id) {
+        $car_array = $this->getData("SELECT * FROM `Cars` WHERE `ID` = ?",[$id]);
         $string = $car_array[0]['Brand']." ".$car_array[0]['Model'];
         return $string;
     }
 
-    public function get_fuel_names() {
+    public function getFuelNames() {
         $fuels_list = $this->getData("SELECT `Name` FROM `Fuel_Types`");
         $fuels_array = array();
         foreach ($fuels_list as $fuel) {
@@ -75,7 +89,7 @@ class CarModel extends DbModelAbstract
         }
         return $fuels_array;
     }
-    public function get_fuel_id() {
+    public function getFuelId() {
         $fuels_list = $this->getData("SELECT `ID` FROM `Fuel_Types`");
         $fuels_array = array();
         foreach ($fuels_list as $fuel) {
@@ -84,71 +98,43 @@ class CarModel extends DbModelAbstract
         return $fuels_array;
     }
     
-    public function add_car($car) {
-        if (empty($car->get_property("brand"))) {
-            return display_warning("Не е въведена марка!");
-        } elseif (empty($car->get_property("model"))) {
-            return display_warning("Не е въведен модел!");
-        } elseif (empty($car->get_property("fuel_id"))) {
-            return display_warning("Не е въведено гориво!");
-        } elseif (empty($car->get_property("mileage"))) {
-            return display_warning("Не е въведен пробег!");
-        } elseif ($car->get_property("mileage") < 0) {
-            return display_warning("Невалиден пробег!");
-        } 
+    public function addCar($car) {
         $query = "INSERT INTO `Cars` 
             (`UID`, `Brand`, `Model`, `Year`, `Color`, `Mileage`, `Fuel_ID`, `Fuel_ID2`, `Notes`)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         $values = [
-            $car->get_property('user_id'),
-            $car->get_property('brand'),
-            $car->get_property('model'),
-            $car->get_property('year'),
-            $car->get_property('color'),
-            $car->get_property('mileage'),
-            $car->get_property('fuel_id'),
-            $car->get_property('fuel_id2'),
-            $car->get_property('notes'),
+            $car->getProperty('userId'),
+            $car->getProperty('brand'),
+            $car->getProperty('model'),
+            $car->getProperty('year'),
+            $car->getProperty('color'),
+            $car->getProperty('mileage'),
+            $car->getProperty('fuelId'),
+            $car->getProperty('fuelId2'),
+            $car->getProperty('notes'),
         ];
         $this->execute($query, $values);        
     }
 
-    public function edit_car($car,$cid) {
-        $query = "UPDATE `Cars` SET ";
-        $values = [];
-        if ($car->get_property("mileage") < 0) {
-            return display_warning("Невалиден пробег!");
-        }
-        if (!empty($car->get_property("color"))) {
-            $query .= "`Color` = ?, ";
-            $values[] = $car->get_property("color");
-        } 
-        if (!empty($car->get_property("fuel_id2"))) {
-            $query .= "`Fuel_ID2` = ?, ";
-            $values[] = $car->get_property("fuel_id2");
-        }
-        if (!empty($car->get_property("mileage"))) {
-            $query .= "`Mileage` = ?, ";
-            $values[] = $car->get_property("mileage");
-        }
-        if (!empty($car->get_property("notes"))) {
-            $query .= "`Notes` = ?, ";
-            $values[] = $car->get_property("notes");
-        }
-        $query .= "`UID` = ? ";
-        $values[] = $car->get_property('user_id');
-        $query .= "WHERE `ID` = ?";
-        $values[] = $cid;
+    public function editCar($car, $cid) {
+        $query = "UPDATE `Cars` SET `Color` = ?, `Fuel_ID2` = ?, `Mileage` = ?, `Notes` = ? WHERE `ID` = ?";
+        $values = [
+            $car->getProperty("color"),
+            $car->getProperty("fuelId2"),
+            $car->getProperty("mileage"),
+            $car->getProperty("notes"),
+            $cid
+        ];
         $this->execute($query, $values);
     }
 
-    public function remove_car_by_id($id) {
-        $query = "DELETE FROM `Cars` WHERE `ID`=".$id;
-        $this->execute($query);
+    public function removeCarById($id) {
+        $query = "DELETE FROM `Cars` WHERE `ID` = ?";
+        $this->execute($query, [$id]);
     }
 
-    public function remove_car_by_uid($uid) {
-        $query = "DELETE FROM `Cars` WHERE `UID` = ".$uid;
-        $this->execute($query);
+    public function removeCarByUserId($uid) {
+        $query = "DELETE FROM `Cars` WHERE `UID` = ?";
+        $this->execute($query, [$uid]);
     }
 }
