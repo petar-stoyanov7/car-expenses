@@ -65,7 +65,7 @@ class Account
                     $_POST['city'],
                     $_POST['sex']
                 );
-                $this->userModel->add_user($user);
+                $this->userModel->addUser($user);
                 header("Location: /");
             }
         }
@@ -106,15 +106,15 @@ class Account
                     'isAdmin'   => FALSE,
                 ];
             }
-            $viewParams['user'] = $this->userModel->get_user_by_id($viewParams['uid']);
+            $viewParams['user'] = $this->userModel->getUserByUserId($viewParams['uid']);
             if (!empty($_POST)) {
                 if (isset($password)) {
                     $User = new User($_POST['user'], $password);
-                    $this->userModel->edit_user($User,$_POST,1);
+                    $this->userModel->editUser($User,$_POST,1);
                     header('Location: ' . $_SERVER['HTTP_REFERER']);
                 } else {
                     $User = new User($_POST['user'], $_POST['old_password']);
-                    $this->userModel->edit_user($User,$_POST);
+                    $this->userModel->editUser($User,$_POST);
                     header('Location: ' . $_SERVER['HTTP_REFERER']);
                 }
             }

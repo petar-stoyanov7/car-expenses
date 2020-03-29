@@ -34,7 +34,7 @@ class Expense
 
         if (isset($_SESSION['user'])) {
             $userId = $_SESSION['user']['ID'];
-            $fuelList = $this->carModel->get_user_fuel_types($userId);
+            $fuelList = $this->carModel->getUserFuelTypes($userId);
             $fuelTypes = [];
             foreach($fuelList as $fuel) {
                 $fuelTypes[$fuel['ID']] = $fuel['Name'];
@@ -42,8 +42,8 @@ class Expense
 
             $viewParams = [
                 'userId'        => $userId,
-                'expenseList'   => $this->expenseModel->get_expenses(),
-                'cars'          => $carModel->list_cars_by_user_id($userId),
+                'expenseList'   => $this->expenseModel->getExpenses(),
+                'cars'          => $carModel->listCarsByUserId($userId),
                 'parsed'        => json_encode($fuelTypes),
             ];
             if (!empty($_POST)) {
@@ -60,7 +60,7 @@ class Expense
                         $values['insurance-type'],
                         $values['description']
                     );
-                $this->expenseModel->add_expense($expense);
+                $this->expenseModel->addExpense($expense);
                 header('Location: /expense/new');
             }
             View::render('expense/new-expense.php', $viewParams);
@@ -75,7 +75,7 @@ class Expense
         if(isset($params['id']) && isset($params['year'])) {
             $id = $params['id'];
             $year = $params['year'];
-            $data = $this->statisticsModel->get_statistic_by_id($id,$year);
+            $data = $this->statisticsModel->getStatisticById($id,$year);
 
             $viewParams = [
                 'data' => $data,
@@ -96,13 +96,13 @@ class Expense
             $year = $params['year'];
             /** proper way to work */
             if (isset($_POST['id']) && isset($_POST['year'])) {
-                $this->expenseModel->remove_expense($_POST['id'],$_POST['year']);
+                $this->expenseModel->removeExpense($_POST['id'],$_POST['year']);
                 header("Location: /statistics");
             }
             $viewParams = [
                 'id'            => $id,
                 'year'          => $year,
-                'data'          => $this->statisticsModel->get_statistic_by_id($id,$year),
+                'data'          => $this->statisticsModel->getStatisticById($id,$year),
                 'expenseModel'  => $this->expenseModel,
                 'carModel'      => $this->carModel,
             ];

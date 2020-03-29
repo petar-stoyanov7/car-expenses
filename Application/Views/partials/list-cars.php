@@ -1,5 +1,5 @@
 <?php
-$cars = $carModel->list_cars_by_user_id($userId);
+$cars = $carModel->listCarsByUserId($userId);
 $i = 1;
 foreach ($cars as $car) : ?>
     <div class='element'>
@@ -11,11 +11,11 @@ foreach ($cars as $car) : ?>
     <b>Година: </b><?= $car['Year']; ?><br>
     <b>Цвят: </b><?= $car['Color']; ?><br>
     <b>Пробег: </b><?= $car['Mileage']; ?> км<br>
-    <?php $fuel1 = $carModel->get_fuel_name($car['Fuel_ID']); ?>
+    <?php $fuel1 = $carModel->getFuelName($car['Fuel_ID']); ?>
     <b>Гориво1: </b><?= translate($fuel1); ?><br>
     <?php 
     if (!empty($car['Fuel_ID2'])) {
-        $fuel2 = $carModel->get_fuel_name($car['Fuel_ID2']);
+        $fuel2 = $carModel->getFuelName($car['Fuel_ID2']);
         echo '<b>Гориво2: </b>' . translate($fuel2) . '<br>';
     } 
     ?>

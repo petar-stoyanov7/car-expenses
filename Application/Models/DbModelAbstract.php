@@ -5,7 +5,7 @@ namespace Application\Models;
 use PDOException;
 use PDO;
 
-class dbModelAbstract
+class DbModelAbstract
 {
     protected $connection;
     private $hostname;
@@ -39,12 +39,16 @@ class dbModelAbstract
         }
     }
 
-    public function getData($sql) {
-        $data = array();
-        $result = $this->connection->prepare($sql);
-        $result->execute();
-        $data = $result->fetchAll(\PDO::FETCH_ASSOC);
-        return $data;
+    public function getData($sql, $values = null) {
+        if (null !== $values) {
+            $result = $this->connection->prepare($sql);
+            $result->execute($values);
+            return $result->fetchAll(\PDO::FETCH_ASSOC);
+        } else {
+            $result = $this->connection->prepare($sql);
+            $result->execute();
+            return $result->fetchAll(\PDO::FETCH_ASSOC);
+        }
     }
 
     public function execute($sql, $values = null) {

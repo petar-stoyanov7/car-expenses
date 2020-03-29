@@ -26,6 +26,5 @@ $title = "Редактирай профил";
 <button type="submit">Редактирай</button>
 </form>
 
-<?php show_back_button(); ?>
 
 </div>

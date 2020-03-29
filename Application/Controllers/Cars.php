@@ -42,7 +42,7 @@ class Cars
                 $values['fuel_id2'],
                 $values['notes']
             );
-            $this->carModel->add_car($car);
+            $this->carModel->addCar($car);
             display_warning("Автомобилът е добавен успешно!");
             header("refresh:1;url=/account/profile");
         }
@@ -58,12 +58,12 @@ class Cars
     {
         if (isset($params['cid'])) {
             $carId = $params['cid'];
-            $car = $this->carModel->get_car_by_id($carId);
+            $car = $this->carModel->getCarById($carId);
             if (!empty($_POST)) {
-                $userId = $this->carModel->get_uid_by_cid($carId);
+                $userId = $this->carModel->getUserIdByCarId($carId);
                 $values = nullify($_POST);
                 $car_edit = new Car($userId,$car['Brand'],$car['Model'],$car['Year'],$values['color'],$values['mileage'],$car['Fuel_ID'],$values['fuel_id2'],$values['notes']);
-                $this->carModel->edit_car($car_edit, $car['ID']);
+                $this->carModel->editCar($car_edit, $car['ID']);
                 
                 display_warning("Промените са направени успешно!");
                 header("refresh:1;url=/account/profile");
@@ -84,9 +84,9 @@ class Cars
     {
         if (isset($params['cid'])) {
             $carId = isset($params['cid']) ? $params['cid']  : NULL;
-            $car = $this->carModel->get_car_by_id($carId);
+            $car = $this->carModel->getCarById($carId);
             if (isset($_POST['id']) && (isset($_POST['choice']) && $_POST['choice'] === 'yes')) {
-                $this->carModel->remove_car_by_id($_POST['id']);
+                $this->carModel->removeCarById($_POST['id']);
                 header("Location: /account/profile");
             }
             $viewParams = [
@@ -118,9 +118,9 @@ class Cars
     private function getFuelOptions()
     {
         if (!empty($uid)) {
-            $fuel_list = $this->carModel->get_user_fuel_types($uid);
+            $fuel_list = $this->carModel->getUserFuelTypes($uid);
         } else {
-            $fuel_list = $this->carModel->get_fuels();
+            $fuel_list = $this->carModel->getFuels();
         }
         return $fuel_list;
     }

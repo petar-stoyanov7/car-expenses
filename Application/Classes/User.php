@@ -30,7 +30,7 @@ class User
         $this->notes = htmlspecialchars($notes,1);
     }
 
-    public function get_property($property) {
+    public function getProperty($property) {
         if (property_exists('\Application\Classes\User', $property)) {
             return $this->$property;
         } else {
@@ -38,7 +38,7 @@ class User
         }
     }
 
-	public function set_property($property, $value) {
+	public function setProperty($property, $value) {
 		if (property_exists($this, $property)) {
 			$this->$property = $value;
 		} else {
