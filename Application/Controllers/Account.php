@@ -111,11 +111,11 @@ class Account
                 if (isset($password)) {
                     $User = new User($_POST['user'], $password);
                     $this->userModel->editUser($User,$_POST,1);
-                    header('Location: ' . $_SERVER['HTTP_REFERER']);
+                    header('Location: /account/');
                 } else {
                     $User = new User($_POST['user'], $_POST['old_password']);
                     $this->userModel->editUser($User,$_POST);
-                    header('Location: ' . $_SERVER['HTTP_REFERER']);
+                    header('Location: /account/');
                 }
             }
 

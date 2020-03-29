@@ -1,12 +1,18 @@
 <div class="container">
 	<h3>Добави автомобил:</h3>
-	<form method="post" action="/cars/add/uid/<?= $userid; ?>">
-		<label for="brand">Марка</label>
-		<input id="brand" type="text" name="brand" placeholder="Wolkswagen"><br>
-		<label for="model">Модел</label>
-		<input id="model" type="text" name="model" placeholder="Golf"><br>
-		<label for="year">Година</label>
-		<input id="year" type="number" name="year" placeholder="2001"><br>
+	<form method="post" action="/cars/add/uid/<?= $userid; ?>" class="edit-car">
+        <div class="form-wrapper">
+            <label for="brand">Марка</label>
+            <input id="brand" type="text" name="brand" placeholder="Wolkswagen">
+        </div>
+        <div class="form-wrapper">
+            <label for="model">Модел</label>
+            <input id="model" type="text" name="model" placeholder="Golf">
+        </div>
+        <div class="form-wrapper">
+            <label for="year">Година</label>
+            <input id="year" type="number" name="year" placeholder="2001">
+        </div>
 		<label for="color">Цвят</label>
 		<input id="color" type="text" name="color" placeholder="Черен"><br>
 		<label for="mileage">Пробег</label>
@@ -20,7 +26,7 @@
 		<label for="fuel_id2">Втори вид гориво(газ)</label>
 		<select id="fuel_id2" name="fuel_id2">
 			<option value=NULL selected="">Няма</option>
-			<?php foreach($fuelList as $fuel) : ?>
+			<?php foreach($fuelList2 as $fuel) : ?>
             <option value="<?= $fuel['ID']; ?>"><?= translate($fuel['Name']); ?></option>;
             <?php endforeach; ?>
 		</select><br>

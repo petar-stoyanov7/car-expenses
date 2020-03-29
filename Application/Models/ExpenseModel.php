@@ -113,7 +113,7 @@ class ExpenseModel extends DbModelAbstract
         if (!array_key_exists($year, $expenseTables)) {
             $this->createTableYear($year);
         }
-        $car = $this->carModel->getCarById($expense->getProperty("car_id"));
+        $car = $this->carModel->getCarById($expense->getProperty("carId"));
         if (empty($expense->getProperty("mileage"))) {
             $expense->setProperty('mileage', $car['Mileage']);
         }
@@ -121,8 +121,8 @@ class ExpenseModel extends DbModelAbstract
             return display_warning("Стойността на разхода не може да е отрицателна!");
         } elseif ($expense->getProperty("liters") < 0) {
             return display_warning("Стойността на литрите не може да е отрицателна!");
-        } elseif (($expense->getProperty("expense_type") == 0) && 
-            ($expense->getProperty("fuel_type") != $car['Fuel_ID'] && $expense->getProperty("fuel_type") != $car['Fuel_ID2'])) {
+        } elseif (($expense->getProperty("expenseType") == 0) &&
+            ($expense->getProperty("fuelType") != $car['Fuel_ID'] && $expense->getProperty("fuelType") != $car['Fuel_ID2'])) {
             return display_warning("Невалиден вид гориво!");
         } elseif (empty($expense->getProperty("price"))) {
             return display_warning("Не е въведена стойност на разхода!");
@@ -131,20 +131,20 @@ class ExpenseModel extends DbModelAbstract
             `UID`, `CID`, `Date`, `Mileage`, `Expense_ID`, `Price`, `Fuel_ID`, `Insurance_ID`, `Liters`, `Notes`)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             $values = [
-                $expense->getProperty("user_id"),
-                $expense->getProperty("car_id"),
+                $expense->getProperty("userId"),
+                $expense->getProperty("carId"),
                 $expense->getProperty("date"),
                 $expense->getProperty("mileage"),
-                $expense->getProperty("expense_type"),
+                $expense->getProperty("expenseType"),
                 $expense->getProperty("price"),
-                $expense->getProperty("fuel_type"),
-                $expense->getProperty("insurance_type"),
+                $expense->getProperty("fuelType"),
+                $expense->getProperty("insuranceType"),
                 $expense->getProperty("liters"),
                 $expense->getProperty("notes"),
             ];
             if ($expense->getProperty("mileage") > $car['Mileage']) {
                 $update = "UPDATE `Cars` SET `Mileage` = ? WHERE `ID` = ?";
-                $updateValues = [$expense->getProperty("mileage"), $expense->getProperty("car_id")];
+                $updateValues = [$expense->getProperty("mileage"), $expense->getProperty("carId")];
                 $this->execute($update, $updateValues);
             }
             $this->execute($query, $values);

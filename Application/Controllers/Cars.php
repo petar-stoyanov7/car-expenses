@@ -48,8 +48,9 @@ class Cars
         }
 
         $viewParams = [
-            'title'    => 'Добави автомобил',
-            'fuelList' => $this->getFuelOptions(),
+            'title'     => 'Добави автомобил',
+            'fuelList'  => $this->getFuelOptions(),
+            'fuelList2' => $this->getFuelOptions(true),
         ];
         View::render('cars/add-car.php', $viewParams);
     }
@@ -58,7 +59,7 @@ class Cars
     {
         if (isset($params['cid'])) {
             $carId = $params['cid'];
-            $car = $this->carModel->getCarById($carId);
+            print_r($car);
             if (!empty($_POST)) {
                 $userId = $this->carModel->getUserIdByCarId($carId);
                 $values = nullify($_POST);
@@ -72,7 +73,7 @@ class Cars
             $viewParams = [
                 'title'     => 'Редакция',
                 'car'       => $car,
-                'fuelList'  => $this->getFuelOptions(),
+                'fuelList'  => $this->getFuelOptions(true),
             ];
             View::render('cars/edit-car.php', $viewParams);
         } else {
@@ -115,12 +116,12 @@ class Cars
         }
     }
 
-    private function getFuelOptions()
+    private function getFuelOptions($secondary = null)
     {
         if (!empty($uid)) {
-            $fuel_list = $this->carModel->getUserFuelTypes($uid);
+            $fuel_list = $this->carModel->getUserFuelTypes($uid, $secondary);
         } else {
-            $fuel_list = $this->carModel->getFuels();
+            $fuel_list = $this->carModel->getFuels($secondary);
         }
         return $fuel_list;
     }

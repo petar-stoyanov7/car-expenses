@@ -7,27 +7,32 @@ use Application\Models\ExpenseModel;
 
 class UserModel extends DbModelAbstract
 {
-    public function listUsers() {
+    public function listUsers()
+    {
         $array = $this->getData("SELECT * FROM `Users`");
         return $array;
     }
 
-    public function getUserByUserId($id) {
+    public function getUserByUserId($id)
+    {
         $user = $this->getData("SELECT * FROM `Users` WHERE `ID` = ".$id);
         return $user[0];
     }
 
-    public function getUserByUsername($username) {
+    public function getUserByUsername($username)
+    {
         $user_array = $this->getData("SELECT * FROM `Users` WHERE `Username` = '".$username."'");
         return $user_array[0];
     }
 
-    public function startSession($username) {
+    public function startSession($username)
+    {
         $array = $this->getUserByUsername($username);
         $_SESSION['user'] = $array;
     }
 
-    public function addUser($user) {
+    public function addUser($user)
+    {
         $users = $this->listUsers();
         foreach ($users as $usr) {
             if ($user->getProperty("username")==$usr["Username"]) {
@@ -52,7 +57,8 @@ class UserModel extends DbModelAbstract
         $this->execute($query, $values);
     }
 
-    public function editUser($user, $post, $auth=0) {
+    public function editUser($user, $post, $auth=0)
+    {
         $userArray = $this->getUserByUsername($post['user']);
         if ($this->login($user, true) || $auth !== 0) {
             $query = 'UPDATE Users SET Fname = ?, Lname = ?, City = ?,';
@@ -71,17 +77,19 @@ class UserModel extends DbModelAbstract
             $query = rtrim($query, ',');
             $query .= ' WHERE `ID` = ?';
             $values[] = $userArray['ID'];
-            echo $query;
             
             $this->execute($query, $values);
 
             if ($_SESSION !== $oldSession) {
                 session_start();
             }
+        } else {
+            return false;
         }
     }
 
-    public function login($user, $justPasswordCheck = false) {
+    public function login($user, $justPasswordCheck = false)
+    {
         $users = $this->listUsers();
         foreach ($users as $usr) {
             if($user->getProperty("username") === $usr["Username"] && password_verify($user->getProperty("password1"), $usr["Password"])) {
@@ -94,7 +102,8 @@ class UserModel extends DbModelAbstract
         return false;
     }
 
-    public function remove_user($id) {
+    public function remove_user($id)
+    {
         $expenseModel = new ExpenseModel();
         $tables = $expenseModel->getTableList();
         $query = "DELETE FROM `Users` WHERE `ID` = ?";

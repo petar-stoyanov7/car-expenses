@@ -26,7 +26,7 @@ class CarModel extends DbModelAbstract
         return $count[0]["COUNT(*)"];
     }
 
-    public function getUserFuelTypes($uid)
+    public function getUserFuelTypes($uid, $secondary = null)
     {
         $query = "SELECT DISTINCT 
                     `Cars`.`Fuel_ID` AS `ID`, 
@@ -41,7 +41,11 @@ class CarModel extends DbModelAbstract
                     `Fuel_Types`.`Name` FROM `Cars`
                     JOIN `Fuel_Types`
                     ON `Cars`.`Fuel_ID2` = `Fuel_Types`.`ID`
-                    WHERE `Cars`.`UID` = ? ORDER BY `ID` ASC";
+                    WHERE `Cars`.`UID` = ?";
+        if (null !== $secondary) {
+            $query .= " AND `Fuel_Types`.`ID` NOT IN (1,2)";
+        }
+        $query .= "ORDER BY `ID` ASC";
         $fuel_array = $this->getData($query, [$uid, $uid]);
         return $fuel_array;
     }
@@ -52,10 +56,12 @@ class CarModel extends DbModelAbstract
         return $data[0]['UID'];
     }
 
-    public function getFuels() {
+    public function getFuels($secondary = null) {
         $query = "SELECT * FROM `Fuel_Types`";
-        $fuels = $this->getData($query);
-        return $fuels;
+        if (null !== $secondary) {
+            $query .= " WHERE `ID` NOT IN (1,2)";
+        }
+        return $this->getData($query);
     }
     
     public function getFuelName($id) {
@@ -97,45 +103,28 @@ class CarModel extends DbModelAbstract
             (`UID`, `Brand`, `Model`, `Year`, `Color`, `Mileage`, `Fuel_ID`, `Fuel_ID2`, `Notes`)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         $values = [
-            $car->getProperty('user_id'),
+            $car->getProperty('userId'),
             $car->getProperty('brand'),
             $car->getProperty('model'),
             $car->getProperty('year'),
             $car->getProperty('color'),
             $car->getProperty('mileage'),
-            $car->getProperty('fuel_id'),
-            $car->getProperty('fuel_id2'),
+            $car->getProperty('fuelId'),
+            $car->getProperty('fuelId2'),
             $car->getProperty('notes'),
         ];
         $this->execute($query, $values);        
     }
 
     public function editCar($car, $cid) {
-        $query = "UPDATE `Cars` SET ";
-        $values = [];
-        if ($car->getProperty("mileage") < 0) {
-            return display_warning("Невалиден пробег!");
-        }
-        if (!empty($car->getProperty("color"))) {
-            $query .= "`Color` = ?, ";
-            $values[] = $car->getProperty("color");
-        } 
-        if (!empty($car->getProperty("fuel_id2"))) {
-            $query .= "`Fuel_ID2` = ?, ";
-            $values[] = $car->getProperty("fuel_id2");
-        }
-        if (!empty($car->getProperty("mileage"))) {
-            $query .= "`Mileage` = ?, ";
-            $values[] = $car->getProperty("mileage");
-        }
-        if (!empty($car->getProperty("notes"))) {
-            $query .= "`Notes` = ?, ";
-            $values[] = $car->getProperty("notes");
-        }
-        $query .= "`UID` = ? ";
-        $values[] = $car->getProperty('user_id');
-        $query .= "WHERE `ID` = ?";
-        $values[] = $cid;
+        $query = "UPDATE `Cars` SET `Color` = ?, `Fuel_ID2` = ?, `Mileage` = ?, `Notes` = ? WHERE `ID` = ?";
+        $values = [
+            $car->getProperty("color"),
+            $car->getProperty("fuelId2"),
+            $car->getProperty("mileage"),
+            $car->getProperty("notes"),
+            $cid
+        ];
         $this->execute($query, $values);
     }
 
