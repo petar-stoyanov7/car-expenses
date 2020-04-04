@@ -1,2 +1,7 @@
 #configuration
 /Application/Config/*
+#generated css
+/public/css
+#IDE artefacts
+.vscode/*
+.idea/*
