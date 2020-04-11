@@ -4,6 +4,7 @@ namespace Application\Models;
 
 use Application\Models\CarModel;
 use Application\Models\ExpenseModel;
+use Core\DbModelAbstract;
 
 class StatisticsModel extends DbModelAbstract
 { 

@@ -2,6 +2,8 @@
 
 namespace Core;
 
+use Core\Form\Form;
+
 class View
 {
     public static function render($view, $arguments = [], $displayTop = true)
@@ -23,7 +25,7 @@ class View
 
     public static function displayPartial($file, $arguments = [])
     {
-        $file = '../Application/Views/partials/' . $file;
+        $file =  "../Application/Views/partials/" . $file;
         $arguments['View'] = new View();
         if (is_readable($file)) {
             extract($arguments, EXTR_SKIP);
@@ -31,5 +33,11 @@ class View
         } else {
             echo "{$file} not found";
         }
+    }
+
+    public static function drawForm(Form $form)
+    {
+        $path = dirname(__FILE__);
+        require('form.php');
     }
 }

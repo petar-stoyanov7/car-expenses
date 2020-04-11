@@ -4,11 +4,15 @@ ob_start();
 require dirname(__DIR__).'/Core/Helpers.php';
 
 spl_autoload_register(function ($class) {
-    $namespace=str_replace("\\","/",__NAMESPACE__);
     $root = dirname(__DIR__);
-    $file = $root . '/' . $namespace . '/' . str_replace('\\', '/', $class) . '.php';
+    $path = explode('\\', $class);
+    $file = $root . '/'  . str_replace('\\', '/', $class);
+    $subDir =  $file . '/' . end($path) . '.php';
+    $file .=  '.php';
     if (is_readable($file)) {
         require $file;
+    } elseif (is_readable($subDir)) {
+        require $subDir;
     }
 });
 

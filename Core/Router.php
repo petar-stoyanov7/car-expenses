@@ -60,12 +60,4 @@ class Router
         }
         return $result;
     }
-
-    function dt($text, $desc)
-    {
-        echo '<pre>';
-        echo '################'.$desc.'######################<br>';
-        print_r($text);
-        echo '<br>################'.$desc.'######################<br>';
-    }
 }

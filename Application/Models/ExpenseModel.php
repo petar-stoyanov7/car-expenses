@@ -3,7 +3,8 @@
 namespace Application\Models;
 
 use Application\Models\CarModel;
-	
+use Core\DbModelAbstract;
+
 class ExpenseModel extends DbModelAbstract 
 {    
     private $carModel;

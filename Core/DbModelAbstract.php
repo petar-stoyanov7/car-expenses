@@ -1,11 +1,11 @@
 <?php
 
-namespace Application\Models;
+namespace Core;
 
 use PDOException;
 use PDO;
 
-class DbModelAbstract
+abstract class DbModelAbstract
 {
     protected $connection;
     private $hostname;
@@ -13,10 +13,11 @@ class DbModelAbstract
     private $username;
     private $password;
     private $options;
+    private $configFile = '/Application/Config/config.json';
 
     public function __construct()
     {
-        $json = file_get_contents(dirname(__DIR__).'/Config/config.json');
+        $json = file_get_contents(dirname(__DIR__) . $this->configFile);
         $config = json_decode($json, true)['db'];
         $this->hostname = $config['host'];
         $this->username = $config['usr'];

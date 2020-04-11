@@ -2,6 +2,8 @@
 
 namespace Application\Models;
 
+use Core\DbModelAbstract;
+
 class CarModel extends DbModelAbstract
 {
     public function __construct()

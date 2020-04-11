@@ -4,6 +4,7 @@ namespace Application\Models;
 
 use Application\Classes\User;
 use Application\Models\ExpenseModel;
+use Core\DbModelAbstract;
 
 class UserModel extends DbModelAbstract
 {
