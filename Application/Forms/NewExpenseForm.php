@@ -73,7 +73,8 @@ class NewExpenseForm extends Form
             [
                 'label'     => 'Fuel type: ',
                 'required'  => false,
-                'options'   => $this->getFuelTypes()
+                'options'   => $this->getFuelTypes(),
+                'classes'     => 'optional-select'
             ]
         );
 
@@ -83,7 +84,8 @@ class NewExpenseForm extends Form
             [
                 'label'     => 'Insurance Type: ',
                 'required'  => false,
-                'options'   => $this->getInsuranceTypes()
+                'options'   => $this->getInsuranceTypes(),
+                'classes'     => 'optional-select'
             ]
         );
 
@@ -93,7 +95,8 @@ class NewExpenseForm extends Form
             [
                 'label'     => 'Insurance Type: ',
                 'required'  => false,
-                'options'   => $this->getInsuranceTypes()
+                'options'   => $this->getInsuranceTypes(),
+                'classes'     => 'optional-select'
             ]
         );
 
@@ -123,7 +126,8 @@ class NewExpenseForm extends Form
             [
                 'label'         => 'Liters',
                 'required'      => false,
-                'placeholder'   => 'Liters of fuel'
+                'placeholder'   => 'Liters of fuel',
+                'classes'         => 'optional-select'
             ]
         );
 
@@ -164,11 +168,7 @@ class NewExpenseForm extends Form
 
     private function getFuelTypes()
     {
-        if (null === $this->userId) {
-            $fuelTypes = $this->carModel->getFuels();
-        } else {
-            $fuelTypes = $this->carModel->getUserFuelTypes($this->userId);
-        }
+        $fuelTypes = $this->carModel->getFuels();
         return $this->_normalize($fuelTypes);
     }
 

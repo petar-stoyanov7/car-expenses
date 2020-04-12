@@ -39,7 +39,7 @@ class Expense
             $viewParams = [
                 'form' => $form,
                 'JS' => ['new-expense.js'],
-                'CSS' => ['new-expense.css']
+//                'CSS' => ['new-expense.css']
             ];
             if (!empty($_POST)) {
                 $values = nullify($_POST);

@@ -8,7 +8,11 @@ use \Core\View;
 		<?= (isset($title)) ? $title : "Автомобилни разходи"; ?>	
 	</title>
 	<meta http-equiv="content-type" content="text/html; charset=utf-8"/>
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script
+            src="https://code.jquery.com/jquery-3.4.1.min.js"
+            integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+            crossorigin="anonymous">
+    </script>
     <?php if (isset($cssArray) && count($cssArray) > 0) : ?>
         <?php foreach($cssArray as $cssFile) : ?>
             <link rel="stylesheet" type="text/css" href="<?=$cssFile?>">
