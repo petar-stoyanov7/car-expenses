@@ -9,7 +9,12 @@ use \Core\View;
 	</title>
 	<meta http-equiv="content-type" content="text/html; charset=utf-8"/>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-	<link rel="stylesheet" type="text/css" href='/css/main.css'>
+    <?php if (isset($cssArray) && count($cssArray) > 0) : ?>
+        <?php foreach($cssArray as $cssFile) : ?>
+            <link rel="stylesheet" type="text/css" href="<?=$cssFile?>">
+        <?php endforeach; ?>
+    <?php endif; ?>
+	<link rel="stylesheet" type="text/css" href="/css/main.css">
 	<link rel="icon" href="/img/icon-wheel.png">
 </head>
 <body>

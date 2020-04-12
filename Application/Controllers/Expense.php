@@ -3,6 +3,7 @@
 
 namespace Application\Controllers;
 
+use Application\Forms\NewExpenseForm;
 use \Core\View;
 use \Application\Models\CarModel;
 use \Application\Models\ExpenseModel;
@@ -34,17 +35,11 @@ class Expense
 
         if (isset($_SESSION['user'])) {
             $userId = $_SESSION['user']['ID'];
-            $fuelList = $this->carModel->getUserFuelTypes($userId);
-            $fuelTypes = [];
-            foreach($fuelList as $fuel) {
-                $fuelTypes[$fuel['ID']] = $fuel['Name'];
-            }
-
+            $form = new NewExpenseForm($userId);
             $viewParams = [
-                'userId'        => $userId,
-                'expenseList'   => $this->expenseModel->getExpenses(),
-                'cars'          => $carModel->listCarsByUserId($userId),
-                'parsed'        => json_encode($fuelTypes),
+                'form' => $form,
+                'JS' => ['new-expense.js'],
+                'CSS' => ['new-expense.css']
             ];
             if (!empty($_POST)) {
                 $values = nullify($_POST);

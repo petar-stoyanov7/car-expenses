@@ -10,6 +10,7 @@ class Element
     private $value;
 
     private $class;
+    private $placeholder;
     private $buttonType;
     private $onClick;
     private $label;
@@ -76,6 +77,11 @@ class Element
         } else {
             $this->class = $classes;
         }
+    }
+
+    public function setPlaceholder($text) : void
+    {
+        $this->placeholder = $text;
     }
 
     public function setButtonType(string $type) : void
@@ -164,6 +170,11 @@ class Element
     public function getClass()
     {
         return $this->class;
+    }
+
+    public function getPlaceholder()
+    {
+        return $this->placeholder;
     }
 
     public function getOptions()

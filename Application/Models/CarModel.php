@@ -28,7 +28,7 @@ class CarModel extends DbModelAbstract
         return $count[0]["COUNT(*)"];
     }
 
-    public function getUserFuelTypes($uid, $secondary = null)
+    public function getUserFuelTypes($userid, $secondary = null)
     {
         $query = "SELECT DISTINCT 
                     `Cars`.`Fuel_ID` AS `ID`, 
@@ -47,8 +47,8 @@ class CarModel extends DbModelAbstract
         if (null !== $secondary) {
             $query .= " AND `Fuel_Types`.`ID` NOT IN (1,2)";
         }
-        $query .= "ORDER BY `ID` ASC";
-        $fuel_array = $this->getData($query, [$uid, $uid]);
+        $query .= " ORDER BY `ID` ASC";
+        $fuel_array = $this->getData($query, [$userid, $userid]);
         return $fuel_array;
     }
 
@@ -91,6 +91,7 @@ class CarModel extends DbModelAbstract
         }
         return $fuels_array;
     }
+
     public function getFuelId() {
         $fuels_list = $this->getData("SELECT `ID` FROM `Fuel_Types`");
         $fuels_array = array();
@@ -98,6 +99,12 @@ class CarModel extends DbModelAbstract
             array_push($fuels_array, $fuel['ID']);
         }
         return $fuels_array;
+    }
+
+    public function getMileageByCarId($carId)
+    {
+        $query = "SELECT `Mileage` from `Cars` WHERE `ID` = ?";
+        return $this->getData($query, [$carId]);
     }
     
     public function addCar($car) {

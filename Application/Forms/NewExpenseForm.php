@@ -2,56 +2,220 @@
 
 namespace Application\Forms;
 
+use Application\Models\CarModel;
+use Application\Models\ExpenseModel;
 use Core\Form\Form;
 
 class NewExpenseForm extends Form
 {
-    const NAME = "test";
-    const METHOD = "post";
-    const TARGET = "kur";
+    private $userId;
+    private $expenseTypes;
+    private $carModel;
+
+    public function __construct(
+        $userId = null,
+        $expenseTypes = null
+    )
+    {
+        $this->userId = $userId;
+        if (null !== $expenseTypes) {
+            $this->expenseTypes = $expenseTypes;
+        } else {
+            $expenseModel = new ExpenseModel();
+            $this->expenseTypes = $expenseModel->getExpenses();
+        }
+        $this->carModel = new CarModel();
+
+        parent::__construct();
+    }
 
     public function init()
     {
-        $this->setName('test');
         $this->setMethod('post');
-        $this->setTarget('#');
-        $this->setOptions(['classes' => ['test', 'pest']]);
+        $this->setTarget('/expense/new');
+        $this->setOptions(
+            [
+                'classes' => ['new-expense', 'new-expense-form']
+            ]
+        );
+        if (null !== $this->userId) {
+            $this->addElement(
+                'hidden',
+                'user-id',
+                [],
+                $this->userId
+            );
+        }
 
         $this->addElement(
-            'text',
-            'test',
+            'select',
+            'car-id',
             [
-                'label' => 'This is test',
-                'required' => true,
-                'classes' => [
-                    'test', 'blessed'
-                ],
-            ],
-            'test value'
+                'label'     => 'Car:',
+                'required'  => true,
+                'options'   => $this->getUserCars()
+            ]
         );
 
         $this->addElement(
             'select',
-            'test-select',
+            'expense-type',
             [
-                'label' => 'Test select',
-                'required' => false,
-                'classes' => ['asd', 'vgz'],
-                'options' => ['test', 'pest', 'klessed']
+                'label'     => 'Expense type: ',
+                'required'  => true,
+                'options'   => $this->getExpenseOptions()
+            ]
+        );
+
+        $this->addElement(
+            'select',
+            'fuel-type',
+            [
+                'label'     => 'Fuel type: ',
+                'required'  => false,
+                'options'   => $this->getFuelTypes()
+            ]
+        );
+
+        $this->addElement(
+            'select',
+            'insurance-type',
+            [
+                'label'     => 'Insurance Type: ',
+                'required'  => false,
+                'options'   => $this->getInsuranceTypes()
+            ]
+        );
+
+        $this->addElement(
+            'select',
+            'insurance-type',
+            [
+                'label'     => 'Insurance Type: ',
+                'required'  => false,
+                'options'   => $this->getInsuranceTypes()
+            ]
+        );
+
+        $this->addElement(
+            'date',
+            'date',
+            [
+                'label'     => 'Date:',
+                'required'  => true,
             ],
-            2
+            date('Y-m-d')
+        );
+
+        $this->addElement(
+            'number',
+            'mileage',
+            [
+                'label'     => 'Mileage',
+                'required'  => true
+            ],
+            $this->getDefaultMileage()
+        );
+
+        $this->addElement(
+            'number',
+            'liters',
+            [
+                'label'         => 'Liters',
+                'required'      => false,
+                'placeholder'   => 'Liters of fuel'
+            ]
+        );
+
+        $this->addElement(
+            'number',
+            'value',
+            [
+                'label'         => 'Value:',
+                'required'      => true,
+                'placeholder'   => 'Value of the expense'
+            ]
+        );
+
+        $this->addElement(
+            'textarea',
+            'description',
+            [
+                'required' => false,
+                'placeholder' => 'Additional info'
+            ]
         );
 
         $this->addElement(
             'button',
             'submit',
             [
-                'label' => 'Enter form',
+                'label' => 'Add expense',
                 'required' => false,
-                'classes' => ['kur', 'tate', 'banica'],
-                'onClick' => 'alert("kur")'
+                'classes' => ['submit'],
             ]
         );
+    }
+
+    private function getExpenseOptions()
+    {
+        return $this->_normalize($this->expenseTypes);
+    }
+
+    private function getFuelTypes()
+    {
+        if (null === $this->userId) {
+            $fuelTypes = $this->carModel->getFuels();
+        } else {
+            $fuelTypes = $this->carModel->getUserFuelTypes($this->userId);
+        }
+        return $this->_normalize($fuelTypes);
+    }
+
+    private function getInsuranceTypes()
+    {
+        $expenseModel = new ExpenseModel();
+        return $this->_normalize($expenseModel->getInsuranceList());
+    }
+
+    private function getUserCars()
+    {
+        $result = [];
+        if (null === $this->userId) {
+            return ['' => 'Fake car'];
+        } else {
+            $cars = $this->carModel->listCarsByUserId($this->userId);
+        }
+        foreach ($cars as $car) {
+            $result[$car['ID']] = "{$car['Brand']} {$car['Model']}";
+        }
+
+        return $result;
+    }
+
+    /**
+     * ugly hack. The real Mileage will be moded in JS with AJAX requests
+     * @return mixed|null
+     */
+    private function getDefaultMileage()
+    {
+        if (null !== $this->userId) {
+            $firstCar = $this->carModel->listCarsByUserId($this->userId)[0]['ID'];
+
+            $result = $this->carModel->getMileageByCarId($firstCar);
+            return $result[0]['Mileage'];
+        }
+        return null;
+    }
+
+    private function _normalize($dbArray)
+    {
+        $result = [];
+        foreach ($dbArray as $element)
+        {
+            $result[$element['ID']] = $element['Name'];
+        }
+        return $result;
     }
 
 }

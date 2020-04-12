@@ -86,6 +86,11 @@ class ExpenseModel extends DbModelAbstract
         return $result[0]['Name'];
     }
 
+    public function getInsuranceList()
+    {
+        return $this->getData('SELECT * FROM `Insurance_Types`');
+    }
+
     public function getInsuranceNames() {
         $insuranceList = $this->getData("SELECT `Name` FROM `Insurance_Types`");
         $insuranceArray = [];
