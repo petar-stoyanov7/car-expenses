@@ -2,6 +2,7 @@
 
 namespace Application\Controllers;
 
+use Application\Forms\CarForm;
 use \Core\View;
 use \Application\Models\StatisticsModel;
 use \Application\Models\CarModel;
@@ -29,6 +30,10 @@ class Cars
         } else {
             $userId = $_SESSION['user']['ID'];
         }
+        $form = new CarForm();
+        $form->setTarget('/cars/add/uid/'.$userId);
+        $form->setMethod('post');
+        $form->setClasses('edit-car');
         if (!empty($_POST)) {
             $values = nullify($_POST);
             $car = new Car(
@@ -48,9 +53,8 @@ class Cars
         }
 
         $viewParams = [
-            'title'     => 'Добави автомобил',
-            'fuelList'  => $this->getFuelOptions(),
-            'fuelList2' => $this->getFuelOptions(true),
+            'title' => 'Добави автомобил',
+            'form'  => $form
         ];
         View::render('cars/add-car.php', $viewParams);
     }
@@ -59,11 +63,36 @@ class Cars
     {
         if (isset($params['cid'])) {
             $carId = $params['cid'];
-            print_r($car);
+            $userId = $this->carModel->getUserIdByCarId($carId);
+            $form = new CarForm($userId, $carId);
+            $form->setClasses('edit-car');
+            $form->setTarget('/cars/edit/cid/'.$carId);
+            $car = $this->carModel->getCarById($carId);
+            $formValues = [
+                'brand'     => $car['Brand'],
+                'model'     => $car['Model'],
+                'year'      => $car['Year'],
+                'color'     => $car['Color'],
+                'mileage'   => $car['Mileage'],
+                'fuel_id1'  => $car['Fuel_ID'],
+                'fuel_id2'  => $car['Fuel_ID2'],
+                'notes'     => $car['Notes']
+            ];
+            $form->populate($formValues);
+
             if (!empty($_POST)) {
-                $userId = $this->carModel->getUserIdByCarId($carId);
-                $values = nullify($_POST);
-                $car_edit = new Car($userId,$car['Brand'],$car['Model'],$car['Year'],$values['color'],$values['mileage'],$car['Fuel_ID'],$values['fuel_id2'],$values['notes']);
+
+                $car_edit = new Car(
+                    $userId,
+                    $_POST['brand'],
+                    $_POST['model'],
+                    $_POST['year'],
+                    $_POST['color'],
+                    $_POST['mileage'],
+                    $_POST['fuel_id1'],
+                    $_POST['fuel_id2'],
+                    $_POST['notes']
+                );
                 $this->carModel->editCar($car_edit, $car['ID']);
                 
                 display_warning("Промените са направени успешно!");
@@ -71,9 +100,8 @@ class Cars
             }
 
             $viewParams = [
-                'title'     => 'Редакция',
-                'car'       => $car,
-                'fuelList'  => $this->getFuelOptions(true),
+                'form'      => $form,
+                'title'     => 'Edit car'
             ];
             View::render('cars/edit-car.php', $viewParams);
         } else {
@@ -113,6 +141,30 @@ class Cars
             View::render('cars/list-cars.php', $viewParams);
         } else {
             header('Location: /');
+        }
+    }
+
+    public function listUserCarsAction()
+    {
+        if (isset($_POST['userid'])) {
+            $result = [];
+            $cars = $this->carModel->listCarsByUserId($_POST['userid']);
+            foreach ($cars as $car) {
+                $result[
+                    $car['ID']] = [
+                        'brand' => $car['Brand'],
+                        'model' => $car['Model'],
+                        'year' => $car['Year'],
+                        'color' => $car['Color'],
+                        'fuels' => [
+                            $car['Fuel_ID'],
+                            $car['Fuel_ID2']
+                        ],
+                        'mileage' => $car['Mileage']
+                ];
+            }
+            echo json_encode($result);
+            die();
         }
     }
 

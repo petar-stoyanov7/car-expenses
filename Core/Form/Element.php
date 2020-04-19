@@ -15,17 +15,12 @@ class Element
     private $onClick;
     private $label;
     private $required;
+    private $disabled;
 
     public function __construct()
     {
     }
 
-    public function __get(string $name)
-    {
-        if (property_exists('Element', $name)) {
-            return $this->$name;
-        }
-    }
 
     public function createElement(
         string $type,
@@ -77,6 +72,11 @@ class Element
         } else {
             $this->class = $classes;
         }
+    }
+
+    public function setDisabled($disabled = true)
+    {
+        $this->disabled = $disabled ? 'disabled' : null;
     }
 
     public function setPlaceholder($text) : void
@@ -170,6 +170,11 @@ class Element
     public function getClass()
     {
         return $this->class;
+    }
+
+    public function getDisabled()
+    {
+        return $this->disabled;
     }
 
     public function getPlaceholder()

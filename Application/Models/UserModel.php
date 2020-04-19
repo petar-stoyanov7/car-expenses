@@ -60,16 +60,19 @@ class UserModel extends DbModelAbstract
 
     public function editUser($user, $post, $auth=0)
     {
-        $userArray = $this->getUserByUsername($post['user']);
+        $userArray = $this->getUserByUsername($user->getProperty('username'));
         if ($this->login($user, true) || $auth !== 0) {
             $query = 'UPDATE Users SET Fname = ?, Lname = ?, City = ?,';
 
             $values = [
-                $post['fname'],
-                $post['lname'],
+                $post['firstname'],
+                $post['lastname'],
                 $post['city'],
             ];
             if (!empty($post['password1']) && !empty($post['password2'])) {
+                if ($post['password1'] !== $post['password2']) {
+                    return false;
+                }
                 $query .= ' ` Password` = ?,';
                 $values[] = password_hash($post['password1'], PASSWORD_DEFAULT);
             }

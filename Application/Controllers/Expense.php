@@ -3,6 +3,7 @@
 
 namespace Application\Controllers;
 
+use Application\Forms\DeleteExpenseForm;
 use Application\Forms\NewExpenseForm;
 use \Core\View;
 use \Application\Models\CarModel;
@@ -37,9 +38,10 @@ class Expense
             $userId = $_SESSION['user']['ID'];
             $form = new NewExpenseForm($userId);
             $viewParams = [
-                'form' => $form,
-                'JS' => ['new-expense.js'],
-//                'CSS' => ['new-expense.css']
+                'title' => 'New expense',
+                'form'  => $form,
+                'JS'    => ['new-expense.js'],
+                'CSS'   => ['new-expense.css']
             ];
             if (!empty($_POST)) {
                 $values = nullify($_POST);
@@ -85,25 +87,26 @@ class Expense
 
     public function removeAction($params)
     {
-        $title = "Детайлна справка";
         if (isset($params['id']) && isset($params['year'])) {
-            $id = $params['id'];
+            $expenseId = $params['id'];
             $year = $params['year'];
-            /** proper way to work */
+            $form = new DeleteExpenseForm($expenseId, $year);
+            $data = $this->statisticsModel->getStatisticById($expenseId, $year);
+            $viewParams = [
+                'form'          => $form,
+                'title'         => 'Remove expense',
+                'CSS'           => ['new-expense.css'],
+                'data'          => $data,
+                'type'          => $this->expenseModel->getExpenseName($data['Expense_ID']),
+                'fuelName'      => $this->carModel->getFuelName($data['Fuel_ID']),
+                'insuranceName' => $this->expenseModel->getInsuranceName($data['Insurance_ID'])
+            ];
             if (isset($_POST['id']) && isset($_POST['year'])) {
                 $this->expenseModel->removeExpense($_POST['id'],$_POST['year']);
                 header("Location: /statistics");
             }
-            $viewParams = [
-                'id'            => $id,
-                'year'          => $year,
-                'data'          => $this->statisticsModel->getStatisticById($id,$year),
-                'expenseModel'  => $this->expenseModel,
-                'carModel'      => $this->carModel,
-            ];
             View::render('expense/remove-expense.php', $viewParams);
         } else {
-            /** exit state */
             header('Location: /statistics');
         }
     }

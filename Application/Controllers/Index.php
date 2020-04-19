@@ -22,7 +22,7 @@ class Index
                 'cars'          => $carModel->listCarsByUserId($userId),
                 'greet'         => $greet,
                 'title'         => 'Автомобилни разходи',
-                'lastFive'      => $statModel->getLastFiveByUserId($userId),
+                'lastFive'      => $statModel->getLastByUserId($userId, 5),
                 'countCars'     => $carModel->countCarsByUserId($userId),
                 'yearExpense'   => $statModel->countYearExpensesByUserId($userId),
                 'firstName'     => $_SESSION['user']['Fname'],

@@ -15,13 +15,14 @@ use \Core\View;
     </script>
     <?php if (isset($cssArray) && count($cssArray) > 0) : ?>
         <?php foreach($cssArray as $cssFile) : ?>
-            <link rel="stylesheet" type="text/css" href="<?=$cssFile?>">
+            <link rel="stylesheet" href="/css/<?=$cssFile?>">
         <?php endforeach; ?>
     <?php endif; ?>
 	<link rel="stylesheet" type="text/css" href="/css/main.css">
 	<link rel="icon" href="/img/icon-wheel.png">
 </head>
 <body>
+    <div id="black-overlay"></div>
 	<!-- Top Bar -->
 	<div class="top-bar">
 		<div class="top-links">

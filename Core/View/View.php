@@ -2,7 +2,7 @@
 
 namespace Core;
 
-use Core\Form\Form;
+use Core\Form\AbstractForm;
 
 class View
 {
@@ -10,33 +10,25 @@ class View
     {
         $jsArray = [];
         $cssArray = [];
-        foreach ($arguments as $key => $argument) {
-            switch($key) {
-                case 'JS':
-                    unset($arguments[$key]);
-                    if (empty($argument)) {
-                        break;
-                    }
-                    if (is_array($argument)) {
-                        $jsArray = $argument;
-                    } else {
-                        $jsArray = [$argument];
-                    }
-                    break;
-                case 'CSS':
-                    unset($arguments[$key]);
-                    if (empty($argument)) {
-                        break;
-                    }
-                    if (is_array($argument)) {
-                        $cssArray = $argument;
-                    } else {
-                        $cssArray = [$argument];
-                    }
-                    break;
-                default:
-                    break;
+        if (!empty($arguments['title'])) {
+            $title = $arguments['title'];
+            unset($arguments['title']);
+        }
+        if (!empty($arguments['JS'])) {
+            if (is_array($arguments['JS'])) {
+                $jsArray = $arguments['JS'];
+            } else {
+                $jsArray = [$arguments['JS']];
             }
+            unset($arguments['JS']);
+        }
+        if (!empty($arguments['CSS'])) {
+            if (is_array($arguments['CSS'])) {
+                $cssArray = $arguments['CSS'];
+            } else {
+                $cssArray = [$arguments['CSS']];
+            }
+            unset($arguments['CSS']);
         }
         $file = "../Application/Views/$view";
         $arguments['View'] = new View();
@@ -71,9 +63,9 @@ class View
         }
     }
 
-    public static function renderForm(Form $form)
+    public static function renderForm(AbstractForm $renderedForm)
     {
-        $path = dirname(__FILE__);
+        $form = $renderedForm;
         require('form.php');
     }
 }

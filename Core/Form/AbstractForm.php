@@ -2,7 +2,7 @@
 
 namespace Core\Form;
 
-class Form
+abstract class AbstractForm
 {
     private $name;
     private $method;
@@ -28,7 +28,7 @@ class Form
      * @param array $params
      * @param bool $required
      * @param string $value
-     * @return Form
+     * @return AbstractForm
      */
     public function addElement(
         string $type,
@@ -58,6 +58,47 @@ class Form
         }
         return $isValid;
     }
+
+    public function populate(array $values)
+    {
+        /** @var  Element $element */
+        foreach($this->formElements as $element) {
+            $name = $element->getName();
+            if (array_key_exists($name, $values)) {
+                $element->setValue($values[$name]);
+            }
+        }
+        return $this;
+    }
+
+    public function removeElements(array $elements)
+    {
+        foreach($elements as $element) {
+            $this->removeElement($element);
+        }
+    }
+
+    public function disableElements(array $elements)
+    {
+        foreach($elements as $element) {
+            $this->disableElement($element);
+        }
+    }
+
+    public function removeElement(string $element)
+    {
+        if (array_key_exists($element, $this->formElements)) {
+            unset($this->formElements[$element]);
+        }
+    }
+
+    public function disableElement(string $element)
+    {
+        if (array_key_exists($element, $this->formElements)) {
+            $this->formElements[$element]->setDisabled(true);
+        }
+    }
+
 
     /**
      * @param string $name
@@ -157,7 +198,7 @@ class Form
         return $this->target;
     }
 
-    public function getClass() : string
+    public function getClass()
     {
         return $this->class;
     }

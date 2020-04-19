@@ -30,7 +30,6 @@ foreach ($cars as $car) : ?>
 </tr>
 
 <?php
-$lastFive = $statModel->getLastFiveByUserId($_SESSION['user']['ID']);
 if (empty($lastFive)) : ?>
     <tr>
         <?php for ($i=0; $i<=6; $i++) {
@@ -42,7 +41,7 @@ if (empty($lastFive)) : ?>
     <tr>
     <td><?= $array['Mileage']; ?></td>
     <td><?= $carModel->getCarNameById($array['CID']); ?></td>
-    <td><?= translate($expenseModel->getExpenseName($array['Expense_ID'])); ?>"</td>
+    <td><?= translate($expenseModel->getExpenseName($array['Expense_ID'])); ?></td>
     <?php switch ($array['Expense_ID']) {
         case 1:
             $expenseType = $carModel->getFuelName($array['Fuel_ID']);

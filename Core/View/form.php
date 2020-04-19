@@ -3,7 +3,7 @@
     <?php if (!empty($form->getName())) : ?>
         id="<?= $form->getName(); ?>"
     <?php endif; ?>
-    target="<?= $form->getTarget(); ?>"
+    action="<?= $form->getTarget(); ?>"
     <?php if (!empty($form->getClass())) : ?>
         class="<?= $form->getClass() ?>"
     <?php endif; ?>
@@ -27,9 +27,14 @@
                     <?php if (!empty($class)) : ?>
                         class="<?= $class; ?>"
                     <?php endif; ?>
+                    <?= (bool)$Element->getDisabled() ? 'disabled' : '' ?>
             >
                 <?php foreach($Element->getOptions() as $index => $option) : ?>
-                    <option value="<?= $index; ?>"><?= $option ?></option>
+                    <?php if($Element->getValue() === $index) :?>
+                        <option value="<?= $index; ?>" selected><?= $option ?></option>
+                    <?php else : ?>
+                        <option value="<?= $index; ?>"><?= $option ?></option>
+                    <?php endif; ?>
                 <?php endforeach; ?>
             </select>
         <?php elseif($type === 'textarea') : ?>
@@ -42,22 +47,23 @@
                 <?php if (!empty($placeholder)) : ?>
                     placeholder="<?=$placeholder; ?>"
                 <?php endif; ?>
+                <?= (bool)$Element->getDisabled() ? 'disabled' : '' ?>
             ><?= $Element->getValue(); ?></textarea>
         <?php elseif($type === 'button') : ?>
             <button
-                    id="<?= $name; ?>"
-                    <?php if (!empty($Element->getButtonType())) : ?>
-                        type="<?= $Element->getButtonType() ?>"
-                    <?php else : ?>
-                        type="submit"
-                    <?php endif; ?>
-                    <?php if (!empty($Element->getOnClick())) : ?>
-                        onclick="<?=$Element->getOnClick() ?>"
-                    <?php endif; ?>
-                    <?php if (!empty($class)) : ?>
-                        class="<?= $class; ?>"
-                    <?php endif; ?>
-
+                id="<?= $name; ?>"
+                <?php if (!empty($Element->getButtonType())) : ?>
+                    type="<?= $Element->getButtonType() ?>"
+                <?php else : ?>
+                    type="submit"
+                <?php endif; ?>
+                <?php if (!empty($Element->getOnClick())) : ?>
+                    onclick="<?=$Element->getOnClick() ?>"
+                <?php endif; ?>
+                <?php if (!empty($class)) : ?>
+                    class="<?= $class; ?>"
+                <?php endif; ?>
+                <?= (bool)$Element->getDisabled() ? 'disabled' : '' ?>
             >
                 <?= empty($label) ? $name : $label; ?>
             </button>
@@ -76,6 +82,7 @@
                     placeholder="<?=$placeholder; ?>"
                 <?php endif; ?>
                 value="<?=$Element->getValue(); ?>"
+                <?= (bool)$Element->getDisabled() ? 'disabled' : '' ?>
                 >
         <?php endif; ?>
     </div>

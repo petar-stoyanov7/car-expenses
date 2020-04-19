@@ -2,6 +2,7 @@
 
 namespace Application\Controllers;
 
+use Application\Forms\StatisticsForm;
 use \Core\View;
 use \Application\Models\StatisticsModel;
 use \Application\Models\CarModel;
@@ -22,17 +23,18 @@ class Statistics
 
     public function indexAction($params)
     {
-        $title = "Статистика";
-
         if(!empty($params['id'])) {
             $userId = $params['id'];
         } else {
             $userId = $_SESSION['user']['ID'];
         }
         
+        $cars = $this->carModel->listCarsByUserId($userId);
+        $expenses = $this->expenseModel->getExpenses();
+        $form = new StatisticsForm($cars, $expenses);
         $viewParams = [
-            'cars' => $this->carModel->listCarsByUserId($userId),
-            'expenses' => $this->expenseModel->getExpenses(),
+            'form'  => $form,
+            'title' => 'Statistics'
         ];
 
         if (isset($_SESSION['user'])) {
@@ -45,15 +47,28 @@ class Statistics
                     echo "</div>";;
                 }
                 else {
-                    $viewParams['data'] = $this->statModel->getStatisticForPeriod(
+                    $data['allExpenses'] = $this->statModel->getAllExpensesForPeriod(
                         $_POST['from'],
                         $_POST['to'],
                         $userId,
                         $_POST['car'],
                         $_POST['expense-type']
                     );
-                    $viewParams['carModel'] = $this->carModel;
-                    $viewParams['expenseModel'] = $this->expenseModel;
+                    $data['cars'] = $this->statModel->getOverallForPeriod(
+                        $_POST['from'],
+                        $_POST['to'],
+                        $userId,
+                        $_POST['car'],
+                        $_POST['expense-type']
+                    );
+                    $vewParams = array_merge(
+                        $viewParams,
+                        [
+                            'data'          => $data,
+                            'carModel'      => $this->carModel,
+                            'expenseModel'  => $this->expenseModel
+                        ]
+                    );
                 }
             }
 

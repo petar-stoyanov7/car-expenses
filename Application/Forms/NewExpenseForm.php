@@ -4,9 +4,9 @@ namespace Application\Forms;
 
 use Application\Models\CarModel;
 use Application\Models\ExpenseModel;
-use Core\Form\Form;
+use Core\Form\AbstractForm;
 
-class NewExpenseForm extends Form
+class NewExpenseForm extends AbstractForm
 {
     private $userId;
     private $expenseTypes;
@@ -42,7 +42,7 @@ class NewExpenseForm extends Form
             $this->addElement(
                 'hidden',
                 'user-id',
-                [],
+                ['required' => true],
                 $this->userId
             );
         }
