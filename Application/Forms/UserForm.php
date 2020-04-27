@@ -3,6 +3,7 @@
 namespace Application\Forms;
 
 use Core\Form\AbstractForm;
+use Core\Form\Element;
 
 class UserForm extends AbstractForm
 {
@@ -28,6 +29,12 @@ class UserForm extends AbstractForm
                 'required'      => true,
                 'label'         => 'Username: ',
                 'placeholder'   => 'only latin characters',
+                'validators'       => [
+                    Element::VALIDATOR_LATIN_CHARS_AND_NUM
+                ],
+                'filters'   => [
+                    Element::FILTER_STRING_TRIM
+                ]
             ],
             $this->username
         );
@@ -59,7 +66,7 @@ class UserForm extends AbstractForm
             'password2',
             [
                 'required'      => true,
-                'label'         => 'Repeat password: ',
+                'label'         => 'Confirm password: ',
                 'placeholder'   => 'minimum six characters'
             ]
         );
@@ -75,20 +82,10 @@ class UserForm extends AbstractForm
 
         $this->addElement(
             'email',
-            'email1',
-            [
-                'required'      => true,
-                'label'         => 'Email: ',
-                'placeholder'   => 'valid e-mail only'
-            ]
-        );
-
-        $this->addElement(
-            'email',
             'email2',
             [
                 'required'      => true,
-                'label'         => 'Repeat email: ',
+                'label'         => 'Confirm email: ',
                 'placeholder'   => 'valid e-mail only'
             ]
         );
@@ -97,8 +94,15 @@ class UserForm extends AbstractForm
             'text',
             'firstname',
             [
-                'required' => true,
-                'label' => 'First name: '
+                'required'  => true,
+                'label'     => 'First name: ',
+                'validator' => [
+                    Element::VALIDATOR_CHARS_ONLY
+                ],
+                'filters'   => [
+                    Element::FILTER_UCFIRST,
+                    Element::FILTER_STRING_TRIM
+                ]
             ]
         );
 
@@ -107,7 +111,14 @@ class UserForm extends AbstractForm
             'lastname',
             [
                 'required'  => true,
-                'label'     => 'Last name: '
+                'label'     => 'Last name: ',
+                'validator'   => [
+                    Element::VALIDATOR_CHARS_ONLY
+                ],
+                'filters'   => [
+                    Element::FILTER_UCFIRST,
+                    Element::FILTER_STRING_TRIM
+                ]
             ]
         );
 
@@ -116,7 +127,11 @@ class UserForm extends AbstractForm
             'city',
             [
                 'required'  => true,
-                'label'     => 'City: '
+                'label'     => 'City: ',
+                'filters'   => [
+                    Element::FILTER_UCFIRST,
+                    Element::FILTER_STRING_TRIM
+                ]
             ]
         );
 
@@ -138,9 +153,12 @@ class UserForm extends AbstractForm
             'check',
             [
                 'required'  => true,
-                'label'     => 'I agree with the terms and conditions'
+                'label'     => 'I agree with the terms and conditions',
+                'validators'    => [
+                    Element::VALIDATOR_IS_TRUE
+                ]
             ],
-            true
+            1
         );
 
         if ($this->_checkEdit()) {
@@ -169,11 +187,19 @@ class UserForm extends AbstractForm
             'button',
             'submit',
             [
-                'required'  => false,
-                'label'     => 'Submit'
+                'required'      => false,
+                'label'         => 'Submit',
             ]
         );
 
+    }
+
+    public function validate(array $values) : bool
+    {
+        if (empty($values['check'])) {
+            $values['check'] = 0;
+        }
+        return parent::validate($values);
     }
 
     private function _checkEdit() : bool

@@ -13,12 +13,11 @@ abstract class DbModelAbstract
     private $username;
     private $password;
     private $options;
-    private $configFile = '/Application/Config/config.json';
 
     public function __construct()
     {
-        $json = file_get_contents(dirname(__DIR__) . $this->configFile);
-        $config = json_decode($json, true)['db'];
+        $Config = new Config();
+        $config = $Config->getConfigDetail('db');
         $this->hostname = $config['host'];
         $this->username = $config['usr'];
         $this->password = $config['pwd'];

@@ -49,14 +49,42 @@ abstract class AbstractForm
     public function validate(array $values) : bool
     {
         $isValid = true;
-        foreach($this->formElements as $name => $element) {
+        $required = $this->getRequiredElements();
+
+        foreach ($required as $name => $Element) {
+            /** @var Element $Element */
+            if (!array_key_exists($name, $values)) {
+                $isValid = false;
+                break;
+            }
+            if (!$Element->validate($values[$name])) {
+                $isValid = false;
+                break;
+            }
+        }
+
+        /** If the form is not valid - it should retain values and display errors */
+        if (!$isValid) {
+            $this->populate($values);
+        }
+
+        return $isValid;
+    }
+
+    public function filterData(array $values)
+    {
+        $newValues = [];
+        foreach($values as $name => $value) {
             if (array_key_exists($name, $this->formElements)) {
-                $isValid = $isValid && $element->validate($name, $values[$name]);
+                /** @var Element $Element */
+                $Element = $this->formElements[$name];
+                $newValues[$name] = $Element->filterValue($value);
             } else {
                 return false;
             }
         }
-        return $isValid;
+
+        return $newValues;
     }
 
     public function populate(array $values)
@@ -175,6 +203,21 @@ abstract class AbstractForm
     }
 
     /**
+     * @return array
+     */
+    public function getRequiredElements() : array
+    {
+        $result = [];
+        /** @var Element $Element */
+        foreach ($this->getElements() as $Element) {
+            if ($Element->getRequired()) {
+                $result[$Element->getName()] = $Element;
+            }
+        }
+        return $result;
+    }
+
+    /**
      * @return string
      */
     public function getName()
@@ -201,6 +244,17 @@ abstract class AbstractForm
     public function getClass()
     {
         return $this->class;
+    }
+
+    public function getValues()
+    {
+        $values = [];
+        /** @var Element  $element */
+        foreach ($this->formElements as $name => $element) {
+            $values[$name] = $element->getValue();
+        }
+
+        return $values;
     }
 }
 

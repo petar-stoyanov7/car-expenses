@@ -9,14 +9,18 @@
     <?php endif; ?>
 >
     <?php foreach($form->getElements() as $Element) : ?>
-    <?php 
+    <?php
         $name = $Element->getName();
         $label = $Element->getLabel();
         $type = $Element->getType();
         $class = $Element->getClass();
         $placeholder = $Element->getPlaceholder();
+        $errors = $Element->getErrors();
     ?>
-    <div class="form-wrapper">
+    <div
+        class="<?= !empty($errors) ? 'form-errors ' : ''?>
+        form-wrapper"
+    >
         <?php if($Element->isSelect()) : ?>
             <?php if (!empty($label)) : ?>
                 <label for="<?= $name; ?>"><?= $label; ?></label>

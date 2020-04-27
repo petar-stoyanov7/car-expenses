@@ -59,29 +59,31 @@ class Account
         $form->setOptions(['classes' => 'register-form']);
         $form->setName('register-form');
         $form->setTarget('/account/register');
+        if(!empty($_POST)) {
+            if ($form->validate($_POST)) {
+                $values = $form->getValues();
+                $user = new User(
+                    $values['username'],
+                    $values['password1'],
+                    $values['password2'],
+                    $values['email1'],
+                    $values['email2'],
+                    $values['firstname'],
+                    $values['lastname'],
+                    $values['city'],
+                    $values['sex']
+                );
+                $this->userModel->addUser($user);
+                header("Location: /");
+            } else {
+                $form->populate($form->getValues());
+            }
+        }
         $viewParams = [
             'title' => "Нова регистрация",
             'form'  => $form
         ];
-        if(isset($_POST['username']) && isset($_POST['password1']) && isset($_POST['email1'])) {
-            if (!$_POST['checkbox']) {
-                display_warning("Трябва да се съгласите с условията!");
-            } else {
-                $user = new User(
-                    $_POST['username'],
-                    $_POST['password1'],
-                    $_POST['password2'],
-                    $_POST['email1'],
-                    $_POST['email2'],
-                    $_POST['firstname'],
-                    $_POST['lastname'],
-                    $_POST['city'],
-                    $_POST['sex']
-                );
-                $this->userModel->addUser($user);
-                header("Location: /");
-            }
-        }
+
         View::render('account/register.php', $viewParams);
     }
 
