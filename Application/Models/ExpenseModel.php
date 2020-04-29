@@ -3,7 +3,8 @@
 namespace Application\Models;
 
 use Application\Models\CarModel;
-	
+use Core\DbModelAbstract;
+
 class ExpenseModel extends DbModelAbstract 
 {    
     private $carModel;
@@ -80,9 +81,17 @@ class ExpenseModel extends DbModelAbstract
     }
     
     public function getExpenseName($id) {
-        $query = "SELECT `Name` FROM `Expense_Types` WHERE `ID`=".$id;
-        $result = $this->getData($query);
+        if (null === $id) {
+            return null;
+        }
+        $query = 'SELECT `Name` FROM `Expense_Types` WHERE `ID` = ?';
+        $result = $this->getData($query, [$id]);
         return $result[0]['Name'];
+    }
+
+    public function getInsuranceList()
+    {
+        return $this->getData('SELECT * FROM `Insurance_Types`');
     }
 
     public function getInsuranceNames() {
@@ -102,8 +111,11 @@ class ExpenseModel extends DbModelAbstract
         return $insuranceArray;
     }
     public function getInsuranceName($id) {
-        $query = "SELECT `Name` FROM `Insurance_Types` WHERE `ID`=".$id;
-        $result = $this->getData($query);
+        if (null === $id) {
+            return null;
+        }
+        $query = 'SELECT `Name` FROM `Insurance_Types` WHERE `ID` = ?';
+        $result = $this->getData($query, [$id]);
         return $result[0]['Name'];
     }
 

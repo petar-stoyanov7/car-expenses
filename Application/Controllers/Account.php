@@ -2,10 +2,13 @@
 
 namespace Application\Controllers;
 
+use Application\Forms\LoginForm;
+use Application\Forms\UserForm;
 use \Core\View;
 use \Application\Models\UserModel;
 use \Application\Models\CarModel;
 use \Application\Classes\User;
+use Exception;
 
 class Account
 {
@@ -25,7 +28,11 @@ class Account
     
     public function loginAction()
     {
-        $viewParams['title'] = "Вход";
+        $form = new LoginForm();
+        $viewParams =[
+            'title' => 'Login',
+            'form'  => $form
+        ];
         
         if(isset($_POST['username']) && isset($_POST['password'])) {
             $User = new User($_POST['username'],$_POST['password']);
@@ -48,41 +55,71 @@ class Account
     }
 
     public function registerAction()
-    {        
-        $viewParams['title'] = "Нова регистрация";
-        if(isset($_POST['username']) && isset($_POST['password1']) && isset($_POST['email1'])) {
-            if (!$_POST['checkbox']) {
-                display_warning("Трябва да се съгласите с условията!");
-            } else {
+    {
+        $form = new UserForm();
+        $form->setOptions(['classes' => 'register-form']);
+        $form->setName('register-form');
+        $form->setTarget('/account/register');
+        if(!empty($_POST)) {
+            if ($form->validate($_POST)) {
+                $values = $form->getValues();
                 $user = new User(
-                    $_POST['username'],
-                    $_POST['password1'],
-                    $_POST['password2'],
-                    $_POST['email1'],
-                    $_POST['email2'],
-                    $_POST['firstname'],
-                    $_POST['lastname'],
-                    $_POST['city'],
-                    $_POST['sex']
+                    $values['username'],
+                    $values['password1'],
+                    $values['password2'],
+                    $values['email1'],
+                    $values['email2'],
+                    $values['firstname'],
+                    $values['lastname'],
+                    $values['city'],
+                    $values['sex']
                 );
-                $this->userModel->addUser($user);
-                header("Location: /");
+                try {
+                    $this->userModel->addUser($user);
+                } catch(Exception $e) {
+                    display_warning($e->getMessage());
+                }
+            } else {
+                $form->populate($form->getValues());
             }
         }
+        $viewParams = [
+            'title' => "Нова регистрация",
+            'form'  => $form
+        ];
+
         View::render('account/register.php', $viewParams);
     }
 
     public function profileAction()
     {
         if (isset($_SESSION['user'])) {
+            $user = $this->userModel->getUserByUserId($_SESSION['user']['ID']);
+            $form = new UserForm(
+                $user['ID'],
+                $user['Username']
+            );
+            $form->setName('edit-account-form');
+            $form->setTarget('/account/edit');
+            $form->setOptions(['classes' => 'account-edit-form']);
+            $userData = [
+                'username'  => $user['Username'],
+                'firstname' => $user['Fname'],
+                'lastname'  => $user['Lname'],
+                'city'      => $user['City'],
+                'email1'    => $user['Email'],
+            ];
+            $form->populate($userData);
+
             $viewParams = [
                 'title'         => 'Потребителски профил',
-                'userId'        => $_SESSION['user']['ID'],
-                'user'          => $_SESSION['user']['Username'],
-                'firstName'     => $_SESSION['user']['Fname'],
-                'lastName'      => $_SESSION['user']['Lname'],
-                'city'          => $_SESSION['user']['City'],
-                'email'         => $_SESSION['user']['Email'],
+                'form'          => $form,
+                'userId'        => $user['ID'],
+                'user'          => $user['Username'],
+                'firstName'     => $user['Fname'],
+                'lastName'      => $user['Lname'],
+                'city'          => $user['City'],
+                'email'         => $user['Email'],
                 'carModel'      => $this->carModel,
             ];
             View::render('account/profile.php', $viewParams);
@@ -94,28 +131,34 @@ class Account
     public function editAction($params)
     {
         if (isset($_SESSION['user'])) {
-            if (isset($params['id']) && !empty($params['id'])) {
+            if (
+                isset($params['id']) &&
+                !empty($params['id']) &&
+                $_SESSION['user']['Group'] === 'admins'
+            ) {
                 $password = 'blank';
                 $viewParams = [
                     'uid'       => $params['id'],
                     'isAdmin'   => TRUE,
                 ];
             } else {
+                $password = $_POST['old-password'];
                 $viewParams = [
                     'uid'       => $_SESSION['user']['ID'],
                     'isAdmin'   => FALSE,
                 ];
             }
-            $viewParams['user'] = $this->userModel->getUserByUserId($viewParams['uid']);
+            $currentUser = $this->userModel->getUserByUserId($viewParams['uid']);
+            $viewParams['user'] = $currentUser;
             if (!empty($_POST)) {
                 if (isset($password)) {
-                    $User = new User($_POST['user'], $password);
+                    $User = new User($currentUser['Username'], $password);
                     $this->userModel->editUser($User,$_POST,1);
-                    header('Location: /account/');
+                    header('Location: /account/profile');
                 } else {
-                    $User = new User($_POST['user'], $_POST['old_password']);
+                    $User = new User($currentUser['Username'], $currentUser['Password']);
                     $this->userModel->editUser($User,$_POST);
-                    header('Location: /account/');
+                    header('Location: /account/profile');
                 }
             }
 

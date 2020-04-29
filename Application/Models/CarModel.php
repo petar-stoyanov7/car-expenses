@@ -2,6 +2,8 @@
 
 namespace Application\Models;
 
+use Core\DbModelAbstract;
+
 class CarModel extends DbModelAbstract
 {
     public function __construct()
@@ -26,7 +28,7 @@ class CarModel extends DbModelAbstract
         return $count[0]["COUNT(*)"];
     }
 
-    public function getUserFuelTypes($uid, $secondary = null)
+    public function getUserFuelTypes($userid, $secondary = null)
     {
         $query = "SELECT DISTINCT 
                     `Cars`.`Fuel_ID` AS `ID`, 
@@ -45,8 +47,8 @@ class CarModel extends DbModelAbstract
         if (null !== $secondary) {
             $query .= " AND `Fuel_Types`.`ID` NOT IN (1,2)";
         }
-        $query .= "ORDER BY `ID` ASC";
-        $fuel_array = $this->getData($query, [$uid, $uid]);
+        $query .= " ORDER BY `ID` ASC";
+        $fuel_array = $this->getData($query, [$userid, $userid]);
         return $fuel_array;
     }
 
@@ -65,6 +67,9 @@ class CarModel extends DbModelAbstract
     }
     
     public function getFuelName($id) {
+        if (null === $id) {
+            return null;
+        }
         $query = "SELECT `NAME` FROM `Fuel_Types` WHERE `ID` = ?";
         $result = $this->getData($query, [$id]);
         return $result[0]['NAME'];
@@ -89,6 +94,7 @@ class CarModel extends DbModelAbstract
         }
         return $fuels_array;
     }
+
     public function getFuelId() {
         $fuels_list = $this->getData("SELECT `ID` FROM `Fuel_Types`");
         $fuels_array = array();
@@ -96,6 +102,12 @@ class CarModel extends DbModelAbstract
             array_push($fuels_array, $fuel['ID']);
         }
         return $fuels_array;
+    }
+
+    public function getMileageByCarId($carId)
+    {
+        $query = "SELECT `Mileage` from `Cars` WHERE `ID` = ?";
+        return $this->getData($query, [$carId]);
     }
     
     public function addCar($car) {
@@ -117,12 +129,25 @@ class CarModel extends DbModelAbstract
     }
 
     public function editCar($car, $cid) {
-        $query = "UPDATE `Cars` SET `Color` = ?, `Fuel_ID2` = ?, `Mileage` = ?, `Notes` = ? WHERE `ID` = ?";
+        $query = "UPDATE `Cars` SET 
+                    `Brand` = ?,
+                    `Model` = ?,
+                    `Year` = ?,
+                    `Color` = ?,
+                    `Fuel_ID` = ?,
+                    `Fuel_ID2` = ?,
+                    `Mileage` = ?,
+                    `Notes` = ? 
+                    WHERE `ID` = ?";
         $values = [
-            $car->getProperty("color"),
-            $car->getProperty("fuelId2"),
-            $car->getProperty("mileage"),
-            $car->getProperty("notes"),
+            $car->getProperty('brand'),
+            $car->getProperty('model'),
+            $car->getProperty('year'),
+            $car->getProperty('color'),
+            $car->getProperty('fuelId'),
+            empty($car->getProperty('fuelId2')) ? null : $car->getProperty('fuelId2'),
+            $car->getProperty('mileage'),
+            $car->getProperty('notes'),
             $cid
         ];
         $this->execute($query, $values);

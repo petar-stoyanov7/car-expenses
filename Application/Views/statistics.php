@@ -2,37 +2,14 @@
 <div class="container">
 <h3>Статистика за период:</h3>
 <?php //display_statistics_input($uid); ?>
-
-
-<form method="post" action="#">
-<label for="car">Автомобил</label>
-<select id="car" name="car">
-<option value="all">Всички</option>
-<?php foreach ($cars as $car) : ?>
-    <option value="<?= $car['ID']; ?>"><?= $car['Brand']; ?> <?= $car['Model']; ?></option>
-<?php endforeach; ?>
-</select><br>
-<label for="expense-type">Тип разход</label>
-<select id="expense-type" name="expense-type">
-<option value="all">Всички</option>
-<?php foreach ($expenses as $expense) : ?>
-    <option value="<?= $expense['ID']; ?>"><?= translate($expense['Name']); ?></option>
-<?php endforeach; ?>
-</select><br>
-<label for="from">От дата</label>
-<input id="from" type="date" name="from" value="<?= date('Y') . '-01-01'; ?>"><br>
-<label for="to">До дата</label>
-<input id="to" type="date" name="to" value="<?= date('Y-m-d'); ?>"><br>
-
-<button type="submit">Извлечи статистика</button>
-</form>
+<?php $View::renderForm($form); ?>
 </div>
 
 
 <?php if (isset($data) && !empty($data)) : ?>
     <div class="container">
     <h3>Общо:</h3>
-    <?php $cars = $data['Cars']; ?>
+    <?php $cars = $data['cars']; ?>
     <?php foreach ($cars as $car) : ?>
         <div class="element">
         <b>Автомобил:</b> <?= $car['Name']; ?><br>
@@ -54,7 +31,7 @@
 
     <div class="container">
 	<h3>Детайлна Статистика</h3>
-	<?php $detailedData = $data['Raw']; ?>
+	<?php $detailedData = $data['allExpenses']; ?>
 	<table class="expenses">
 	<tr>
 			<th>Пробег</th>

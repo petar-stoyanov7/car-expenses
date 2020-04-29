@@ -4,6 +4,8 @@ namespace Application\Models;
 
 use Application\Classes\User;
 use Application\Models\ExpenseModel;
+use Core\DbModelAbstract;
+use Exception;
 
 class UserModel extends DbModelAbstract
 {
@@ -31,44 +33,48 @@ class UserModel extends DbModelAbstract
         $_SESSION['user'] = $array;
     }
 
-    public function addUser($user)
+    public function addUser($User)
     {
         $users = $this->listUsers();
-        foreach ($users as $usr) {
-            if ($user->getProperty("username")==$usr["Username"]) {
-                return display_warning("Потребитеят съществува!");
-            } elseif ($user->getProperty("email1")==$usr["Email"]) {
-                return display_warning("Този e-mail се използва от друг потребител!");
+        foreach ($users as $user) {
+            if ($User->getProperty("username") === $user["Username"]) {
+                throw new Exception('User already exists');
+            } elseif ($User->getProperty("email1") === $user["Email"]) {
+                throw new Exception('Email is already in use ');
             }
         }
         $query = "INSERT INTO `Users` (`Username`,`Password`,`Group`,`Email`,`Fname`,`Lname`,`City`,`Sex`,`Notes`)
                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         $values = [
-            $user->getProperty("username"),
-            password_hash($user->getProperty("password1"), PASSWORD_DEFAULT),
-            $user->getProperty("group"),
-            $user->getProperty("email1"),
-            $user->getProperty("fname"),
-            $user->getProperty("lname"),
-            $user->getProperty("city"),
-            $user->getProperty("sex"),
-            $user->getProperty("notes"),
+            $User->getProperty("username"),
+            password_hash($User->getProperty("password1"), PASSWORD_DEFAULT),
+            $User->getProperty("group"),
+            $User->getProperty("email1"),
+            $User->getProperty("fname"),
+            $User->getProperty("lname"),
+            $User->getProperty("city"),
+            $User->getProperty("sex"),
+            $User->getProperty("notes"),
         ];
         $this->execute($query, $values);
+        return true;
     }
 
     public function editUser($user, $post, $auth=0)
     {
-        $userArray = $this->getUserByUsername($post['user']);
+        $userArray = $this->getUserByUsername($user->getProperty('username'));
         if ($this->login($user, true) || $auth !== 0) {
             $query = 'UPDATE Users SET Fname = ?, Lname = ?, City = ?,';
 
             $values = [
-                $post['fname'],
-                $post['lname'],
+                $post['firstname'],
+                $post['lastname'],
                 $post['city'],
             ];
             if (!empty($post['password1']) && !empty($post['password2'])) {
+                if ($post['password1'] !== $post['password2']) {
+                    return false;
+                }
                 $query .= ' ` Password` = ?,';
                 $values[] = password_hash($post['password1'], PASSWORD_DEFAULT);
             }

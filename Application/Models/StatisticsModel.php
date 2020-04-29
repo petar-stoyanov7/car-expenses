@@ -4,11 +4,17 @@ namespace Application\Models;
 
 use Application\Models\CarModel;
 use Application\Models\ExpenseModel;
+use Core\DbModelAbstract;
 
 class StatisticsModel extends DbModelAbstract
-{ 
+{
+    private $carModel;
+    private $expenseModel;
+
     public function __construct()
     {
+        $this->carModel = new CarModel();
+        $this->expenseModel = new ExpenseModel();
         parent::__construct();        
     }
 
@@ -23,92 +29,96 @@ class StatisticsModel extends DbModelAbstract
         return $list;
     }
 
-    public function getLastFiveByUserId($uid)
+    public function getLastByUserId($uid, $limit = 5)
     {
         $year = date('Y');
-        $last_year = $year-1;
-        $query = "SELECT * FROM `Expense_{$last_year}` WHERE `UID`= ? 
-                UNION ALL
-                SELECT * FROM `Expense_{$year}` WHERE `UID` = ?
-                ORDER BY `Date` DESC LIMIT 5";
-        $values = [
-            $uid,
-            $uid
-        ];
-        $array = $this->getData($query, $values);
-        return $array;
+        $result = [];
+        $tableList = $this->expenseModel->getTableList();
+        while($limit > 0) {
+            $query = "SELECT * FROM `Expense_{$year}` WHERE `UID`= ?
+                ORDER BY `Date` DESC LIMIT {$limit}";
+            $array = $this->getData($query, [$uid]);
+            $result = array_merge($result, $array);
+            $limit = $limit - count($array);
+            $year--;
+            if (!array_key_exists($year, $tableList)) {
+                //can't go back any further
+                $limit = 0;
+            }
+        }
+        return $result;
     }
 
-    public function getStatisticForPeriod($start, $end, $uid, $cid, $expense_id)
+    public function getAllExpensesForPeriod($start, $end, $userId, $carId, $expenseId)
     {
-        $carModel = new CarModel();
-        $expenseModel = new ExpenseModel();
         $startYear = date("Y", strtotime($start));
         $endYear = date("Y", strtotime($end));
-        $tables = $this->getTableList();
-        $data = [];
-        $where = "WHERE `Date` >= '".$start."' AND `Date` <= '".$end."' AND `UID` = ".$uid." ";
-        $overall = "";
-        $sum = "";
-        $mileage = "";
-        $whereExpense = "";			
-        $data['Cars'] = [];		
-        if ($cid === "all") {
-            $cars = $carModel->listCarsByUserId($uid);
-            $whereCar = "";
+        $queryDetails = $this->_getWhere($start, $end, $userId, $carId, $expenseId);
+        $where = $queryDetails['where'];
+        $queryParams = $queryDetails['params'];
+        $query = '';
+        $params = [];
+
+        if ($startYear === $endYear) {
+            $query = "SELECT * FROM `Expense_{$startYear}` " . $where;
+            $params = $queryParams;
         } else {
-            $cars = [];
-            $car = $carModel->getCarById($cid);
-            array_push($cars, $car);
-            $whereCar = "AND `CID` = ".$cid." ";
+            for ($y = $startYear; $y <= $endYear; $y++) {
+                $query .= "SELECT * FROM `Expense_{$y}` {$where} UNION ALL ";
+                $params = array_merge($params, $queryParams);
+            }
+            $query = preg_replace('/ UNION ALL $/', '', $query);
         }
 
-        if ($expense_id !== "all") {
-            $whereExpense .= " AND `Expense_ID` = ".$expense_id." ";
-            $data['Expense'] = $expenseModel->getExpenseName($expense_id);
+        return $this->getData($query, $params);
+    }
+
+    public function getOverallForPeriod($start, $end, $userId, $carId, $expenseId) {
+        if ($carId === "all") {
+            $cars = $this->carModel->listCarsByUserId($userId);
         } else {
-            $whereExpense = "";
-        }	
-        foreach ($tables as $year => $table) {
-            if ($startYear === $endYear) {
-                $overall = "SELECT * FROM `Expense_".$startYear."` ".$where.$whereExpense.$whereCar;
-                break;
-            }
-            if ($year < $endYear) {
-                $overall .= "SELECT * FROM `".$table."` ".$where.$whereExpense.$whereCar." UNION ALL ";
-            } elseif ($year == $endYear) {
-                $overall .= "SELECT * FROM `".$table."` ".$where.$whereExpense.$whereCar;
-            }
+            $cars[] = $this->carModel->getCarById($carId);
         }
+        $result = [];
         foreach ($cars as $car) {
-            $summaryQuery = "SELECT SUM(`Overall`) as `Sum` FROM ( ";
-            $mileageQuery = "SELECT SUM(`Distance`) as `Sum` FROM ( ";
-            $whereCar = " AND `CID` = ".$car['ID']." ";
-            foreach ($tables as $year => $table) {
-                if ($year < $startYear) {
-                    continue;					
-                } elseif ($year >= $startYear && $year < $endYear) {
-                    $summaryQuery .= "SELECT Sum(`Price`) as `Overall` FROM `{$table}` ".$where.$whereExpense.$whereCar." UNION ALL ";
-                    $mileageQuery .= "SELECT Max(`Mileage`) - Min(`Mileage`) AS `Distance` FROM `{$table}` ".$where.$whereCar." UNION ALL ";
-                } elseif ($year == $endYear) {
-                    $summaryQuery .= "SELECT Sum(`Price`) as `Overall` FROM `{$table}` ".$where.$whereExpense.$whereCar." ) as SubQuery";
-                    $mileageQuery .= "SELECT Max(`Mileage`) - Min(`Mileage`) AS `Distance` FROM `{$table}` ".$where.$whereCar." ) as SubQuery";
-                }
-            }
-
-            $name = $carModel->getCarNameById($car['ID']);
-            $summary = $this->getData($summaryQuery);
-            $mileage = $this->getData($mileageQuery);				
-            $temp = array("Name" => $name, "Summary" => $summary[0]['Sum'], "Mileage" => $mileage[0]['Sum']);
-            
-            array_push($data['Cars'], $temp);
-
+            $data = $this->getCarOverallForPeriod(
+                $start,
+                $end,
+                $userId,
+                $car['ID'],
+                $expenseId
+            );
+            $result[$car['ID']] = array_merge($data, $car);
         }
-        // echo "overall";
-        // display_test($overall);
-        $data['Raw'] = $this->getData($overall);
 
-        return $data;
+        return $result;
+    }
+
+    public function getCarOverallForPeriod($start, $end, $userId, $carId, $expenseId) {
+        $startYear = date("Y", strtotime($start));
+        $endYear = date("Y", strtotime($end));
+        $queryDetails = $this->_getWhere($start, $end, $userId, $carId, $expenseId);
+        $where = $queryDetails['where'];
+        $queryParams = $queryDetails['params'];
+        $params = [];
+
+        if ($startYear === $endYear) {
+            $query = "SELECT Sum(`Price`) as `Overall`, Max(`Mileage`) - Min(`Mileage`) as `Distance` FROM Expense_{$startYear} {$where}";
+            $params = $queryParams;
+        } else {
+            $query = "SELECT Sum(`Price`) as `Overall`, Sum(`Distance`) as `Distance` FROM (";
+            for ($y = $startYear; $y <= $endYear; $y++) {
+                $table = "Expense_{$y}";
+                $query .= "SELECT sum(Price) as Price, Max(Mileage) - Min(Mileage) as Distance FROM {$table} {$where} UNION ALL ";
+                $params = array_merge($params, $queryParams);
+            }
+            $query = preg_replace('/ UNION ALL $/', '', $query);
+            $query .= ') as SubQuery';
+        }
+
+        $result = $this->getData($query, $params);
+
+        return !empty($result) ? $result[0] : [];
     }
 
     public function getStatisticById($id, $year="")
@@ -137,6 +147,27 @@ class StatisticsModel extends DbModelAbstract
         } else {
             return $array[0]["SUM(`PRICE`)"];
         }
+    }
+
+    private function _getWhere($start, $end, $userId, $carId, $expenseId)
+    {
+        $where = "WHERE `Date` >= ? AND `Date` <= ? AND `UID` = ? ";
+        $params = [$start, $end, $userId];
+
+        if ($carId !== "all") {
+            $where .= "AND `CID` = ? ";
+            $params[] = $carId;
+        }
+
+        if ($expenseId !== "all") {
+            $where .= " AND `Expense_ID` = ? ";
+            $params[] = $expenseId;
+            $data['Expense'] = $expenseModel->getExpenseName($expenseId);
+        }
+
+        $result['where'] = $where;
+        $result['params'] = $params;
+        return $result;
     }
 }
 
