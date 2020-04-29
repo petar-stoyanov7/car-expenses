@@ -55,8 +55,15 @@ class Element
         self::VALIDATOR_IS_TRUE,
     ];
 
-    public function __construct()
+    public function __construct($type = null, $name = null, $params = null, $value = null)
     {
+        if (
+            null !== $type &&
+            null !== $name &&
+            null !== $params
+        ) {
+            $this->createElement($type, $name, $params, $value);
+        }
         $Config = new Config();
         $errorsMessages = $Config->getConfigDetail('form-error-messages');
         if (!empty($errorsMessages)) {

@@ -8,6 +8,8 @@ abstract class AbstractForm
     private $method;
     private $target;
     private $formElements;
+    private $fieldsets = [];
+    private $groups = [];
 
     private $class;
 
@@ -37,8 +39,7 @@ abstract class AbstractForm
         $value = null
     ) : void
     {
-        $element = new Element();
-        $element->createElement($type, $name, $params, $value);
+        $element = new Element($type, $name, $params, $value);
         $this->setElement($element);
     }
 
@@ -170,7 +171,11 @@ abstract class AbstractForm
      */
     public function setElement(Element $element) : void
     {
-        $this->formElements[$element->getName()] = $element;
+        $this->formElements[$element->getName()] = [
+            'element' => $element,
+            'group' => '',
+            'fieldset' => ''
+        ];
     }
 
     public function setClasses($classes) : void
@@ -183,12 +188,180 @@ abstract class AbstractForm
     }
 
     /**
+     * @param string $fieldsetName
+     * @param array $elements
+     * @param null $label
+     */
+    public function createFieldset(string $fieldsetName, array $elements, $label = null) : void
+    {
+        $matches = false;
+        foreach ($elements as $elementName) {
+            if (array_key_exists($elementName, $this->formElements)) {
+                $this->setFieldset($elementName, $fieldsetName);
+                $matches = true;
+            }
+        }
+        if ($matches) {
+            $this->fieldsets[] = $fieldsetName;
+        }
+    }
+
+    /**
+     * @param $elementName
+     * @param $fieldsetName
+     */
+    public function setFieldset($elementName, $fieldsetName) : void
+    {
+        $this->formElements[$elementName]['fieldset'] = $fieldsetName;
+    }
+
+    /**
+     * @param string $groupName
+     * @param array $elements
+     * @param null $label
+     */
+    public function createGroup(string $groupName, array $elements, $label = null) : void
+    {
+        $matches = false;
+        foreach ($elements as $elementName) {
+            if (array_key_exists($elementName, $this->formElements)) {
+                $this->setGroup($elementName, $groupName);
+                $matches = true;
+            }
+        }
+        if ($matches) {
+            $this->groups[] = $groupName;
+        }
+    }
+
+    /**
+     * @param $elementName
+     * @param $groupName
+     */
+    public function setGroup($elementName, $groupName) : void
+    {
+        $this->formElements[$elementName]['group'] = $groupName;
+    }
+
+    /**
      * @return array
      */
     public function getElements() : array
     {
         return $this->formElements;
     }
+
+    /**
+     * @return array|null
+     */
+    public function getAllFieldsetElements()
+    {
+        if (empty($this->fieldsets)) {
+            return null;
+        }
+        $result = [];
+
+        foreach ($this->fieldsets as $fieldsetName) {
+            $result[$fieldsetName] = $this->getFieldsetElements($fieldsetName);
+        }
+
+        return $result;
+    }
+
+    /**
+     * @return array
+     */
+    public function getNonFieldsetElements()
+    {
+        if (empty($this->fieldsets)) {
+            return $this->formElements;
+        }
+        $result = [];
+
+        foreach ($this->formElements as $name => $elementData) {
+            if (empty($elementData['fieldset'])) {
+                $result[$name] = $elementData;
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * @param $fieldsetName
+     * @return array|null
+     */
+    public function getFieldsetElements($fieldsetName)
+    {
+        if (!in_array($fieldsetName, $this->fieldsets)) {
+            return null;
+        }
+        $result = [];
+        foreach ($this->formElements as $elementName => $formData) {
+            if ($this->_isInFieldset($elementName, $fieldsetName)) {
+                $result[$elementName] = $formData;
+            }
+        }
+
+        return $result;
+    }
+
+    ####################################################
+    /**
+     * @return array|null
+     */
+    public function getAllGroupElements()
+    {
+        if (empty($this->groups)) {
+            return null;
+        }
+        $result = [];
+
+        foreach ($this->groups as $groupName) {
+            $result[$groupName] = $this->getGroupElements($groupName);
+        }
+
+        return $result;
+    }
+
+    /**
+     * @return array
+     */
+    public function getNonGroupElements()
+    {
+        if (empty($this->groups)) {
+            return $this->formElements;
+        }
+        $result = [];
+
+        foreach ($this->formElements as $name => $elementData) {
+            if (empty($elementData['group'])) {
+                $result[$name] = $elementData;
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * @param $groupName
+     * @return array|null
+     */
+    public function getGroupElements($groupName)
+    {
+        if (!in_array($groupName, $this->groups)) {
+            return null;
+        }
+        $result = [];
+        foreach ($this->formElements as $elementName => $formData) {
+            if ($this->_isGroupped($elementName, $groupName)) {
+                $result[$elementName] = $formData;
+            }
+        }
+
+        return $result;
+    }
+    ####################################################
 
     /**
      * @param string $name
@@ -211,7 +384,7 @@ abstract class AbstractForm
         /** @var Element $Element */
         foreach ($this->getElements() as $Element) {
             if ($Element->getRequired()) {
-                $result[$Element->getName()] = $Element;
+                $result[$Element->getName()]['element'] = $Element;
             }
         }
         return $result;
@@ -250,11 +423,56 @@ abstract class AbstractForm
     {
         $values = [];
         /** @var Element  $element */
-        foreach ($this->formElements as $name => $element) {
+        foreach ($this->formElements as $name => $elementData) {
+            $element = $elementData['element'];
             $values[$name] = $element->getValue();
         }
 
         return $values;
+    }
+
+    /**
+     * @param string $elementName
+     * @param null $groupName
+     * @return bool
+     */
+    public function _isGroupped(string $elementName, $groupName = null) : bool
+    {
+        if (!array_key_exists($elementName, $this->formElements)) {
+            return false;
+        }
+
+        if (empty($this->formElements[$elementName]['group'])) {
+            return false;
+        }
+
+        if (null !== $groupName && $this->formElements[$elementName]['group'] !== $groupName) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * @param string $elementName
+     * @param null $fieldsetName
+     * @return bool
+     */
+    public function _isInFieldset(string $elementName, $fieldsetName = null) : bool
+    {
+        if (!array_key_exists($elementName, $this->formElements)) {
+            return false;
+        }
+
+        if (empty($this->formElements[$elementName]['fieldset'])) {
+            return false;
+        }
+
+        if (null !== $fieldsetName && $this->formElements[$elementName]['fieldset'] !== $fieldsetName) {
+            return false;
+        }
+
+        return true;
     }
 }
 

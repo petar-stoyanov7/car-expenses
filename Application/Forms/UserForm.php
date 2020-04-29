@@ -161,6 +161,27 @@ class UserForm extends AbstractForm
             1
         );
 
+        $this->createFieldset(
+            'User : ',
+            [
+                'username',
+                'password1',
+                'password2',
+                'email1',
+                'email2'
+            ]
+        );
+
+        $this->createFieldset(
+            'User data: ',
+            [
+                'firstname',
+                'lastname',
+                'city',
+                'sex'
+            ]
+        );
+
         if ($this->_checkEdit()) {
             $this->addElement(
                 'hidden',
@@ -191,7 +212,6 @@ class UserForm extends AbstractForm
                 'label'         => 'Submit',
             ]
         );
-
     }
 
     public function validate(array $values) : bool

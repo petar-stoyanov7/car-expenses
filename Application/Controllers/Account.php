@@ -8,6 +8,7 @@ use \Core\View;
 use \Application\Models\UserModel;
 use \Application\Models\CarModel;
 use \Application\Classes\User;
+use Exception;
 
 class Account
 {
@@ -73,8 +74,11 @@ class Account
                     $values['city'],
                     $values['sex']
                 );
-                $this->userModel->addUser($user);
-                header("Location: /");
+                try {
+                    $this->userModel->addUser($user);
+                } catch(Exception $e) {
+                    display_warning($e->getMessage());
+                }
             } else {
                 $form->populate($form->getValues());
             }
