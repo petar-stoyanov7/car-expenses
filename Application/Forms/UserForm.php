@@ -77,6 +77,7 @@ class UserForm extends AbstractForm
             [
                 'required'  => true,
                 'label'     => 'Email: ',
+                'placeholder'   => 'valid e-mail only'
             ]
         );
 

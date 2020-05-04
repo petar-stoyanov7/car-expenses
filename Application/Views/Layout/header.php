@@ -5,7 +5,7 @@ use \Core\View;
 <html>
 <head>
 	<title>
-		<?= (isset($title)) ? $title : "Автомобилни разходи"; ?>	
+		<?= (isset($title)) ? $title : 'Car expenses'; ?>
 	</title>
 	<meta http-equiv="content-type" content="text/html; charset=utf-8"/>
     <script
@@ -13,6 +13,7 @@ use \Core\View;
             integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
             crossorigin="anonymous">
     </script>
+    <script src="https://kit.fontawesome.com/75ddeba959.js" crossorigin="anonymous"></script>
     <?php if (isset($cssArray) && count($cssArray) > 0) : ?>
         <?php foreach($cssArray as $cssFile) : ?>
             <link rel="stylesheet" href="/css/<?=$cssFile?>">
@@ -23,29 +24,57 @@ use \Core\View;
 </head>
 <body>
     <div id="black-overlay"></div>
-	<!-- Top Bar -->
-	<div class="top-bar">
-		<div class="top-links">
-		<a href="/">АВТО</a>
-		<a href="/">ДОМ</a>
-		</div>
+    <?php #top-toolbar ?>
+	<header class="top-bar">
+        <div class="site-logo">
+            <a href="/"><img src="/img/logo2.png"></a>
+        </div>
+
+        <div class="toolbar">
+            <a href="/">Home</a>
+            <a href="/expense/new">New Expense</a>
+            <a href="/statistics">Statistics</a>
+            <a href="/account/profile">Profile</a>
+            <?= ((isset($_SESSION['user'])) && ($_SESSION['user']['Group'] == "admins")) ?
+                '<a href="/admin">Admin panel</a>' :
+                ''
+            ?>
+        </div>
+        <?php #login panel ?>
 		<div class="login">
-		<?php
-			if (!empty($_SESSION)) {
-				echo "<a href='/account/profile'>[ ".$_SESSION['user']['Username']." ]</a>";
-				echo "<a href='/account/logout'>[ Изход ]</a>";
-			} else {
-				echo '<a href="/account/login">Вход</a>';
-				echo '<a href="/account/register">Регистрация</a>';
-			}
-		?>
-		</div>
-	</div>
-	<header id="site-header">	
-		<img id="site-logo" src="/img/logo2.png">	
-		<div class="header">
-			<img src="/img/site-logo2.png">
+		<?php if (!empty($_SESSION)) : ?>
+				<a href='/account/profile'>
+                    <span class="tooltip">profile</span>
+                    <i class="fas fa-user"></i>
+                </a>
+				<a href='/account/logout'>
+                    <span class="tooltip">logout</span>
+                    <i class="fas fa-sign-out-alt"></i>
+                </a>
+		<?php else : ?>
+				<a id="login-button">
+                    <span class="tooltip">login</span>
+                    <i class="fas fa-sign-in-alt"></i>
+                </a>
+				<a id="register-button">
+                    <span class="tooltip">register</span>
+                    <i class="fas fa-user-plus"></i>
+                </a>
+		<?php endif; ?>
 		</div>
 	</header>
 </body>
 <main>
+<div class="main-content">
+<?php if (!empty($loginForm)) : ?>
+   <div id="user-login-modal" class="toggleable-modal">
+       <h3>Login:</h3>
+       <?php View::renderForm($loginForm); ?>
+   </div>
+<?php endif; ?>
+<?php if (!empty($registerForm)) : ?>
+    <div id="user-register-modal" class="toggleable-modal">
+        <h3>Register:</h3>
+        <?php View::renderForm($registerForm); ?>
+    </div>
+<?php endif; ?>

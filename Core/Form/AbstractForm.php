@@ -401,7 +401,7 @@ abstract class AbstractForm
     /**
      * @return string
      */
-    public function getMethod() : string
+    public function getMethod()
     {
         return $this->method;
     }
@@ -409,7 +409,7 @@ abstract class AbstractForm
     /**
      * @return string
      */
-    public function getTarget() : string
+    public function getTarget()
     {
         return $this->target;
     }

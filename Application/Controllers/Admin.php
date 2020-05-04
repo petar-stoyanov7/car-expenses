@@ -33,6 +33,7 @@ class Admin
             'title'     => 'Admin panel',
             'userList'  => $this->userModel->listUsers(),
             'carModel'  => $this->carModel,
+            'CSS'   => ['admin.css']
         ];
 
         // if (isset($_GET['uid'])) {

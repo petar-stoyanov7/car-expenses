@@ -1,3 +1,5 @@
+<?php
+/*
 	<!-- Toolbar	 -->
 	<div class="toolbar">
 		<div class="tooltip">
@@ -17,3 +19,5 @@
 		  <span class="tooltiptext">Профил</span>
 		</div>
 	</div>
+ */
+?>

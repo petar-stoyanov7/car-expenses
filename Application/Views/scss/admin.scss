@@ -1,0 +1,38 @@
+table.userlist {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 5px;
+
+  a {
+    text-decoration: none;
+    color: black;
+
+    &:hover {
+      background-color: #649f70;
+      color: white;
+    }
+  }
+  th,td {
+    padding-left: 10px;
+    text-align: left;
+  }
+
+  th {
+    background-color: #649f70;
+    color: white;
+  }
+
+  tr {
+
+    &:nth-child(odd) {
+      background-color: #fff;
+    }
+    &:nth-child(even) {
+      background-color: #eee4e4;
+    }
+    &:hover {
+      background-color: #94c898;
+    }
+  }
+}
+

@@ -11,17 +11,34 @@
 		<th>Modify</th>
 	</tr>
 		<?php foreach ($userList as $user) : ?>
-			<tr>
-			<td><a href="/admin/show-profile/user_id/<?= $user['ID']; ?>"><?= $user['ID']; ?></a></td>
-			<td><a href="/admin/show-profile/user_id/<?= $user['ID']; ?>"><?= $user['Username']; ?></a></td>
-			<td><a href="/admin/show-profile/user_id/<?= $user['ID']; ?>"><?= $user['Email']; ?></a></td>
-			<td><a href="/cars/list-cars/user_id/<?= $user['ID']; ?>"><?= $carModel->countCarsByUserId($user['ID']); ?></a></td>
-			<td><a href="/admin/show-profile/user_id/<?= $user['ID']; ?>"><?= $user['Fname']; ?></a></td>
-			<td><a href="/admin/show-profile/user_id/<?= $user['ID']; ?>"><?= $user['Lname']; ?></a></td>
-			<td>
-			<a href="/account/edit/user_id/<?= $user['ID']; ?>"><img class="icon" src="./img/icon-edit.png"></a>
-			<!-- <a href="/admin/remove-profile/user_id/"<?= ''//$user['ID']; ?>"><img class="icon" src="./img/icon-delete.png"></a> -->
-			</td>
+
+            <?php if ((int)$user['ID'] === 1) : ?>
+                <?php continue; ?>
+            <?php else : ?>
+            <tr>
+                <td>
+                    <a href="/admin/show-profile/user_id/<?= $user['ID']; ?>"><?= $user['ID']; ?></a>
+                </td>
+                <td>
+                    <a href="/admin/show-profile/user_id/<?= $user['ID']; ?>"><?= $user['Username']; ?></a>
+                </td>
+                <td>
+                    <a href="/admin/show-profile/user_id/<?= $user['ID']; ?>"><?= $user['Email']; ?></a></td>
+                <td>
+                    <a href="/cars/list-cars/user_id/<?= $user['ID']; ?>"><?= $carModel->countCarsByUserId($user['ID']); ?></a>
+                </td>
+                <td>
+                    <a href="/admin/show-profile/user_id/<?= $user['ID']; ?>"><?= $user['Fname']; ?></a>
+                </td>
+                <td>
+                    <a href="/admin/show-profile/user_id/<?= $user['ID']; ?>"><?= $user['Lname']; ?></a>
+                </td>
+                <td>
+                    <a href="/account/edit/user_id/<?= $user['ID']; ?>"><i class="fas fa-user-edit"></i></a>
+                    <a href="/admin/remove-profile/user_id/"<?= $user['ID']; ?>"><i class="fas fa-user-times"></i></a>
+                </td>
+            </tr>
+            <?php endif; ?>
         <?php endforeach; ?>
 		
 </table>
