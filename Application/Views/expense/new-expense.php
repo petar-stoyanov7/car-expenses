@@ -1,7 +1,3 @@
-<div id="expense-black-overlay"></div>
-<div id="loading-message" class="new-expense-loading">
-    <span>Loading...</span>
-</div>
 <div class='container'>
     <h3>New expense:</h3>
     <?php $View::renderForm($form);?>

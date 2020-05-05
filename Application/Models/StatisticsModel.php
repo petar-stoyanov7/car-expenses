@@ -53,18 +53,45 @@ class StatisticsModel extends DbModelAbstract
     {
         $startYear = date("Y", strtotime($start));
         $endYear = date("Y", strtotime($end));
-        $queryDetails = $this->_getWhere($start, $end, $userId, $carId, $expenseId);
-        $where = $queryDetails['where'];
-        $queryParams = $queryDetails['params'];
         $query = '';
         $params = [];
 
         if ($startYear === $endYear) {
-            $query = "SELECT * FROM `Expense_{$startYear}` " . $where;
+            $queryDetails = $this->_getWhere($start, $end, $userId, $carId, $expenseId, $startYear);
+            $where = $queryDetails['where'];
+            $queryParams = $queryDetails['params'];
+            $query = "SELECT 
+                Expense_{$startYear}.*,
+                Cars.Brand as car_brand,
+                Cars.Model as car_model,
+                Fuel_Types.Name as fuel_name,
+                Insurance_Types.Name as insurance_name,
+                Expense_Types.Name as expense_name
+                FROM `Expense_{$startYear}` 
+                LEFT JOIN Cars ON Cars.ID = Expense_{$startYear}.CID
+                LEFT JOIN Fuel_Types ON Expense_{$startYear}.Fuel_ID = Fuel_Types.ID
+                LEFT JOIN Insurance_Types ON Expense_2016.Insurance_ID = Insurance_Types.ID
+                LEFT JOIN Expense_Types ON Expense_{$startYear}.Expense_ID = Expense_Types.ID
+                {$where}";
             $params = $queryParams;
         } else {
             for ($y = $startYear; $y <= $endYear; $y++) {
-                $query .= "SELECT * FROM `Expense_{$y}` {$where} UNION ALL ";
+                $queryDetails = $this->_getWhere($start, $end, $userId, $carId, $expenseId, $y);
+                $where = $queryDetails['where'];
+                $queryParams = $queryDetails['params'];
+                $query .= "SELECT 
+                Expense_{$y}.*,
+                Cars.Brand as car_brand,
+                Cars.Model as car_model,
+                Fuel_Types.Name as fuel_name,
+                Insurance_Types.Name as insurance_name,
+                Expense_Types.Name as expense_name
+                FROM `Expense_{$y}` 
+                LEFT JOIN Cars ON Cars.ID = Expense_{$y}.CID
+                LEFT JOIN Fuel_Types ON Expense_{$y}.Fuel_ID = Fuel_Types.ID
+                LEFT JOIN Insurance_Types ON Expense_{$y}.Insurance_ID = Insurance_Types.ID
+                LEFT JOIN Expense_Types ON Expense_{$y}.Expense_ID = Expense_Types.ID 
+                {$where} UNION ALL ";
                 $params = array_merge($params, $queryParams);
             }
             $query = preg_replace('/ UNION ALL $/', '', $query);
@@ -97,17 +124,20 @@ class StatisticsModel extends DbModelAbstract
     public function getCarOverallForPeriod($start, $end, $userId, $carId, $expenseId) {
         $startYear = date("Y", strtotime($start));
         $endYear = date("Y", strtotime($end));
-        $queryDetails = $this->_getWhere($start, $end, $userId, $carId, $expenseId);
-        $where = $queryDetails['where'];
-        $queryParams = $queryDetails['params'];
         $params = [];
 
         if ($startYear === $endYear) {
+            $queryDetails = $this->_getWhere($start, $end, $userId, $carId, $expenseId, $startYear);
+            $where = $queryDetails['where'];
+            $queryParams = $queryDetails['params'];
             $query = "SELECT Sum(`Price`) as `Overall`, Max(`Mileage`) - Min(`Mileage`) as `Distance` FROM Expense_{$startYear} {$where}";
             $params = $queryParams;
         } else {
             $query = "SELECT Sum(`Price`) as `Overall`, Sum(`Distance`) as `Distance` FROM (";
             for ($y = $startYear; $y <= $endYear; $y++) {
+                $queryDetails = $this->_getWhere($start, $end, $userId, $carId, $expenseId, $y);
+                $where = $queryDetails['where'];
+                $queryParams = $queryDetails['params'];
                 $table = "Expense_{$y}";
                 $query .= "SELECT sum(Price) as Price, Max(Mileage) - Min(Mileage) as Distance FROM {$table} {$where} UNION ALL ";
                 $params = array_merge($params, $queryParams);
@@ -149,20 +179,20 @@ class StatisticsModel extends DbModelAbstract
         }
     }
 
-    private function _getWhere($start, $end, $userId, $carId, $expenseId)
+    private function _getWhere($start, $end, $userId, $carId, $expenseId, $year)
     {
-        $where = "WHERE `Date` >= ? AND `Date` <= ? AND `UID` = ? ";
+        $where = "WHERE `Expense_{$year}`.`Date` >= ? AND `Expense_{$year}`.`Date` <= ? AND `Expense_{$year}`.`UID` = ? ";
         $params = [$start, $end, $userId];
 
         if ($carId !== "all") {
-            $where .= "AND `CID` = ? ";
+            $where .= "AND `Expense_{$year}`.`CID` = ? ";
             $params[] = $carId;
         }
 
         if ($expenseId !== "all") {
-            $where .= " AND `Expense_ID` = ? ";
+            $where .= " AND `Expense_{$year}`.`Expense_ID` = ? ";
             $params[] = $expenseId;
-            $data['Expense'] = $expenseModel->getExpenseName($expenseId);
+            $data['Expense'] = $this->expenseModel->getExpenseName($expenseId);
         }
 
         $result['where'] = $where;

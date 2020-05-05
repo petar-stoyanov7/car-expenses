@@ -1,5 +1,6 @@
 </div>
 </main>
+<div class="bottom-spacer"></div>
 <footer>
 Copyright pest media. All wrongs reserved.
 </footer>
@@ -10,3 +11,4 @@ Copyright pest media. All wrongs reserved.
     <?php endforeach; ?>
 <?php endif; ?>
 </html>
+

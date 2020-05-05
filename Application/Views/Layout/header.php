@@ -24,6 +24,11 @@ use \Core\View;
 </head>
 <body>
     <div id="black-overlay"></div>
+    <div id="form-black-overlay"></div>
+    <div id="loading-message" class="loading-text">
+        <span>Loading...</span>
+    </div>
+    <div id="top-spacer"></div>
     <?php #top-toolbar ?>
 	<header class="top-bar">
         <div class="site-logo">
@@ -65,12 +70,11 @@ use \Core\View;
 	</header>
 </body>
 <main>
-<div class="main-content">
 <?php if (!empty($loginForm)) : ?>
-   <div id="user-login-modal" class="toggleable-modal">
-       <h3>Login:</h3>
-       <?php View::renderForm($loginForm); ?>
-   </div>
+    <div id="user-login-modal" class="toggleable-modal">
+        <h3>Login:</h3>
+        <?php View::renderForm($loginForm); ?>
+    </div>
 <?php endif; ?>
 <?php if (!empty($registerForm)) : ?>
     <div id="user-register-modal" class="toggleable-modal">
@@ -78,3 +82,5 @@ use \Core\View;
         <?php View::renderForm($registerForm); ?>
     </div>
 <?php endif; ?>
+<div class="main-content">
+

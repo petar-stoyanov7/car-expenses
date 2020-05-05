@@ -4,3 +4,50 @@ img.icon {
   width: 10px;
   height: 10px;
 }
+
+form {
+  .form-wrapper {
+    display: flex;
+
+    input,label,select,textarea {
+      font-size: 1em;
+      margin-bottom: 6px;
+      border-radius: 2px;
+    }
+
+    label {
+      width: 30%;
+    }
+    select{
+      width: 16.4em;
+    }
+    input {
+      width: 16em;
+    }
+    textarea {
+      width: 32.4em;
+      height: 6em;
+    }
+
+    button {
+      height: 2em;
+      width: 7em;
+      font-size: 1em;
+      background-color: #049609;
+      color: white;
+      font-weight: bold;
+    }
+  }
+}
+
+.element {
+  h4 {
+    background-color: #c3e1c5;
+    padding: 5px;
+    border-radius: 1px;
+  }
+
+  .element-entry {
+    display: block;
+  }
+}

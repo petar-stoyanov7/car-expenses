@@ -15,8 +15,14 @@ var _showAllFuels = function() {
 };
 
 var _toggleLoading = function() {
-    $('#expense-black-overlay').toggle();
+    $('#form-black-overlay').toggle();
     $('#loading-message').toggle();
+};
+
+var _resetForm = function() {
+    $('#description').val('');
+    $('#value').val('');
+    $('#liters').val('');
 };
 
 var displayOption = function(selector) {
@@ -151,7 +157,7 @@ $(function(){
                 console.log(response);
             }
         }).done(function(data){
-            form.find('input textarea').val('');
+            _resetForm();
             setMileage(cars);
             if (data['success']) {
                 getLastFive(userId);
