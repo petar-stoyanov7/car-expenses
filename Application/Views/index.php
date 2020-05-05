@@ -23,15 +23,15 @@
 </div>
 
 <div class="container">
-<h3>Последни пет:</h3>
+<h3>Last five:</h3>
 <table class="expenses">
 <tr>
-	<th>Километри</th>
-	<th>Автомобил</th>
-	<th>Тип разход</th>
-	<th>Тип:</th>
-	<th>Стойност</th>
-	<th>Бележки</th>
+	<th>Mileage</th>
+	<th>Car</th>
+	<th>Expense type</th>
+	<th>Type</th>
+	<th>Value</th>
+	<th>Notes</th>
 </tr>
 
 <?php

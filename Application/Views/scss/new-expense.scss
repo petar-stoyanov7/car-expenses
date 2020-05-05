@@ -1,10 +1,56 @@
 @import 'variables';
 
+#expense-black-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  z-index: $med-z-index;
+  background-color: rgba(0, 0, 0, 0.7);
+}
+
 #loading-message.new-expense-loading {
   span {
     display: inline-block;
     background-color: #fff;
     padding: 5px 10px 5px 10px;
     border-radius: 3px;
+  }
+}
+
+form {
+  .form-wrapper {
+    display: flex;
+
+    input,label,select,textarea {
+      font-size: 1.3em;
+      margin-bottom: 6px;
+      border-radius: 2px;
+    }
+
+    label {
+      width: 30%;
+    }
+    select{
+      width: 16.4em;
+    }
+    input {
+      width: 16em;
+    }
+    textarea {
+      width: 32.4em;
+      height: 6em;
+    }
+
+    button {
+      height: 2.5em;
+      width: 8.1em;
+      font-size: 1.1em;
+      background-color: #049609;
+      color: white;
+      font-weight: bold;
+    }
   }
 }

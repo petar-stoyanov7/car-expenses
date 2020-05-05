@@ -1,5 +1,6 @@
 var cache = {};
 var cars = {};
+var lastFive = {};
 
 var _hideOptionals = function() {
     $.each($('.optional-select'), function(i, value){
@@ -14,7 +15,7 @@ var _showAllFuels = function() {
 };
 
 var _toggleLoading = function() {
-    $('#black-overlay').toggle();
+    $('#expense-black-overlay').toggle();
     $('#loading-message').toggle();
 };
 
@@ -41,7 +42,6 @@ var filterExpenses = function() {
 var filterFuels = function(cars) {
     selectedCar = $('#car-id').val();
     fuels = cars[selectedCar].fuels;
-    console.log(fuels);
     _showAllFuels();
     $.each($('#fuel-type option'), function(){
         if (fuels.indexOf($(this).val()) === -1) {
@@ -75,7 +75,43 @@ var getCars = function(userId) {
     }).done(function(data){
         _toggleLoading();
         filterFuels(cars);
-        console.log(cars);
+    });
+};
+
+var drawLastFive = function(data){
+    $table = $('#last-five-expenses');
+    $('#last-five-expenses tr.dynamic-row').remove();
+
+    $.each(data, function(i,datum){
+        var row = '<tr class="dynamic-row">' +
+            '<td>'+datum['mileage']+'</td>' +
+            '<td>'+datum['car']+'</td>' +
+            '<td>'+datum['expenseType']+'</td>' +
+            '<td>'+datum['type']+'</td>' +
+            '<td>'+datum['price']+'</td>' +
+            '<td>'+datum['notes']+'</td>' +
+            '</tr>';
+        $table.append(row);
+    });
+};
+
+var getLastFive = function(userId) {
+    $.ajax({
+        type: 'POST',
+        dataType: 'json',
+        url: '/expense/get-last-five',
+        data: {
+            userId: userId
+        },
+        success: function(data) {
+            lastFive = data;
+        },
+        error: function(response) {
+            console.log('error with last five');
+            console.log(response);
+        }
+    }).done(function(data){
+        drawLastFive(lastFive);
     });
 };
 
@@ -84,8 +120,45 @@ $(function(){
     var expenseSelect = $('#expense-type');
     var userId = $('#user-id').val();
     var dataReady = false;
+    var form = $('#new-expense-form');
 
     getCars(userId);
+    getLastFive(userId);
+
+    form.submit(function(event){
+        _toggleLoading()
+        event.preventDefault();
+        formData = {
+            "userId": userId,
+            "carId": $('#car-id').val(),
+            "expenseType": $('#expense-type').val(),
+            "fuelType": $('#fuel-type').val(),
+            "insuranceType": $('#insurance-type').val(),
+            "date": $('#date').val(),
+            "mileage": $('#mileage').val(),
+            "liters": $('#liters').val(),
+            "value": $('#value').val(),
+            "description": $('#description').val(),
+        };
+        $.ajax({
+            type: 'POST',
+            dataType: 'json',
+            url: '/expense/new-ajax-expense',
+            data: formData,
+            error: function(response) {
+                _toggleLoading();
+                console.log('error with form execution');
+                console.log(response);
+            }
+        }).done(function(data){
+            form.find('input textarea').val('');
+            setMileage(cars);
+            if (data['success']) {
+                getLastFive(userId);
+                _toggleLoading();
+            }
+        });
+    });
 
     $('#car-id').change(function(){
         filterFuels(cars);

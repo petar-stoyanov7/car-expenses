@@ -36,7 +36,7 @@ class StatisticsModel extends DbModelAbstract
         $tableList = $this->expenseModel->getTableList();
         while($limit > 0) {
             $query = "SELECT * FROM `Expense_{$year}` WHERE `UID`= ?
-                ORDER BY `Date` DESC LIMIT {$limit}";
+                ORDER BY `ID` DESC LIMIT {$limit}";
             $array = $this->getData($query, [$uid]);
             $result = array_merge($result, $array);
             $limit = $limit - count($array);
