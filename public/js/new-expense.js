@@ -14,11 +14,6 @@ var _showAllFuels = function() {
     });
 };
 
-var _toggleLoading = function() {
-    $('#form-black-overlay').toggle();
-    $('#loading-message').toggle();
-};
-
 var _resetForm = function() {
     $('#description').val('');
     $('#value').val('');

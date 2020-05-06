@@ -1,3 +1,8 @@
+var _toggleLoading = function() {
+    $('#form-black-overlay').toggle();
+    $('#loading-message').toggle();
+};
+
 $(function(){
     var blackOverlay = $('#black-overlay');
     var loginModal = $('#user-login-modal');

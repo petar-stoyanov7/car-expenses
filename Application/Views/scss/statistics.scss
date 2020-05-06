@@ -5,6 +5,17 @@ img.icon {
   height: 10px;
 }
 
+#blacker-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: $med-plus-z-index;
+  background-color: rgba(0, 0, 0, 0.44);
+}
+
 form {
   .form-wrapper {
     display: flex;
@@ -50,4 +61,109 @@ form {
   .element-entry {
     display: block;
   }
+}
+
+#detailed-info {
+  display: none;
+  position: fixed;
+  z-index: $med-z-index;
+  background-color: #fff;
+  top: 30%;
+  left: 30%;
+  width: 35%;
+  padding: 15px;
+  box-shadow: 3px 3px 3px #044806;
+  border-radius: 3px;
+  font-size: 1.3em;
+
+  span.modal-close {
+    position: absolute;
+    top: 3%;
+    right: 1%;
+    padding: 2px;
+    border-radius: 2px;
+    cursor: pointer;
+  }
+
+  h4 {
+    margin: 5px 5px 10px;
+    background-color: #badfa1;
+    display: inline-block;
+    padding: 5px;
+    border-radius: 3px;
+  }
+
+  .flex-wrapper {
+    margin-bottom: 3px;
+
+    .label {
+      font-weight: bold;
+      width: 20%;
+    }
+  }
+  a.delete-expense {
+    font-size: 2.3em;
+    padding: 6px 15px;
+    background-color: #ff5656;
+    color: white;
+    border-radius: 10%;
+    cursor: pointer;
+  }
+}
+#delete-confirm {
+  display: none;
+  position: fixed;
+  z-index: $high-z-index;
+  top: 25%;
+  left: 34%;
+  width: 28%;
+  background-color: #fff;
+  border-radius: 3px;
+  box-shadow: 3px 3px 3px #045c06;
+  padding: 15px;
+  font-size: 1.3em;
+
+  span {
+    display: block;
+  }
+  span.confirm-close {
+    position: absolute;
+    top: 3%;
+    right: 1%;
+    padding: 2px;
+    border-radius: 2px;
+    cursor: pointer;
+  }
+
+  button {
+    height: 1.5em;
+    width: 4em;
+    font-size: 0.9em;
+    color: white;
+    font-weight: bold;
+
+    &.delete-yes {
+      background-color: red;
+    }
+    &.delete-no {
+      background-color: #049609;
+    }
+  }
+}
+
+//Overriders
+table {
+  a {
+    &:hover {
+      cursor: pointer;
+    }
+  }
+}
+
+div.main-content {
+  width: 80%;
+}
+
+div.container.statistics-content {
+  width: 95%;
 }

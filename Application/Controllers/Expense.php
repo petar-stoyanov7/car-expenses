@@ -67,49 +67,16 @@ class Expense
         }
     }
 
-    public function detailedInfoAction($params)
-    {
-        $title = "Детайлна справка";
-        if(isset($params['id']) && isset($params['year'])) {
-            $id = $params['id'];
-            $year = $params['year'];
-            $data = $this->statisticsModel->getStatisticById($id,$year);
-
-            $viewParams = [
-                'data' => $data,
-                'expenseModel' => $this->expenseModel,
-                'carModel' => $this->carModel,
-            ];
-            View::render('expense/detailed-info.php', $viewParams);
-        } else {
-            header("Location: /statistics");
-        }
-    }
-
     public function removeAction($params)
     {
-        if (isset($params['id']) && isset($params['year'])) {
-            $expenseId = $params['id'];
-            $year = $params['year'];
-            $form = new DeleteExpenseForm($expenseId, $year);
-            $data = $this->statisticsModel->getStatisticById($expenseId, $year);
-            $viewParams = [
-                'form'          => $form,
-                'title'         => 'Remove expense',
-                'CSS'           => ['new-expense.css'],
-                'data'          => $data,
-                'type'          => $this->expenseModel->getExpenseName($data['Expense_ID']),
-                'fuelName'      => $this->carModel->getFuelName($data['Fuel_ID']),
-                'insuranceName' => $this->expenseModel->getInsuranceName($data['Insurance_ID'])
-            ];
-            if (isset($_POST['id']) && isset($_POST['year'])) {
-                $this->expenseModel->removeExpense($_POST['id'],$_POST['year']);
-                header("Location: /statistics");
-            }
-            View::render('expense/remove-expense.php', $viewParams);
-        } else {
-            header('Location: /statistics');
+        if (!empty($_POST['date']) && !empty($_POST['expenseId'])) {
+            $year = explode('-', $_POST['date'])[0];
+            $this->expenseModel->removeExpense($_POST['expenseId'],$year);
+            echo json_encode(['success' => true]);
+            die();
         }
+        echo json_encode(['success' => false]);
+        die();
     }
 
     public function newAjaxExpenseAction()
@@ -129,7 +96,7 @@ class Expense
                 $values['description']
             );
             $this->expenseModel->addExpense($expense);
-            echo json_encode(['success'=>true]);
+            echo json_encode(['success' => true]);
             die();
         }
         echo json_encode(['success' => false]);
