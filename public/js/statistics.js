@@ -1,9 +1,9 @@
 var expenseCache = {};
 
-var closeDeleteConfirmation = function()
+var _closeDeleteConfirmation = function()
 {
     $('#delete-confirm').hide();
-    $('#blacker-overlay').hide();
+    _toggleBlack2();
     $('#delete-confirm button.delete-yes').attr('onclick', '');
 };
 
@@ -11,7 +11,7 @@ var showDeleteConfirmation = function(index)
 {
     var cacheString = $('#detailed-expenses-table').attr('cacheString');
     var data = expenseCache[cacheString]['allExpenses'][index];
-    $('#blacker-overlay').toggle();
+    _toggleBlack2();
     $('#delete-confirm').toggle();
     $('#delete-confirm button.delete-yes')
         .attr(
@@ -24,7 +24,6 @@ var showDetailedInformation = function(index)
 {
     var cacheString = $('#detailed-expenses-table').attr('cacheString');
     var data = expenseCache[cacheString]['allExpenses'][index];
-    var blackOverlay = $('#black-overlay');
     var detailedInfo = $('#detailed-info');
     var deleteButton = $('a.delete-expense');
     $('#detailed-info span.data').val('');
@@ -52,12 +51,13 @@ var showDetailedInformation = function(index)
                 '<span class="label">Insurance Type:</span>' +
                 '<span class="data">' + data['insurance_name'] + '</span>' +
                 '</div>';
+            break;
         default:
             added = '';
     }
     $('div.separator').after(added);
     detailedInfo.toggle();
-    blackOverlay.toggle();
+    _toggleBlack1();
 };
 
 var showDeleteExpense = function(index)
@@ -119,8 +119,8 @@ var deleteExpense = function(expenseString)
             var row = $('#' + expenseString);
             var arrayIndex = row.attr('rowIndex');
             row.remove();
-            $('#blacker-overlay').hide();
-            $('#black-overlay').hide();
+            _toggleBlack2();
+            _toggleBlack1();
             $('.expense-details-modal').hide();
             expenseCache[cacheString]['allExpenses'].splice(arrayIndex, 1);
         }
@@ -159,7 +159,6 @@ var renderDetailedStatistics = function(data, cacheString)
 
 var renderStatisticsData = function(data, cacheString)
 {
-    console.log(data);
     renderCars(data['cars']);
     renderDetailedStatistics(data['allExpenses'], cacheString);
 };
@@ -205,8 +204,6 @@ var getStatisticsData = function() {
 
 $(function(){
     var form = $('#get-statistics-form');
-    var blackOverlay = $('#black-overlay');
-    var blackerOverlay = $('#blacker-overlay');
 
     form.submit(function(event){
         event.preventDefault();
@@ -215,16 +212,11 @@ $(function(){
 
     $('.modal-close').click(function(){
         $(this).closest('div.expense-details-modal').hide();
-        blackOverlay.hide();
+        _toggleBlack1();
     });
 
     $('#delete-confirm .modal-close').click(function(){
         $(this).closest('div.expense-details-modal').hide();
-        blackerOverlay.hide();
-    });
-
-    blackerOverlay.click(function(){
-        $('#delete-confirm').hide();
-        blackerOverlay.hide();
+        _toggleBlack2();
     });
 });

@@ -2,6 +2,8 @@
 
 namespace Application\Controllers;
 
+use Application\Forms\CarForm;
+use Application\Forms\UserForm;
 use \Core\View;
 use \Application\Models\UserModel;
 use \Application\Models\CarModel;
@@ -31,18 +33,13 @@ class Admin
     {
         $viewParams = [
             'title'     => 'Admin panel',
+            'carForm'   => new CarForm(),
+            'userForm'  => new UserForm(),
             'userList'  => $this->userModel->listUsers(),
             'carModel'  => $this->carModel,
-            'CSS'   => ['admin.css']
+            'CSS'       => ['admin.css', 'profile.css', 'cars.css'],
+            'JS'        => ['cars.js', 'profile.js', 'admin.js'],
         ];
-
-        // if (isset($_GET['uid'])) {
-		// 	$uid = $_GET['uid'];
-		// 	$user_dao = new User_DAO();
-		// 	$user_dao->remove_user($uid);
-		// 	display_warning("Потребителят ".$user_dao->getUserByUserId($uid)."е изтрит успешно");
-		// 	header("Location: admin.php");
-		// }
 
         View::render('admin/admin.php', $viewParams);
     }

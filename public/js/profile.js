@@ -5,7 +5,6 @@ var $firstName;
 var $lastName;
 var $email;
 var $city;
-var $oldPwd;
 var $sex;
 var $currentUser;
 
@@ -20,12 +19,11 @@ var _resetUserForm = function() {
     $lastName.val('');
     $email.val('');
     $city.val('');
-    $oldPwd.val('');
 };
 
 var _closeModal = function()
 {
-    $('#black-overlay').hide();
+    _toggleBlack2();
     $('#user-form-modal').hide();
 };
 
@@ -36,7 +34,7 @@ var _addErrorClass = function(element)
 
 var _toggleUserModal = function()
 {
-    $('#black-overlay').toggle();
+    _toggleBlack2();
     $('#user-form-modal').toggle();
 };
 
@@ -77,7 +75,6 @@ var _resetPage = function(data)
         'onclick',
         'drawUserForm(' + data['user-id'] + ');'
     );
-    $oldPwd.val('');
 };
 
 var renderUser = function(userId)
@@ -129,7 +126,6 @@ var editUser = function()
         _startLoading();
         var userId = $userId.val();
         var newValues = {
-            'old-password': $oldPwd.val(),
             'firstname': $firstName.val(),
             'lastname': $lastName.val(),
             'sex': $sex.val(),
@@ -168,7 +164,6 @@ $(function(){
     $lastName = $('#lastname');
     $email = $('#email1');
     $city = $('#city');
-    $oldPwd = $('#old-password');
     $userId = $('#user-id');
     $sex = $('#sex');
     $currentUser = $('#profile-user-id');

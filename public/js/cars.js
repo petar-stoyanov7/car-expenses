@@ -14,7 +14,7 @@ var carCache = {};
 
 var _toggleCarModal = function()
 {
-    $('#black-overlay').toggle();
+    _toggleBlack2();
     $('#car-form-modal').toggle();
 };
 
@@ -40,7 +40,7 @@ var _resetDeleteModal = function()
 var _closeDeleteConfirmation = function()
 {
     $('#delete-confirm').hide();
-    $('#blacker-overlay').hide();
+    _toggleBlack2();
     _resetDeleteModal();
 };
 
@@ -123,7 +123,7 @@ var showDeleteCar = function(carId)
     _resetDeleteModal();
     $('div.profile-car').addClass('hide-car-overlay');
     $('#car-id-'+carId).removeClass('hide-car-overlay').addClass('delete-car-overlay');
-    $('#blacker-overlay').toggle();
+    _toggleBlack2();
     $('#delete-confirm').toggle();
     $('#delete-confirm button.delete-yes')
         .attr(
@@ -279,7 +279,7 @@ $(function(){
         processCar();
     });
 
-    if ($currentCarUser.val !== '') {
+    if ($currentCarUser.val() !== '') {
         renderUserCars($currentCarUser.val());
     }
 });

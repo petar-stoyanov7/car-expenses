@@ -1,4 +1,4 @@
-var cache = {};
+var expenseCache = {};
 var cars = {};
 var lastFive = {};
 
@@ -41,19 +41,25 @@ var filterExpenses = function() {
 };
 
 var filterFuels = function(cars) {
+    console.log(cars);
     selectedCar = $('#car-id').val();
-    fuels = cars[selectedCar].fuels;
+    // fuels = cars[selectedCar].fuels;
+    fuels = [cars[selectedCar]['Fuel_ID']];
+    if (null !== cars[selectedCar]['Fuel_ID2']) {
+        fuels.push(cars[selectedCar]['Fuel_ID2']);
+    }
     _showAllFuels();
     $.each($('#fuel-type option'), function(){
         if (fuels.indexOf($(this).val()) === -1) {
             $(this).hide();
         }
     });
+    $('#fuel-type').val(cars[selectedCar]['Fuel_ID']);
 };
 
 var setMileage = function(cars) {
     selectedCar = $('#car-id').val();
-    $('#mileage').val(cars[selectedCar].mileage);
+    $('#mileage').val(cars[selectedCar]['Mileage']);
 };
 
 var getCars = function(userId) {
@@ -61,7 +67,7 @@ var getCars = function(userId) {
     $.ajax({
         type: 'POST',
         url: '/cars/list-user-cars/',
-        dataType: 'json',
+        dataType: 'JSON',
         data: {
             userid: userId
         },
@@ -98,6 +104,45 @@ var drawLastFive = function(data){
     });
 };
 
+var processExpense = function()
+{
+    _startLoading();
+    var carId = $('#car-id').val();
+    var mileage = $('#mileage').val();
+    var userId = $('#user-id').val();
+    formData = {
+        "userId": userId,
+        "carId": carId,
+        "expenseType": $('#expense-type').val(),
+        "fuelType": $('#fuel-type').val(),
+        "insuranceType": $('#insurance-type').val(),
+        "date": $('#date').val(),
+        "mileage": mileage,
+        "liters": $('#liters').val(),
+        "value": $('#value').val(),
+        "description": $('#description').val(),
+    };
+    $.ajax({
+        type: 'POST',
+        dataType: 'json',
+        url: '/expense/new-ajax-expense',
+        data: formData,
+        error: function(response) {
+            _stopLoading();
+            console.log('error with form execution');
+            console.log(response);
+        }
+    }).done(function(data){
+        cars[carId]['Mileage'] = mileage;
+        _resetForm();
+        setMileage(cars);
+        if (data['success']) {
+            getLastFive(userId);
+        }
+        _stopLoading();
+    });
+};
+
 var getLastFive = function(userId) {
     $.ajax({
         type: 'POST',
@@ -129,41 +174,8 @@ $(function(){
     getLastFive(userId);
 
     form.submit(function(event){
-        _startLoading();
         event.preventDefault();
-        var carId = $('#car-id').val();
-        var mileage = $('#mileage').val();
-        formData = {
-            "userId": userId,
-            "carId": carId,
-            "expenseType": $('#expense-type').val(),
-            "fuelType": $('#fuel-type').val(),
-            "insuranceType": $('#insurance-type').val(),
-            "date": $('#date').val(),
-            "mileage": mileage,
-            "liters": $('#liters').val(),
-            "value": $('#value').val(),
-            "description": $('#description').val(),
-        };
-        $.ajax({
-            type: 'POST',
-            dataType: 'json',
-            url: '/expense/new-ajax-expense',
-            data: formData,
-            error: function(response) {
-                _stopLoading();
-                console.log('error with form execution');
-                console.log(response);
-            }
-        }).done(function(data){
-            cars[carId].mileage = mileage;
-            _resetForm();
-            setMileage(cars);
-            if (data['success']) {
-                getLastFive(userId);
-            }
-            _stopLoading();
-        });
+        processExpense();
     });
 
     $('#car-id').change(function(){

@@ -7,14 +7,14 @@
 
 
 
-<div id="delete-confirm" class="expense-details-modal">
+<div id="delete-confirm" class="expense-details-modal modal-lvl-3">
     <span class="confirm-close" onclick="_closeDeleteConfirmation()"><i class="far fa-times-circle"></i></span>
     <span>Are you sure you want to delete this car? This action is irreversible!</span>
     <button class="delete-yes">Yes</button>
     <button class="delete-no" onclick="_closeDeleteConfirmation()">No</button>
 </div>
 
-<div id="car-form-modal" class="toggleable-modal">
+<div id="car-form-modal" class="modal-lvl-2">
     <h3 class="title">Edit car:</h3>
     <?php $View::renderForm($carForm) ?>
 </div>

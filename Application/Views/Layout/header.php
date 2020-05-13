@@ -23,9 +23,10 @@ use \Core\View;
 	<link rel="icon" href="/img/icon-wheel.png">
 </head>
 <body>
-    <div id="black-overlay"></div>
-    <div id="blacker-overlay"></div>
-    <div id="form-black-overlay"></div>
+    <div id="black-lvl-1" class="black-overlay"></div>
+    <div id="black-lvl-2" class="black-overlay"></div>
+    <div id="black-lvl-3" class="black-overlay"></div>
+    <div id="loading-black" class="black-overlay"></div>
     <div id="loading-message" class="loading-text">
         <span>Loading...</span>
     </div>
@@ -72,13 +73,13 @@ use \Core\View;
 </body>
 <main>
 <?php if (!empty($loginForm)) : ?>
-    <div id="user-login-modal" class="toggleable-modal">
+    <div id="user-login-modal" class="modal-lvl-1">
         <h3>Login:</h3>
         <?php View::renderForm($loginForm); ?>
     </div>
 <?php endif; ?>
 <?php if (!empty($registerForm)) : ?>
-    <div id="user-register-modal" class="toggleable-modal">
+    <div id="user-register-modal" class="modal-lvl-1">
         <h3>Register:</h3>
         <?php View::renderForm($registerForm); ?>
     </div>

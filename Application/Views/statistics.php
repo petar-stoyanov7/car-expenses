@@ -26,7 +26,7 @@
     </table>
 </div>
 
-<div id="detailed-info" class="toggleable-modal expense-details-modal">
+<div id="detailed-info" class="modal-lvl-1 expense-details-modal">
     <span class="modal-close"><i class="far fa-times-circle"></i></span>
     <h4>Expense details:</h4>
     <div class="flex-wrapper">
@@ -52,7 +52,7 @@
     <a class="delete-expense"><i class="far fa-trash-alt"></i></a>
 </div>
 
-<div id="delete-confirm" class="expense-details-modal">
+<div id="delete-confirm" class="expense-details-modal modal-lvl-2">
     <span class="confirm-close" onclick="_closeDeleteConfirmation()"><i class="far fa-times-circle"></i></span>
     <span>Are you sure you want to delete this expense?!</span>
     <button class="delete-yes">Yes</button>

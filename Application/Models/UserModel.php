@@ -11,8 +11,18 @@ class UserModel extends DbModelAbstract
 {
     public function listUsers()
     {
-        $array = $this->getData("SELECT * FROM `Users`");
-        return $array;
+        $query = <<<__SQL
+            SELECT
+            u.*,
+            count(c.ID) as number_of_cars
+            FROM Users u
+            LEFT JOIN
+            Cars c ON u.ID = c.UID
+            GROUP BY u.ID
+__SQL;
+        return $this->getData($query);
+//        $array = $this->getData("SELECT * FROM `Users`");
+//        return $array;
     }
 
     public function getUserByUserId($id)

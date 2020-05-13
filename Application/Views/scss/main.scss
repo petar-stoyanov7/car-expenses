@@ -18,36 +18,37 @@ body {
   height: 20px;
 }
 
-#black-overlay {
+.black-overlay {
   display: none;
   position: fixed;
   top: 0;
   left: 0;
   bottom: 0;
   right: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+}
+
+#black-lvl-1 {
+  z-index: $lowest-z-index;
+}
+.modal-lvl-1 {
+  z-index: $low-z-index;
+}
+#black-lvl-2 {
   z-index: $med-z-index;
-  background-color: rgba(0, 0, 0, 0.7);
 }
-
-#blacker-overlay {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+.modal-lvl-2 {
   z-index: $med-plus-z-index;
-  background-color: rgba(0, 0, 0, 0.44);
+}
+#black-lvl-3 {
+  z-index: $high-z-index
+}
+.modal-lvl-3 {
+  z-index: $highest-z-index;
 }
 
-#form-black-overlay {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  right: 0;
-  z-index: $highest-z-index;
+#loading-black {
+  z-index: $loading-z-index;
   background-color: rgba(0, 0, 0, 0.7);
 }
 
@@ -56,13 +57,15 @@ body {
   position: fixed;
   top: 45%;
   left: 45%;
-  z-index: $ultra-z-index;
+  z-index: $loading-text-z-index;
+  background-color: #fff;
   span {
     display: inline-block;
     background-color: #fff;
     padding: 5px 10px 5px 10px;
     border-radius: 3px;
   }
+
 }
 
 #delete-confirm {

@@ -100,7 +100,7 @@ class Account
             $form = new UserForm();
             $carForm = new CarForm();
             $form->addClass('profile-edit');
-            $form->removeElements(['email2', 'check', 'old-password']);
+            $form->removeElements(['email2', 'check']);
             $form->disableElement('username');
 
             $userData = [
@@ -137,7 +137,8 @@ class Account
         $response = [];
         if (!empty($_POST)) {
             $currentUser = $this->userModel->getUserByUserId($_POST['user-id']);
-            $User = new User($currentUser['Username'], $_POST['old-password']);
+            //TODO: FIX THIS!
+            $User = new User($currentUser['Username'], 'blank');
             $this->userModel->editUser($User, $_POST,true);
             $response['success'] = true;
         } else {

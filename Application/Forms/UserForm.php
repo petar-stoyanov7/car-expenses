@@ -52,16 +52,6 @@ class UserForm extends AbstractForm
 
         $this->addElement(
             'password',
-            'old-password',
-            [
-                'required'      => true,
-                'label'         => 'Current password: ',
-                'placeholder'   => 'Required!'
-            ]
-        );
-
-        $this->addElement(
-            'password',
             'password1',
             [
                 'required'      => true,
