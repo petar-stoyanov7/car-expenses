@@ -24,6 +24,7 @@ use \Core\View;
 </head>
 <body>
     <div id="black-overlay"></div>
+    <div id="blacker-overlay"></div>
     <div id="form-black-overlay"></div>
     <div id="loading-message" class="loading-text">
         <span>Loading...</span>

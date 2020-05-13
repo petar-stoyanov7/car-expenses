@@ -57,7 +57,7 @@ var setMileage = function(cars) {
 };
 
 var getCars = function(userId) {
-    _toggleLoading();
+    _startLoading();
     $.ajax({
         type: 'POST',
         url: '/cars/list-user-cars/',
@@ -69,13 +69,15 @@ var getCars = function(userId) {
             cars = data;
         },
         error: function(response) {
+            _stopLoading();
             console.log('error with request');
             console.log(response);
         }
 
     }).done(function(data){
-        _toggleLoading();
         filterFuels(cars);
+        console.log(cars);
+        _stopLoading();
     });
 };
 
@@ -127,16 +129,18 @@ $(function(){
     getLastFive(userId);
 
     form.submit(function(event){
-        _toggleLoading()
+        _startLoading();
         event.preventDefault();
+        var carId = $('#car-id').val();
+        var mileage = $('#mileage').val();
         formData = {
             "userId": userId,
-            "carId": $('#car-id').val(),
+            "carId": carId,
             "expenseType": $('#expense-type').val(),
             "fuelType": $('#fuel-type').val(),
             "insuranceType": $('#insurance-type').val(),
             "date": $('#date').val(),
-            "mileage": $('#mileage').val(),
+            "mileage": mileage,
             "liters": $('#liters').val(),
             "value": $('#value').val(),
             "description": $('#description').val(),
@@ -147,17 +151,18 @@ $(function(){
             url: '/expense/new-ajax-expense',
             data: formData,
             error: function(response) {
-                _toggleLoading();
+                _stopLoading();
                 console.log('error with form execution');
                 console.log(response);
             }
         }).done(function(data){
+            cars[carId].mileage = mileage;
             _resetForm();
             setMileage(cars);
             if (data['success']) {
                 getLastFive(userId);
-                _toggleLoading();
             }
+            _stopLoading();
         });
     });
 

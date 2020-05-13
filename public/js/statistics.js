@@ -1,9 +1,10 @@
 var expenseCache = {};
 
-var _toggleLoading = function()
+var closeDeleteConfirmation = function()
 {
-    $('#form-black-overlay').toggle();
-    $('#loading-message').toggle();
+    $('#delete-confirm').hide();
+    $('#blacker-overlay').hide();
+    $('#delete-confirm button.delete-yes').attr('onclick', '');
 };
 
 var showDeleteConfirmation = function(index)
@@ -17,13 +18,6 @@ var showDeleteConfirmation = function(index)
             'onclick',
             'deleteExpense(\'' + data['Date'] + '_' + data['ID'] + '\')'
         );
-};
-
-var closeDeleteConfirmation = function()
-{
-    $('#delete-confirm').hide();
-    $('#blacker-overlay').hide();
-    $('#delete-confirm button.delete-yes').attr('onclick', '');
 };
 
 var showDetailedInformation = function(index)
@@ -103,7 +97,7 @@ var deleteExpense = function(expenseString)
     var success = false;
     var date = expenseDetails[0];
     var expenseId = expenseDetails[1];
-    _toggleLoading();
+    _startLoading();
     $.ajax({
         type: 'POST',
         url: '/expense/remove',
@@ -115,7 +109,7 @@ var deleteExpense = function(expenseString)
         error: function(response) {
             console.log('Error with deletion');
             console.log(response);
-            _toggleLoading();
+            _stopLoading();
         },
         success: function(data) {
             success = data['success'];
@@ -130,7 +124,7 @@ var deleteExpense = function(expenseString)
             $('.expense-details-modal').hide();
             expenseCache[cacheString]['allExpenses'].splice(arrayIndex, 1);
         }
-        _toggleLoading();
+        _stopLoading();
     });
 };
 
@@ -177,10 +171,10 @@ var getStatisticsData = function() {
     var endDate = $('#to').val();
     var userId = $('#user-id').val();
     var cacheString = selectedCar + expenseType + startDate + endDate + userId;
-    _toggleLoading();
+    _startLoading();
     if (expenseCache[cacheString] !== undefined) {
         renderStatisticsData(expenseCache[cacheString], cacheString);
-        _toggleLoading();
+        _stopLoading();
     } else {
         $.ajax({
             type: 'POST',
@@ -200,11 +194,11 @@ var getStatisticsData = function() {
             error: function(response) {
                 console.log('Error with statistics data');
                 console.log(response);
-                _toggleLoading();
+                _stopLoading();
             }
         }).done(function(){
             renderStatisticsData(expenseCache[cacheString], cacheString);
-            _toggleLoading();
+            _stopLoading();
         });
     }
 };

@@ -1,6 +1,19 @@
-var _toggleLoading = function() {
-    $('#form-black-overlay').toggle();
-    $('#loading-message').toggle();
+var loadingCounter = 0;
+
+var _startLoading = function() {
+    loadingCounter++;
+    if (loadingCounter <= 1) {
+        $('#form-black-overlay').show();
+        $('#loading-message').show();
+    }
+};
+
+var _stopLoading = function() {
+    loadingCounter--;
+    if (loadingCounter <= 0) {
+        $('#form-black-overlay').hide();
+        $('#loading-message').hide();
+    }
 };
 
 $(function(){
@@ -8,7 +21,6 @@ $(function(){
     var loginModal = $('#user-login-modal');
     var registerModal = $('#user-register-modal');
 
-    // $('.toggleable-modal').hide();
 
     $('#login-button').click(function(){
         blackOverlay.show();
@@ -19,7 +31,6 @@ $(function(){
         blackOverlay.show();
         registerModal.show();
     });
-
 
     blackOverlay.click(function(){
         blackOverlay.hide();

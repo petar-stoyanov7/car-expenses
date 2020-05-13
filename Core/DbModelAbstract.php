@@ -56,6 +56,7 @@ abstract class DbModelAbstract
             try {
                 $statement = $this->connection->prepare($sql, [PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY]);
                 $statement->execute($values);
+                return $this->connection->lastInsertId();
             } catch (PDOException $e) {
                 die('DB Error: '. $e->getMessage());
             }

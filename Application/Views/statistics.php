@@ -1,4 +1,3 @@
-<div id="blacker-overlay"></div>
 <div class="container">
     <h3>Statistic for period:</h3>
     <?php //display_statistics_input($uid); ?>
@@ -54,8 +53,8 @@
 </div>
 
 <div id="delete-confirm" class="expense-details-modal">
-    <span class="confirm-close" onclick="closeDeleteConfirmation()"><i class="far fa-times-circle"></i></span>
+    <span class="confirm-close" onclick="_closeDeleteConfirmation()"><i class="far fa-times-circle"></i></span>
     <span>Are you sure you want to delete this expense?!</span>
     <button class="delete-yes">Yes</button>
-    <button class="delete-no" onclick="closeDeleteConfirmation()">No</button>
+    <button class="delete-no" onclick="_closeDeleteConfirmation()">No</button>
 </div>

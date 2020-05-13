@@ -104,7 +104,7 @@ abstract class AbstractForm
     public function removeElements(array $elements)
     {
         foreach($elements as $element) {
-            $this->removeElement($element['element']);
+            $this->removeElement($element);
         }
     }
 
@@ -185,6 +185,15 @@ abstract class AbstractForm
             $this->class = implode(' ', $classes);
         } else {
             $this->class = $classes;
+        }
+    }
+
+    public function addClass(string $class) : void
+    {
+        if (empty($this->class)) {
+            $this->class = $class;
+        } else {
+            $this->class .= ' ' . $class;
         }
     }
 

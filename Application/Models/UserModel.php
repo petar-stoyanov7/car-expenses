@@ -60,16 +60,17 @@ class UserModel extends DbModelAbstract
         return true;
     }
 
-    public function editUser($user, $post, $auth=0)
+    public function editUser($user, $post, $adminEdit = false)
     {
         $userArray = $this->getUserByUsername($user->getProperty('username'));
-        if ($this->login($user, true) || $auth !== 0) {
-            $query = 'UPDATE Users SET Fname = ?, Lname = ?, City = ?,';
+        if ($this->login($user, true) || $adminEdit) {
+            $query = 'UPDATE Users SET Fname = ?, Lname = ?, City = ?, Email = ?';
 
             $values = [
                 $post['firstname'],
                 $post['lastname'],
                 $post['city'],
+                $post['email']
             ];
             if (!empty($post['password1']) && !empty($post['password2'])) {
                 if ($post['password1'] !== $post['password2']) {
@@ -86,9 +87,12 @@ class UserModel extends DbModelAbstract
             
             $this->execute($query, $values);
 
-            if ($_SESSION !== $oldSession) {
-                session_start();
+            if (!$adminEdit) {
+                if (array_diff($_SESSION, $oldSession)) {
+                    session_start();
+                }
             }
+            return true;
         } else {
             return false;
         }

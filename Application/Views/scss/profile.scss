@@ -1,0 +1,69 @@
+@import 'variables';
+
+.flex-wrapper {
+  flex-direction: row;
+}
+
+.user-summary {
+  width: 60%;
+  font-size: 1.1em;
+  .label {
+    width: 20%;
+  }
+}
+
+
+button {
+  background-color: $button-color;
+  cursor: pointer;
+  margin-top: 10px;
+  color: white;
+  height: 2.2em;
+}
+
+#user-form-modal {
+  display: none;
+  position: absolute;
+  z-index: $med-z-index;
+  top: 20%;
+  left: 35%;
+  width: 20%;
+  background-color: white;
+  padding: 10px;
+  box-shadow: 2px 2px 2px green;
+
+  h3 {
+    display: inline-block;
+    margin: 5px 10px;
+    padding: 5px;
+    background-color: $main-color;
+    color: white;
+    border-radius: 3px;
+  }
+
+  form#account-edit-form {
+    font-size: 1em;
+    label,input,select {
+      font-size: 1em;
+    }
+    select {
+      height: 1.4em;
+    }
+
+    label[for="check"] {
+      width: 80%;
+    }
+
+    .form-error {
+      border: 1px outset red;
+      border-radius: 2px;
+      padding: 3px;
+      background-color: rgba(255, 29, 14, 0.52);
+    }
+
+    button {
+      height: 2em;
+      width: 6em;
+    }
+  }
+}

@@ -29,6 +29,17 @@ body {
   background-color: rgba(0, 0, 0, 0.7);
 }
 
+#blacker-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: $med-plus-z-index;
+  background-color: rgba(0, 0, 0, 0.44);
+}
+
 #form-black-overlay {
   display: none;
   position: fixed;
@@ -54,6 +65,47 @@ body {
   }
 }
 
+#delete-confirm {
+  display: none;
+  position: fixed;
+  z-index: $high-z-index;
+  top: 25%;
+  left: 34%;
+  width: 28%;
+  background-color: #fff;
+  border-radius: 3px;
+  box-shadow: 3px 3px 3px #045c06;
+  padding: 15px;
+  font-size: 1.3em;
+
+  span {
+    display: block;
+  }
+  span.confirm-close {
+    position: absolute;
+    top: 3%;
+    right: 1%;
+    padding: 2px;
+    border-radius: 2px;
+    cursor: pointer;
+  }
+
+  button {
+    height: 1.5em;
+    width: 4em;
+    font-size: 0.9em;
+    color: white;
+    font-weight: bold;
+
+    &.delete-yes {
+      background-color: red;
+    }
+    &.delete-no {
+      background-color: $button-color;
+    }
+  }
+}
+
 .top-bar {
   position: fixed;
   display: flex;
@@ -62,7 +114,7 @@ body {
   top: 0;
   left: 0;
   right: 0;
-  background: rgb(4,150,9);
+  background: $main-color;
   box-shadow: 2px 2px 4px #005903;
 
 
@@ -157,7 +209,7 @@ div.container {
     display: inline-block;
     padding: 5px;
     margin: 3px 3px 10px;
-    background-color: #239136;
+    background-color: $main-color;
     color: white;
     border-radius: 3px;
   }
@@ -182,6 +234,7 @@ div.container {
 
 .flex-wrapper {
   display: flex;
+  flex-wrap: wrap;
 }
 
 table.expenses {
@@ -212,15 +265,66 @@ table.expenses {
   }
 }
 
-// I'm here
-
 footer {
   position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
   height: 20px;
-  background-color: #049609;
+  background-color: $main-color;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+#account-edit-form {
+  fieldset {
+    margin-bottom: 5px;
+  }
+  #fieldset-user {
+    background-color: #e7f4e4;
+    border: 1px solid #8e998e;
+    legend {
+      color: #474d47;
+    }
+  }
+  #fieldset-userdata {
+    background-color: #f0e9e9;
+    border: 1px solid #948e8e;
+    legend {
+      color: #3d3838;
+    }
+  }
+
+  .form-wrapper {
+    display: flex;
+
+    input,label {
+      font-size: 1.3em;
+      margin-bottom: 6px;
+      border-radius: 2px;
+    }
+
+    label {
+      width: 40%;
+    }
+
+    button {
+      height: 2.5em;
+      width: 7.5em;
+      font-size: 1.1em;
+      background-color: $button-color;
+      color: white;
+      font-weight: bold;
+    }
+  }
 }
 
 #user-login-modal {
@@ -240,10 +344,12 @@ footer {
     margin: 0 0 10px 0;
     padding: 1px 5px;
     border-radius: 2px;
-    background-color: #239136;
+    background-color: $main-color;
   }
 
   form {
+
+
     input{
       width: 75%;
       height: 30px;
@@ -255,7 +361,7 @@ footer {
       height: 2.5em;
       width: 7.5em;
       font-size: 1.1em;
-      background-color: #049609;
+      background-color: $button-color;
       color: white;
       font-weight: bold;
     }
@@ -279,47 +385,7 @@ footer {
     margin: 0 0 10px 0;
     padding: 1px 5px;
     border-radius: 2px;
-    background-color: #239136;
-  }
-
-  form {
-    #fieldset-user {
-      background-color: #e7f4e4;
-      border: 1px solid #8e998e;
-      legend {
-        color: #474d47;
-      }
-    }
-    #fieldset-userdata {
-      background-color: #f0e9e9;
-      border: 1px solid #948e8e;
-      legend {
-        color: #3d3838;
-      }
-    }
-
-    .form-wrapper {
-      display: flex;
-
-      input,label {
-        font-size: 1.3em;
-        margin-bottom: 6px;
-        border-radius: 2px;
-      }
-
-      label {
-        width: 40%;
-      }
-
-      button {
-        height: 2.5em;
-        width: 7.5em;
-        font-size: 1.1em;
-        background-color: #049609;
-        color: white;
-        font-weight: bold;
-      }
-    }
+    background-color: $main-color;
   }
 }
 
@@ -338,14 +404,8 @@ span.warn {
   padding: 2px;
   margin: 2px;
   border: 1px solid black;
-  /*radius*/
-  -webkit-border-radius: 2px;
-  -moz-border-radius: 2px;
   border-radius: 2px;
-  /*shadow*/
-  -webkit-box-shadow: 1px 1px 3px 0px rgba(0,0,0,0.75);
-  -moz-box-shadow: 1px 1px 3px 0px rgba(0,0,0,0.75);
-  box-shadow: 1px 1px 3px 0px rgba(0,0,0,0.75);
+  box-shadow: 1px 1px 3px rgba(0,0,0,0.75);
 }
 
 span.success {
@@ -367,18 +427,28 @@ span.success {
   box-shadow: 1px 1px 3px 0px rgba(0,0,0,0.75);
 }
 
-span.edit {
-  display: inline-block;
-  float: right;
-  padding: 1px;
-  border: 1px solid black;
-  /*radius*/
-  -webkit-border-radius: 1px;
-  -moz-border-radius: 1px;
-  border-radius: 1px;
-  margin-left: 2px;
-}
-
 span#user-warning, span#password-warning, span#fname-warning, span#lname-warning, span#city-warning span#general-warning {
   color: red;
+}
+
+.hidden {
+  display: none;
+}
+.low-z-index {
+  z-index: $low-z-index
+}
+.med-z-index {
+  z-index: $med-z-index;
+}
+.med-plus-z-index {
+  z-index: $med-plus-z-index;
+}
+.high-z-index {
+  z-index: $high-z-index;
+}
+.highest-z-index {
+  z-index: $highest-z-index;
+}
+.ultra-z-index {
+  z-index: $ultra-z-index;
 }

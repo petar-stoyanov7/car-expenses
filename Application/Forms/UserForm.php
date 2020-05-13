@@ -21,6 +21,17 @@ class UserForm extends AbstractForm
     public function init()
     {
         $this->setMethod('post');
+        $this->setName('account-edit-form');
+        $this->setClasses('user-form');
+
+        $this->addElement(
+            'hidden',
+            'user-id',
+            [
+                'required' => true,
+            ],
+            $this->userId
+        );
 
         $this->addElement(
             'text',
@@ -39,17 +50,15 @@ class UserForm extends AbstractForm
             $this->username
         );
 
-        if ($this->_checkEdit()) {
-            $this->addElement(
-                'password',
-                'old-password',
-                [
-                    'required'      => true,
-                    'label'         => 'Current password: ',
-                    'placeholder'   => 'Required!'
-                ]
-            );
-        }
+        $this->addElement(
+            'password',
+            'old-password',
+            [
+                'required'      => true,
+                'label'         => 'Current password: ',
+                'placeholder'   => 'Required!'
+            ]
+        );
 
         $this->addElement(
             'password',
@@ -183,28 +192,6 @@ class UserForm extends AbstractForm
             ]
         );
 
-        if ($this->_checkEdit()) {
-            $this->addElement(
-                'hidden',
-                'id',
-                ['required' => true],
-                $this->userId
-            );
-
-            $this->disableElement('username');
-
-            $this->getElementByName('password1')->setPlaceholder(
-                'enter new password'
-            );
-            $this->getElementByName('password2')->setPlaceholder(
-                'repeat new password'
-            );
-            $this->removeElements([
-                'email2',
-                'check'
-            ]);
-        }
-
         $this->addElement(
             'button',
             'submit',
@@ -221,14 +208,5 @@ class UserForm extends AbstractForm
             $values['check'] = 0;
         }
         return parent::validate($values);
-    }
-
-    private function _checkEdit() : bool
-    {
-        if (!empty($this->userId) && !empty($this->username)) {
-            return true;
-        }
-
-        return false;
     }
 }

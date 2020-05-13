@@ -19,7 +19,19 @@ class CarModel extends DbModelAbstract
 
     public function listCarsByUserId($uid)
     {
-        return $this->getData("SELECT * FROM `Cars` WHERE `UID` = ?", [$uid]);
+        $query = <<<__SQL
+            SELECT
+            c.*,
+            ft.Name AS fuel_name1,
+            ft2.Name AS fuel_name2,
+            u.Username AS username
+            FROM Cars c
+            LEFT JOIN Users u on u.ID = c.UID
+            LEFT JOIN Fuel_Types ft on ft.ID = c.Fuel_ID
+            LEFT JOIN Fuel_Types ft2 on ft2.ID = c.Fuel_ID2
+            WHERE u.ID = ?;
+__SQL;
+        return $this->getData($query, [$uid]);
     }
 
     public function countCarsByUserId($uid)
@@ -76,7 +88,19 @@ class CarModel extends DbModelAbstract
     }
 
     public function getCarById($id) {
-        $car_array = $this->getData("SELECT * FROM `Cars` WHERE `ID` = ?",[$id]);
+        $query = <<<__SQL
+            SELECT
+            c.*,
+            ft.Name AS fuel_name1,
+            ft2.Name AS fuel_name2,
+            u.Username AS username
+            FROM Cars c
+            LEFT JOIN Users u on u.ID = c.UID
+            LEFT JOIN Fuel_Types ft on ft.ID = c.Fuel_ID
+            LEFT JOIN Fuel_Types ft2 on ft2.ID = c.Fuel_ID2
+            WHERE c.ID = ?;
+__SQL;
+        $car_array = $this->getData($query,[$id]);
         return $car_array[0];
     }
 
@@ -125,7 +149,7 @@ class CarModel extends DbModelAbstract
             $car->getProperty('fuelId2'),
             $car->getProperty('notes'),
         ];
-        $this->execute($query, $values);        
+        return $this->execute($query, $values);
     }
 
     public function editCar($car, $cid) {
@@ -150,7 +174,7 @@ class CarModel extends DbModelAbstract
             $car->getProperty('notes'),
             $cid
         ];
-        $this->execute($query, $values);
+        return $this->execute($query, $values);
     }
 
     public function removeCarById($id) {
