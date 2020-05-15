@@ -115,7 +115,6 @@ var deleteExpense = function(expenseString)
             success = data['success'];
         }
     }).done(function(){
-        console.log(success);
         if (success) {
             var row = $('#' + expenseString);
             var arrayIndex = row.attr('rowIndex');
