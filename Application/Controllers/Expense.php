@@ -69,13 +69,12 @@ class Expense
 
     public function removeAction($params)
     {
-        $result = [];
+        $result['success'] = false;
         if (!empty($_POST['date']) && !empty($_POST['expenseId'])) {
             $year = explode('-', $_POST['date'])[0];
             $this->expenseModel->removeExpense($_POST['expenseId'],$year);
             $result['success'] = true;
         }
-        $result['success'] = false;
         echo json_encode($result);
         die();
     }
