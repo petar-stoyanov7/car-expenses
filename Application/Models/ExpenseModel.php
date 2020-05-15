@@ -187,7 +187,16 @@ class ExpenseModel extends DbModelAbstract
         $tableList = $this->getTableList();
         foreach ($tableList as $table) {
             $query = "DELETE FROM {$table} WHERE `UID` = ?";
-            $this->execute($query, $userId);
+            $this->execute($query, [$userId]);
+        }
+    }
+
+    public function removeCarExpenses($carId)
+    {
+        $tableList = $this->getTableList();
+        foreach ($tableList as $table) {
+            $query = "DELETE FROM {$table} WHERE `CID` = ?";
+            $this->execute($query, [$carId]);
         }
     }
 }

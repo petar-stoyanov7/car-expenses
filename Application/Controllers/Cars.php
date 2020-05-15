@@ -65,8 +65,12 @@ class Cars
     public function deleteAction($params)
     {
         $response = [];
-        if (isset($_POST['carId'])) {
-            $carId = $_POST['carId'];
+        if (isset($_POST['car-id'])) {
+            $carId = $_POST['car-id'];
+            if (isset($_POST['delete-expenses']) && (int)$_POST['delete-expenses'] === 1) {
+                $expenseModel = new ExpenseModel();
+                $expenseModel->removeCarExpenses($carId);
+            }
             $this->carModel->removeCarById($carId);
             $response['success'] = true;
         } else {

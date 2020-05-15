@@ -4,11 +4,16 @@ $title = "Автомобилни разходи";
 <div class="container">
 <h3 style="background-color: red; color: white">This is an example page!</font></h3>
 <div class="content">
-    Wellcome to the expenses web app! What you see is an example page. With this app you can manage, monitor and calculate
+    Wellcome to the expenses web app! What you see is an example index page. With this app you can manage, monitor and calculate
     the daily expenses of your car, you can extract detailed statistics about your car. To use the full capabilities of
-    this app you need to have an account. Registering is absolutely free and can be done here. For already registered users -
+    this app you need to have an account. Registering is absolutely free. For already registered users -
     you can proceed to the login.
+    <div>
+    End User's License agreement can be seen <a href="#" class="eula-activator">here</a>
+    </div>
 </div>
+    <button class="site-access register-activator">Register</button>
+    <button class="site-access login-activator">Login</button>
 </div>
 <!-- Content -->
 <div class="container">
@@ -77,4 +82,18 @@ $title = "Автомобилни разходи";
 			<td>20</td>
 		</tr>
 	</table>
+</div>
+<div id="modal-eula" class="modal-lvl-1">
+    <h3>End user license agreement</h3>
+    <div>
+        This site is mainly a proof of concept creation, intended mainly for personal usage. It has no commercial aim,
+        does not share any of the stored data with third parties, and does not show advertisements.
+    </div>
+    <div>
+        The site is completely free to use, the platform, upon which is built is Open Source and the source code can be
+        seen <a href="https://github.com/petar-stoyanov7/car-expenses" target="_blank">here</a>.
+    </div>
+    <div>
+        For general feedback, bugs, issues, or suggestion - you can contact me at <span>petar <i>dot</i> stoyanov <i>at</i> gmail.com</span>
+    </div>
 </div>

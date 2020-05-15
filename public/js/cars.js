@@ -12,9 +12,21 @@ var $currentCarUser;
 
 var carCache = {};
 
-var _toggleCarModal = function()
+var _showCarEditForm = function()
 {
     _showBlack3();
+    $('#car-form-modal').show();
+};
+
+var _hideCarEditForm = function()
+{
+    _closeBlack3();
+    $('#car-form-modal').hide();
+};
+
+var _toggleCarModal = function()
+{
+    _toggleBlack3();
     $('#car-form-modal').toggle();
 };
 
@@ -110,13 +122,13 @@ var showEditCar = function(userId,carId)
     $formFuel2.val(car['Fuel_ID2']);
     $formMileage.val(car['Mileage']);
     $formNotes.val(car['Notes']);
-    _toggleCarModal();
+    _showCarEditForm();
 };
 
 var showNewCar = function(userId)
 {
     _resetCarForm();
-    _toggleCarModal();
+    _showCarEditForm();
     $formUserId.val(userId);
 };
 
@@ -186,11 +198,15 @@ var deleteCar = function(carId)
 {
     _startLoading();
     var success = false;
+    var deleteData = {'car-id': carId};
+    if ($('#delete-car-expenses').is(":checked")) {
+        deleteData['delete-expenses'] = 1;
+    }
     $.ajax({
         type: 'POST',
         dataType: 'JSON',
         url: '/cars/delete',
-        data: {'carId': carId},
+        data: deleteData,
         error: function(response) {
             console.log('Error with deletion: ');
             console.log(response);
@@ -258,7 +274,7 @@ var processCar = function()
             }
             carCache[userId][newCar['ID']] = newCar;
         }
-        _toggleCarModal();
+        _hideCarEditForm();
         _stopLoading();
     });
 

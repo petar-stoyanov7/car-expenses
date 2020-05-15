@@ -64,26 +64,17 @@ class Statistics
                         $_POST['car'],
                         $_POST['expense-type']
                     );
-                    if (!empty($_POST['ajax']) && (int)$_POST['ajax'] === 1) {
+                    if ((int)$_POST['ajax'] === 1) {
                         echo json_encode($data);
                         die();
                     }
-                    $viewParams = array_merge(
-                        $viewParams,
-                        [
-                            'data'          => $data,
-                            'carModel'      => $this->carModel,
-                            'expenseModel'  => $this->expenseModel
-                        ]
-                    );
                 }
             }
 
-            View::render('statistics.php', $viewParams);
+            View::render('statistics/statistics.php', $viewParams);
 
         } else {
-
-            View::render('/Static/statistics.php');
+            header('location: /');
         }
     }
 }

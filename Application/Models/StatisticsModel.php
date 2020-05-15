@@ -55,7 +55,7 @@ class StatisticsModel extends DbModelAbstract
             $query = str_replace('%y',$year, $queryTemplate);
             $array = $this->getData($query, [$uid]);
             $result = array_merge($result, $array);
-            $limit = $limit - count($array);
+            $limit -= count($array);
             $year--;
             if (!array_key_exists($year, $tableList)) {
                 //can't go back any further

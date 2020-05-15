@@ -63,26 +63,43 @@ class Expense
             }
             View::render('expense/new-expense.php', $viewParams);
         } else {
-            View::render('Static/new-expense.php');
+            header('location: /');
         }
     }
 
     public function removeAction($params)
     {
+        $result = [];
         if (!empty($_POST['date']) && !empty($_POST['expenseId'])) {
             $year = explode('-', $_POST['date'])[0];
             $this->expenseModel->removeExpense($_POST['expenseId'],$year);
-            echo json_encode(['success' => true]);
-            die();
+            $result['success'] = true;
         }
-        echo json_encode(['success' => false]);
+        $result['success'] = false;
+        echo json_encode($result);
         die();
     }
 
     public function newAjaxExpenseAction()
     {
+        $response['success'] = false;
         if (!empty($_POST)) {
             $values = nullify($_POST);
+            $type = (int)$values['expenseType'];
+            switch($type) {
+                case 1:
+                    $values['insuranceType'] = null;
+                    break;
+                case 2:
+                    $values['fuelType'] = null;
+                    $values['liters'] = null;
+                    break;
+                default:
+                    $values['insuranceType'] = null;
+                    $values['fuelType'] = null;
+                    $values['liters'] = null;
+            }
+            $values['notes'] = null === $values['notes'] ? '' : $values['notes'];
             $expense = new ExpenseClass(
                 $values['userId'],
                 $values['carId'],
@@ -96,10 +113,9 @@ class Expense
                 $values['description']
             );
             $this->expenseModel->addExpense($expense);
-            echo json_encode(['success' => true]);
-            die();
+            $response['success'] = true;
         }
-        echo json_encode(['success' => false]);
+        echo json_encode($response);
         die();
     }
 

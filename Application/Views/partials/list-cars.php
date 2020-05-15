@@ -8,6 +8,10 @@
 <div id="delete-car-confirm" class="delete-confirm modal-lvl-3">
     <span class="confirm-close" onclick="_closeDeleteConfirmation()"><i class="far fa-times-circle"></i></span>
     <span>Are you sure you want to delete this car? This action is irreversible!</span>
+    <div>
+        <input type="checkbox" id="delete-car-expenses">
+        <label for="delete-car-expenses">Delete car's expenses?</label>
+    </div>
     <button class="delete-yes">Yes</button>
     <button class="delete-no" onclick="_closeDeleteConfirmation()">No</button>
 </div>

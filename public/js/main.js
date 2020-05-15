@@ -90,14 +90,19 @@ $(function(){
     var registerModal = $('#user-register-modal');
 
 
-    $('#login-button').click(function(){
+    $('.login-activator').click(function(){
         $blackLvl1.show();
         loginModal.show();
     });
 
-    $('#register-button').click(function(){
+    $('.register-activator').click(function(){
         $blackLvl1.show();
         registerModal.show();
+    });
+
+    $('.eula-activator').click(function(){
+        $('#modal-eula').show();
+        _showBlack1();
     });
 
     $blackLvl1.click(function(){
@@ -113,6 +118,13 @@ $(function(){
     $blackLvl3.click(function(){
         $('.modal-lvl-3').hide();
         $blackLvl3.hide();
+    });
+
+    $(document).keyup(function(e){
+        if (e.key === 'Escape') {
+            _closeAllBlack();
+            _closeAllModals();
+        }
     });
 
 });

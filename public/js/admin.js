@@ -96,6 +96,7 @@ var deleteUser = function(userId)
             success = data['success'];
         }
     }).done(function(){
+        console.log(success);
         if (success) {
             _removeUserFromTable(userId);
         }

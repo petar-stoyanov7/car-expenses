@@ -270,6 +270,22 @@ table.expenses {
   }
 }
 
+button.site-access {
+  width: auto;
+  height: auto;
+  font-size: 1.3em;
+  padding: 3px 5px;
+  border-radius: 2px;
+  color: white;
+
+  &.login-activator {
+    background-color: green;
+  }
+  &.register-activator {
+    background-color: #3a6bff;
+  }
+}
+
 footer {
   position: fixed;
   bottom: 0;
@@ -434,6 +450,38 @@ span.success {
 
 span#user-warning, span#password-warning, span#fname-warning, span#lname-warning, span#city-warning span#general-warning {
   color: red;
+}
+
+#modal-eula {
+  display: none;
+  position: fixed;
+  top: 20%;
+  left: 30%;
+  width: 40%;
+  font-size: 1.5em;
+  padding: 15px;
+  background-color: white;
+  border-radius: 3px;
+  box-shadow: 3px 3px 3px black;
+
+  h3 {
+    display: inline-block;
+    margin: 2px 0 10px 3px;
+    padding: 5px 10px;
+    background-color: $main-color;
+    border-radius: 2px;
+    color: white;
+  }
+
+  span {
+    display: inline-block;
+    padding: 0 5px;
+    background-color: #ddd;
+    border-radius: 2px;
+    i {
+      font-size: 0.6em;
+    }
+  }
 }
 
 .hidden {

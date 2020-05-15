@@ -32,7 +32,8 @@ class Admin
     public function indexAction()
     {
         $userForm = new UserForm();
-        $userForm->removeElement('check');
+        $userForm->removeElements(['check','email2']);
+        $userForm->disableElement('username');
         $viewParams = [
             'title'     => 'Admin panel',
             'carForm'   => new CarForm(),
@@ -44,35 +45,6 @@ class Admin
         ];
 
         View::render('admin/admin.php', $viewParams);
-    }
-
-    public function showProfileAction($params)
-    {
-        if (isset($params['user_id'])) {
-            $userId = $params['user_id'];
-            $user = $this->userModel->getUserByUserId($userId);
-            $canDelete = $userId === $_SESSION['user']['ID'] ? false : true;
-            $canDelete = $userId === 1 ? false : $canDelete;
-
-            $viewParams = [
-                'title'         => 'Потребителски профил',
-                'canDelete'     => $canDelete,
-                'userId'        => $userId,
-                'user'          => $user,
-                'carCount'      => $this->carModel->countCarsByUserId($userId),
-                'expenses'      => $this->statModel->countYearExpensesByUserId($userId),
-                'user'          => $this->userModel->getUserByUserId($userId),
-                'cars'          => $this->carModel->listCarsByUserId($userId),
-                'greet'         => $user['Sex'] === 'male' ? 'дошъл' : 'дошла',
-                'lastFive'      => $this->statModel->getLastFiveByUserId($userId),
-                'carModel'      => $this->carModel,
-                'expenseModel'  => $this->expenseModel,
-            ];
-            
-            View::render('admin/show-profile.php', $viewParams);
-        } else {
-            header('Location: /');
-        }
     }
 
     public function removeProfileAction($params)

@@ -39,6 +39,9 @@ use \Core\View;
 
         <div class="toolbar">
             <a href="/">Home</a>
+            <?php if (empty($_SESSION)) : ?>
+                <a href="#" class="eula-activator">EULA</a>
+            <?php endif; ?>
             <a href="/expense/new">New Expense</a>
             <a href="/statistics">Statistics</a>
             <a href="/account/profile">Profile</a>
@@ -59,11 +62,11 @@ use \Core\View;
                     <i class="fas fa-sign-out-alt"></i>
                 </a>
 		<?php else : ?>
-				<a id="login-button">
+				<a id="login-button" class="site-access login-activator">
                     <span class="tooltip">login</span>
                     <i class="fas fa-sign-in-alt"></i>
                 </a>
-				<a id="register-button">
+				<a id="register-button" class="site-access register-activator">
                     <span class="tooltip">register</span>
                     <i class="fas fa-user-plus"></i>
                 </a>

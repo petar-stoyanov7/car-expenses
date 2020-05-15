@@ -131,7 +131,7 @@ class Account
             ];
             View::render('account/profile.php', $viewParams);
         } else {
-            View::render('Static/profile.php');
+            header('location: /');
         }
     }
 
