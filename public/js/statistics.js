@@ -115,15 +115,14 @@ var deleteExpense = function(expenseString)
             success = data['success'];
         }
     }).done(function(){
+        console.log(success);
         if (success) {
             var row = $('#' + expenseString);
             var arrayIndex = row.attr('rowIndex');
             row.remove();
-            _toggleBlack2();
-            _toggleBlack1();
-            $('.expense-details-modal').hide();
             expenseCache[cacheString]['allExpenses'].splice(arrayIndex, 1);
         }
+        _closeAll();
         _stopLoading();
     });
 };
