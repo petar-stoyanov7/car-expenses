@@ -23,6 +23,26 @@ class CarForm extends AbstractForm
     public function init()
     {
         $this->setMethod('post');
+        $this->setName('car-form');
+        $this->setClasses(
+            ['car-edit-form', 'car-form']
+        );
+
+        $this->addElement(
+            'hidden',
+            'car-user-id',
+            [
+                'required' => false,
+            ]
+        );
+
+        $this->addElement(
+            'hidden',
+            'car-id',
+            [
+                'required' => false,
+            ]
+        );
 
         $this->addElement(
             'text',
@@ -88,7 +108,7 @@ class CarForm extends AbstractForm
             'select',
             'fuel_id2',
             [
-                'options' => array_merge(['' => 'None'], $this->getFuelOptions(1)),
+                'options' => $this->getFuelOptions(1),
                 'required' => false,
                 'label' => 'Secondary Fuel: '
             ]
@@ -138,6 +158,9 @@ class CarForm extends AbstractForm
     {
         $fuels = $this->carModel->getFuels($secondary);
         $result = [];
+        if (null !== $secondary) {
+            $result[''] = 'None';
+        }
         foreach ($fuels as $fuel) {
             $result[$fuel['ID']] = $fuel['Name'];
         }

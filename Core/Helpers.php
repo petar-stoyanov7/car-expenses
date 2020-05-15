@@ -22,7 +22,7 @@ function dt($value) {
 
 function nullify($array) {
 	foreach ($array as $key => $value) {
-		if ($value === 'NULL') {
+		if ($value === 'NULL' || $value === '') {
 			$array[$key] = NULL;
 		}
 	}

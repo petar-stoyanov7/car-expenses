@@ -32,10 +32,10 @@ class NewExpenseForm extends AbstractForm
     public function init()
     {
         $this->setMethod('post');
-        $this->setTarget('/expense/new');
+        $this->setName('new-expense-form');
         $this->setOptions(
             [
-                'classes' => ['new-expense', 'new-expense-form']
+                'classes' => ['expense-form']
             ]
         );
         if (null !== $this->userId) {

@@ -31,10 +31,12 @@ class Statistics
         
         $cars = $this->carModel->listCarsByUserId($userId);
         $expenses = $this->expenseModel->getExpenses();
-        $form = new StatisticsForm($cars, $expenses);
+        $form = new StatisticsForm($cars, $expenses, $userId);
         $viewParams = [
             'form'  => $form,
-            'title' => 'Statistics'
+            'title' => 'Statistics',
+            'CSS'   => ['statistics.css'],
+            'JS'    => ['statistics.js'],
         ];
 
         if (isset($_SESSION['user'])) {
@@ -47,36 +49,32 @@ class Statistics
                     echo "</div>";;
                 }
                 else {
+                    $providedUser = !empty($_POST['user-id']) ? $_POST['user-id'] : $userId;
                     $data['allExpenses'] = $this->statModel->getAllExpensesForPeriod(
                         $_POST['from'],
                         $_POST['to'],
-                        $userId,
+                        $providedUser,
                         $_POST['car'],
                         $_POST['expense-type']
                     );
                     $data['cars'] = $this->statModel->getOverallForPeriod(
                         $_POST['from'],
                         $_POST['to'],
-                        $userId,
+                        $providedUser,
                         $_POST['car'],
                         $_POST['expense-type']
                     );
-                    $vewParams = array_merge(
-                        $viewParams,
-                        [
-                            'data'          => $data,
-                            'carModel'      => $this->carModel,
-                            'expenseModel'  => $this->expenseModel
-                        ]
-                    );
+                    if ((int)$_POST['ajax'] === 1) {
+                        echo json_encode($data);
+                        die();
+                    }
                 }
             }
 
-            View::render('statistics.php', $viewParams);
+            View::render('statistics/statistics.php', $viewParams);
 
         } else {
-
-            View::render('/Static/statistics.php');
+            header('location: /');
         }
     }
 }

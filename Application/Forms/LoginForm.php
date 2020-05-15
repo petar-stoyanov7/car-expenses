@@ -25,8 +25,8 @@ class LoginForm extends AbstractForm
             'text',
             'username',
             [
-                'required'  => true,
-                'label'     => 'Username: '
+                'required'      => true,
+                'placeholder'   => 'Username'
             ]
         );
 
@@ -34,8 +34,8 @@ class LoginForm extends AbstractForm
             'password',
             'password',
             [
-                'required'  => true,
-                'label'     => 'Password: '
+                'required'      => true,
+                'placeholder'   => 'Password: '
             ]
         );
 

@@ -2,8 +2,10 @@
 
 namespace Application\Controllers;
 
+use Application\Forms\CarForm;
 use Application\Forms\LoginForm;
 use Application\Forms\UserForm;
+use Application\Models\ExpenseModel;
 use \Core\View;
 use \Application\Models\UserModel;
 use \Application\Models\CarModel;
@@ -15,11 +17,13 @@ class Account
 
     private $userModel;
     private $carModel;
+    private $expenseModel;
 
     public function __construct()
     {
         $this->userModel = new UserModel();
-        $this->carModel = new CarModel();    
+        $this->carModel = new CarModel();
+        $this->expenseModel = new ExpenseModel();
     }
     public function indexAction()
     {
@@ -60,6 +64,7 @@ class Account
         $form->setOptions(['classes' => 'register-form']);
         $form->setName('register-form');
         $form->setTarget('/account/register');
+        $form->removeElement('user-id');
         if(!empty($_POST)) {
             if ($form->validate($_POST)) {
                 $values = $form->getValues();
@@ -95,77 +100,92 @@ class Account
     {
         if (isset($_SESSION['user'])) {
             $user = $this->userModel->getUserByUserId($_SESSION['user']['ID']);
-            $form = new UserForm(
-                $user['ID'],
-                $user['Username']
-            );
-            $form->setName('edit-account-form');
-            $form->setTarget('/account/edit');
-            $form->setOptions(['classes' => 'account-edit-form']);
+            $form = new UserForm();
+            $carForm = new CarForm();
+            $form->addClass('profile-edit');
+            $form->removeElements(['email2', 'check']);
+            $form->disableElement('username');
+
             $userData = [
+                'id'        => $user['ID'],
                 'username'  => $user['Username'],
                 'firstname' => $user['Fname'],
                 'lastname'  => $user['Lname'],
                 'city'      => $user['City'],
                 'email1'    => $user['Email'],
+                'userId'    => $user['ID'],
+                'sex'       => $user['Sex'],
+                'notex'     => $user['Notes']
             ];
+
             $form->populate($userData);
 
             $viewParams = [
-                'title'         => 'Потребителски профил',
+                'title'         => $user['Username']."'s profile",
                 'form'          => $form,
-                'userId'        => $user['ID'],
-                'user'          => $user['Username'],
-                'firstName'     => $user['Fname'],
-                'lastName'      => $user['Lname'],
-                'city'          => $user['City'],
-                'email'         => $user['Email'],
-                'carModel'      => $this->carModel,
+                'carForm'       => $carForm,
+                'user'          => $userData,
+                'cars'          => $this->carModel->listCarsByUserId($user['ID']),
+                'JS'            => ['profile.js', 'cars.js'],
+                'CSS'           => ['profile.css', 'cars.css']
             ];
             View::render('account/profile.php', $viewParams);
         } else {
-            View::render('Static/profile.php');
+            header('location: /');
         }
     }
 
-    public function editAction($params)
+    public function editAction()
     {
-        if (isset($_SESSION['user'])) {
-            if (
-                isset($params['id']) &&
-                !empty($params['id']) &&
-                $_SESSION['user']['Group'] === 'admins'
-            ) {
-                $password = 'blank';
-                $viewParams = [
-                    'uid'       => $params['id'],
-                    'isAdmin'   => TRUE,
-                ];
-            } else {
-                $password = $_POST['old-password'];
-                $viewParams = [
-                    'uid'       => $_SESSION['user']['ID'],
-                    'isAdmin'   => FALSE,
-                ];
-            }
-            $currentUser = $this->userModel->getUserByUserId($viewParams['uid']);
-            $viewParams['user'] = $currentUser;
-            if (!empty($_POST)) {
-                if (isset($password)) {
-                    $User = new User($currentUser['Username'], $password);
-                    $this->userModel->editUser($User,$_POST,1);
-                    header('Location: /account/profile');
-                } else {
-                    $User = new User($currentUser['Username'], $currentUser['Password']);
-                    $this->userModel->editUser($User,$_POST);
-                    header('Location: /account/profile');
-                }
-            }
-
-            View::render('account/edit-profile.php', $viewParams);
+        $response = [];
+        if (!empty($_POST)) {
+            $currentUser = $this->userModel->getUserByUserId($_POST['user-id']);
+            //TODO: FIX THIS!
+            $User = new User($currentUser['Username'], 'blank');
+            $this->userModel->editUser($User, $_POST,true);
+            $response['success'] = true;
         } else {
-            header("Location: /");
+            $response['success'] = false;
         }
+        echo json_encode($response);
+    }
+
+    public function getUserInfoAction()
+    {
+        if (!empty($_POST)) {
+            $user = $this->userModel->getUserByUserId($_POST['userId']);
+            if (!empty($user)) {
+                $result = [
+                    'user-id'   => $user['ID'],
+                    'username'  => $user['Username'],
+                    'firstname' => $user['Fname'],
+                    'lastname'  => $user['Lname'],
+                    'city'      => $user['City'],
+                    'email'     => $user['Email'],
+                    'sex'       => $user['Sex'],
+                ];
+                echo json_encode($result);
+                die();
+            }
+        }
+    }
+
+    public function deleteAction()
+    {
+        $response['success'] = false;
+        if (!empty($_POST)) {
+            $userId = $_POST['userId'];
+            if ((bool)$_POST['deleteExpenses']) {
+                $this->expenseModel->removeUserExpenses($userId);
+            }
+            if ((bool)$_POST['deleteCars']) {
+                $this->carModel->removeUserCars($userId);
+            }
+            $this->userModel->removeUser($userId);
+            $response['success'] = true;
+        }
+        json_encode($response);
+        die();
     }
 }
 

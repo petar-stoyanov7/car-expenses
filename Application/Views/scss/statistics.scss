@@ -1,0 +1,117 @@
+@import 'variables';
+
+img.icon {
+  width: 10px;
+  height: 10px;
+}
+
+form {
+  .form-wrapper {
+    display: flex;
+
+    input,label,select,textarea {
+      font-size: 1em;
+      margin-bottom: 6px;
+      border-radius: 2px;
+    }
+
+    label {
+      width: 30%;
+    }
+    select{
+      width: 16.4em;
+    }
+    input {
+      width: 16em;
+    }
+    textarea {
+      width: 32.4em;
+      height: 6em;
+    }
+
+    button {
+      height: 2em;
+      width: 7em;
+      font-size: 1em;
+      background-color: $button-color;
+      color: white;
+      font-weight: bold;
+    }
+  }
+}
+
+.element {
+  h4 {
+    background-color: #c3e1c5;
+    padding: 5px;
+    border-radius: 1px;
+  }
+
+  .element-entry {
+    display: block;
+  }
+}
+
+#detailed-info {
+  display: none;
+  position: fixed;
+  background-color: #fff;
+  top: 30%;
+  left: 30%;
+  width: 35%;
+  padding: 15px;
+  box-shadow: 3px 3px 3px #044806;
+  border-radius: 3px;
+  font-size: 1.3em;
+
+  span.modal-close {
+    position: absolute;
+    top: 3%;
+    right: 1%;
+    padding: 2px;
+    border-radius: 2px;
+    cursor: pointer;
+  }
+
+  h4 {
+    margin: 5px 5px 10px;
+    background-color: #badfa1;
+    display: inline-block;
+    padding: 5px;
+    border-radius: 3px;
+  }
+
+  .flex-wrapper {
+    margin-bottom: 3px;
+
+    .label {
+      font-weight: bold;
+      width: 20%;
+    }
+  }
+  a.delete-expense {
+    font-size: 2.3em;
+    padding: 6px 15px;
+    background-color: #ff5656;
+    color: white;
+    border-radius: 10%;
+    cursor: pointer;
+  }
+}
+
+//Overriders
+table {
+  a {
+    &:hover {
+      cursor: pointer;
+    }
+  }
+}
+
+div.main-content {
+  width: 80%;
+}
+
+div.container.statistics-content {
+  width: 95%;
+}

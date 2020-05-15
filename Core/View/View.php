@@ -2,11 +2,14 @@
 
 namespace Core;
 
+use Application\Forms\LoginForm;
+use Application\Forms\UserForm;
 use Core\Form\AbstractForm;
+use Core\Form\Element;
 
 class View
 {
-    public static function render($view, $arguments = [], $displayTop = true)
+    public static function render($view, $arguments = [])
     {
         $jsArray = [];
         $cssArray = [];
@@ -39,10 +42,11 @@ class View
             extract($arguments, EXTR_SKIP);
             $customHeader = '../Application/Views/Layout/header.php';
             if (is_readable($customHeader)) {
+                if (!isset($_SESSION['user'])) {
+                    $loginForm = new LoginForm();
+                    $registerForm = new UserForm();
+                }
                 require($customHeader);
-            }
-            if ($displayTop) {
-                require('../Application/Views/Layout/top-toolbar.php');
             }
             require($file);
             require('../Application/Views/Layout/footer.php');
@@ -67,5 +71,62 @@ class View
     {
         $form = $renderedForm;
         require('form.php');
+    }
+
+    public static function renderFormElement(Element $Element)
+    {
+        $name = $Element->getName();
+        $label = $Element->getLabel();
+        $type = $Element->getType();
+        $class = $Element->getClass();
+        $placeholder = $Element->getPlaceholder();
+        $errors = $Element->getErrors();
+        if($Element->isSelect()) {
+            require(__DIR__. '/FormElements/select.php');
+        } elseif($type === 'textarea') {
+            require(__DIR__. '/FormElements/textarea.php');
+        } elseif($type === 'button') {
+            require(__DIR__. '/FormElements/button.php');
+        } else {
+            require(__DIR__ . '/FormElements/input.php');
+        }
+    }
+
+    public static function renderElements(array $formElements, AbstractForm $form)
+    {
+        foreach($formElements as $name => $formElement) {
+            /** @var Element $Element */
+            $Element = $formElement['element'];
+            $div = '<div class="form-wrapper';
+            if (!empty($Element->getErrors())) {
+                $div .= ' form-errors';
+            }
+            if (!empty($formElement['group'])) {
+                $groupName = $formElement['group'];
+                if (empty($cache[$groupName])) {
+                    $group = $form->getGroupElements($groupName);
+                    $cache[$groupName] = $group;
+                } else {
+                    $group = $cache[$groupName];
+                }
+                $group = array_keys($group);
+                if ($name === $group[0]) {
+                    $groupId = preg_replace('/[^a-z]/', '', strtolower($groupName));
+                    $div .= "\" id=\"form-group-{$groupId}\">";
+                    echo $div;
+                    self::renderFormElement($Element);
+                } elseif ($name === $group[count($group) - 1]) {
+                    self::renderFormElement($Element);
+                    echo '</div>';
+                } else {
+                    self::renderFormElement($Element);
+                }
+            } else {
+                $div .= '">';
+                echo $div;
+                self::renderFormElement($Element);
+                echo '</div>';
+            }
+        }
     }
 }

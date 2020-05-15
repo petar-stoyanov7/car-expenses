@@ -16,6 +16,7 @@ class Expense
 {
     private $expenseModel;
     private $carModel;
+    private $statisticsModel;
 
     public function __construct()
     {
@@ -62,52 +63,93 @@ class Expense
             }
             View::render('expense/new-expense.php', $viewParams);
         } else {
-            View::render('Static/new-expense.php');
-        }
-    }
-
-    public function detailedInfoAction($params)
-    {
-        $title = "Детайлна справка";
-        if(isset($params['id']) && isset($params['year'])) {
-            $id = $params['id'];
-            $year = $params['year'];
-            $data = $this->statisticsModel->getStatisticById($id,$year);
-
-            $viewParams = [
-                'data' => $data,
-                'expenseModel' => $this->expenseModel,
-                'carModel' => $this->carModel,
-            ];
-            View::render('expense/detailed-info.php', $viewParams);
-        } else {
-            header("Location: /statistics");
+            header('location: /');
         }
     }
 
     public function removeAction($params)
     {
-        if (isset($params['id']) && isset($params['year'])) {
-            $expenseId = $params['id'];
-            $year = $params['year'];
-            $form = new DeleteExpenseForm($expenseId, $year);
-            $data = $this->statisticsModel->getStatisticById($expenseId, $year);
-            $viewParams = [
-                'form'          => $form,
-                'title'         => 'Remove expense',
-                'CSS'           => ['new-expense.css'],
-                'data'          => $data,
-                'type'          => $this->expenseModel->getExpenseName($data['Expense_ID']),
-                'fuelName'      => $this->carModel->getFuelName($data['Fuel_ID']),
-                'insuranceName' => $this->expenseModel->getInsuranceName($data['Insurance_ID'])
-            ];
-            if (isset($_POST['id']) && isset($_POST['year'])) {
-                $this->expenseModel->removeExpense($_POST['id'],$_POST['year']);
-                header("Location: /statistics");
+        $result = [];
+        if (!empty($_POST['date']) && !empty($_POST['expenseId'])) {
+            $year = explode('-', $_POST['date'])[0];
+            $this->expenseModel->removeExpense($_POST['expenseId'],$year);
+            $result['success'] = true;
+        }
+        $result['success'] = false;
+        echo json_encode($result);
+        die();
+    }
+
+    public function newAjaxExpenseAction()
+    {
+        $response['success'] = false;
+        if (!empty($_POST)) {
+            $values = nullify($_POST);
+            $type = (int)$values['expenseType'];
+            switch($type) {
+                case 1:
+                    $values['insuranceType'] = null;
+                    break;
+                case 2:
+                    $values['fuelType'] = null;
+                    $values['liters'] = null;
+                    break;
+                default:
+                    $values['insuranceType'] = null;
+                    $values['fuelType'] = null;
+                    $values['liters'] = null;
             }
-            View::render('expense/remove-expense.php', $viewParams);
-        } else {
-            header('Location: /statistics');
+            $values['notes'] = null === $values['notes'] ? '' : $values['notes'];
+            $expense = new ExpenseClass(
+                $values['userId'],
+                $values['carId'],
+                $values['date'],
+                $values['mileage'],
+                $values['expenseType'],
+                $values['value'],
+                $values['fuelType'],
+                $values['liters'],
+                $values['insuranceType'],
+                $values['description']
+            );
+            $this->expenseModel->addExpense($expense);
+            $response['success'] = true;
+        }
+        echo json_encode($response);
+        die();
+    }
+
+    public function getLastFiveAction()
+    {
+        if (!empty($_POST) && !empty($_POST['userId'])) {
+            $result = [];
+            $lastFive = $this->statisticsModel->getLastByUserId($_POST['userId'], 5);
+            if (!empty($lastFive)) {
+                foreach($lastFive as $expense) {
+                    $expenseType = '';
+                    switch ($expense['Expense_ID']) {
+                        case 1:
+                            $expenseType = $this->carModel->getFuelName($expense['Fuel_ID']);
+                            break;
+                        case 2:
+                            $expenseType = $this->expenseModel->getInsuranceName($expense['Insurance_ID']);
+                            break;
+                        default:
+                            $expenseType = '';
+                            break;
+                    }
+                    $result[] = [
+                        'mileage'       => $expense['Mileage'],
+                        'car'           => $this->carModel->getCarNameById($expense['CID']),
+                        'expenseType'   => $this->expenseModel->getExpenseName($expense['Expense_ID']),
+                        'type'          => $expenseType,
+                        'price'         => $expense['Price'],
+                        'notes'         => $expense['Notes']
+                    ];
+                }
+            }
+            echo json_encode($result);
+            die();
         }
     }
 }

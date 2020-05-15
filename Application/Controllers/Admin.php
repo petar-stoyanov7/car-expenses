@@ -2,6 +2,8 @@
 
 namespace Application\Controllers;
 
+use Application\Forms\CarForm;
+use Application\Forms\UserForm;
 use \Core\View;
 use \Application\Models\UserModel;
 use \Application\Models\CarModel;
@@ -29,50 +31,20 @@ class Admin
 
     public function indexAction()
     {
+        $userForm = new UserForm();
+        $userForm->removeElements(['check','email2']);
+        $userForm->disableElement('username');
         $viewParams = [
             'title'     => 'Admin panel',
+            'carForm'   => new CarForm(),
+            'userForm'  => $userForm,
             'userList'  => $this->userModel->listUsers(),
             'carModel'  => $this->carModel,
+            'CSS'       => ['admin.css', 'profile.css', 'cars.css'],
+            'JS'        => ['cars.js', 'profile.js', 'admin.js'],
         ];
 
-        // if (isset($_GET['uid'])) {
-		// 	$uid = $_GET['uid'];
-		// 	$user_dao = new User_DAO();
-		// 	$user_dao->remove_user($uid);
-		// 	display_warning("Потребителят ".$user_dao->getUserByUserId($uid)."е изтрит успешно");
-		// 	header("Location: admin.php");
-		// }
-
         View::render('admin/admin.php', $viewParams);
-    }
-
-    public function showProfileAction($params)
-    {
-        if (isset($params['user_id'])) {
-            $userId = $params['user_id'];
-            $user = $this->userModel->getUserByUserId($userId);
-            $canDelete = $userId === $_SESSION['user']['ID'] ? false : true;
-            $canDelete = $userId === 1 ? false : $canDelete;
-
-            $viewParams = [
-                'title'         => 'Потребителски профил',
-                'canDelete'     => $canDelete,
-                'userId'        => $userId,
-                'user'          => $user,
-                'carCount'      => $this->carModel->countCarsByUserId($userId),
-                'expenses'      => $this->statModel->countYearExpensesByUserId($userId),
-                'user'          => $this->userModel->getUserByUserId($userId),
-                'cars'          => $this->carModel->listCarsByUserId($userId),
-                'greet'         => $user['Sex'] === 'male' ? 'дошъл' : 'дошла',
-                'lastFive'      => $this->statModel->getLastFiveByUserId($userId),
-                'carModel'      => $this->carModel,
-                'expenseModel'  => $this->expenseModel,
-            ];
-            
-            View::render('admin/show-profile.php', $viewParams);
-        } else {
-            header('Location: /');
-        }
     }
 
     public function removeProfileAction($params)
