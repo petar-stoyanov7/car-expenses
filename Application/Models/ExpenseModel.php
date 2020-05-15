@@ -9,7 +9,8 @@ class ExpenseModel extends DbModelAbstract
 {    
     private $carModel;
 
-    public function __construct() {
+    public function __construct()
+    {
         parent::__construct();
         $this->carModel = new CarModel();
         $year = getdate()['year'];
@@ -31,7 +32,8 @@ class ExpenseModel extends DbModelAbstract
         $this->table = "";
     }
 
-    public function getTableList() {
+    public function getTableList()
+    {
         $arrays = $this->getData("SHOW TABLES LIKE 'Expense_2%'");
         $list = array();
         foreach ($arrays as $array) {
@@ -41,7 +43,8 @@ class ExpenseModel extends DbModelAbstract
         return $list;
     }
 
-    public function createTableYear($year) {
+    public function createTableYear($year)
+    {
         $query = "CREATE TABLE IF NOT EXISTS `Expense_{$year}` (
                         `ID` int primary key auto_increment,
                         `UID` int references `Users`(`ID`),
@@ -58,7 +61,8 @@ class ExpenseModel extends DbModelAbstract
         $this->execute($query);
     }
     //might delete this
-    public function getExpenseNames() {
+    public function getExpenseNames()
+    {
         $expenseList = $this->getData("SELECT `Name` FROM `Expense_Types`");
         $expenseArray = array();
         foreach ($expenseList as $expense) {
@@ -67,7 +71,8 @@ class ExpenseModel extends DbModelAbstract
         return $expenseArray;
     }
     //might delete this
-    public function getExpenseId() {
+    public function getExpenseId()
+    {
         $expenseList = $this->getData("SELECT `ID` FROM `Expense_Types`");
         $expenseArray = array();
         foreach ($expenseList as $expense) {
@@ -76,11 +81,13 @@ class ExpenseModel extends DbModelAbstract
         return $expenseArray;
     }
 
-    public function getExpenses() {
+    public function getExpenses()
+    {
         return $this->getData("SELECT * FROM `Expense_Types`");
     }
     
-    public function getExpenseName($id) {
+    public function getExpenseName($id)
+    {
         if (null === $id) {
             return null;
         }
@@ -94,7 +101,8 @@ class ExpenseModel extends DbModelAbstract
         return $this->getData('SELECT * FROM `Insurance_Types`');
     }
 
-    public function getInsuranceNames() {
+    public function getInsuranceNames()
+    {
         $insuranceList = $this->getData("SELECT `Name` FROM `Insurance_Types`");
         $insuranceArray = [];
         foreach ($insuranceList as $insurance) {
@@ -102,7 +110,8 @@ class ExpenseModel extends DbModelAbstract
         }
         return $insuranceArray;
     }
-    public function getInsuranceId() {
+    public function getInsuranceId()
+    {
         $insuranceList = $this->getData("SELECT `ID` FROM `Insurance_Types`");
         $insuranceArray = array();
         foreach ($insuranceList as $insurance) {
@@ -110,7 +119,9 @@ class ExpenseModel extends DbModelAbstract
         }
         return $insuranceArray;
     }
-    public function getInsuranceName($id) {
+
+    public function getInsuranceName($id)
+    {
         if (null === $id) {
             return null;
         }
@@ -119,7 +130,8 @@ class ExpenseModel extends DbModelAbstract
         return $result[0]['Name'];
     }
 
-    public function addExpense($expense) {
+    public function addExpense($expense)
+    {
         $year = substr($expense->getProperty("date"),0,4);
         $expenseTables = $this->getTableList();
         if (!array_key_exists($year, $expenseTables)) {
@@ -163,10 +175,20 @@ class ExpenseModel extends DbModelAbstract
         }
     }
 
-    public function removeExpense($id, $year) {
+    public function removeExpense($id, $year)
+    {
         $query = "DELETE FROM `Expense_{$year}` WHERE `ID`= ?";
         $values = [$id];
         $this->execute($query, $values);
-    }    
+    }
+
+    public function removeUserExpenses($userId)
+    {
+        $tableList = $this->getTableList();
+        foreach ($tableList as $table) {
+            $query = "DELETE FROM {$table} WHERE `UID` = ?";
+            $this->execute($query, $userId);
+        }
+    }
 }
 ?>

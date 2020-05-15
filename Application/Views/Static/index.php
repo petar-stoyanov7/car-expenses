@@ -2,32 +2,39 @@
 $title = "Автомобилни разходи";
 ?>
 <div class="container">
-<h3><font color="red" weight="bold">Това е примерна страница!</font></h3>
-<br>Добре дошли в страницата за автомобилни разходи. Това, което виждате е пример за съдържанието на сайта. С помощта на този сайт може да управлявате разходите по автомобила си и да извличате детайлна статистика. Ако желаете да използвате услугите - нужно е да имате регистрация. Регистрация може да направите, като натиснете <a href="/register">тук</a>.<br>
-За вече регистрирани потребители - <a href="/login">тук</a>.
+<h3 style="background-color: red; color: white">This is an example page!</font></h3>
+<div class="content">
+    Wellcome to the expenses web app! What you see is an example page. With this app you can manage, monitor and calculate
+    the daily expenses of your car, you can extract detailed statistics about your car. To use the full capabilities of
+    this app you need to have an account. Registering is absolutely free and can be done here. For already registered users -
+    you can proceed to the login.
+</div>
 </div>
 <!-- Content -->
 <div class="container">
-	<h3>Добре дошъл, Иван Иванов!</h3>
-	Брой автомобили: 2<br>
-	Общо похарчени: 8200 лв.<br>
+	<h3>Wellcome John Smith</h3>
+    <div class="content">
+        Number of cars: 2<br>
+        Total spent: 7350.<br>
+    </div>
 
 </div>
 <div class="container">
-<h3>Автомобили:</h3>
-	<div class="element">
-	<h4>Автомобил 1:</h4>
-	BMW M3 2010<br>
-	<b>Километри</b>: 80000km<br>
-	<b>Похарчени:</b> 6800 лв.
-	</div>
+<h3>Cars:</h3>
+    <div class="flex-wrapper">
+        <div class="element">
+        <h4>BMW M3 2010</h4>
+        <b>Километри</b>: 80000km<br>
+        <b>Похарчени:</b> 6800 лв.
+        </div>
 
-	<div class="element">
-	<h4>Автомобил 2:</h4>
-	Wolkswagen Golf 2001<br>
-	<b>Километри:</b> 150000km<br>
-	<b>Похарчени:</b> 1400 лв.
-	</div>
+        <div class="element">
+        <h4>Автомобил 2:</h4>
+        Wolkswagen Golf 2001<br>
+        <b>Километри:</b> 150000km<br>
+        <b>Похарчени:</b> 1400 лв.
+        </div>
+    </div>
 </div>
 
 <div class="container">

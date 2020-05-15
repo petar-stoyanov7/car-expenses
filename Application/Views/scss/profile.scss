@@ -12,19 +12,9 @@
   }
 }
 
-
-button {
-  background-color: $button-color;
-  cursor: pointer;
-  margin-top: 10px;
-  color: white;
-  height: 2.2em;
-}
-
 #user-form-modal {
   display: none;
-  position: absolute;
-  z-index: $med-z-index;
+  position: fixed;
   top: 20%;
   left: 35%;
   width: 20%;
@@ -65,5 +55,57 @@ button {
       height: 2em;
       width: 6em;
     }
+  }
+}
+
+.user-modify-actions {
+  a {
+    position: relative;
+    font-size: 1.6em;
+    cursor: pointer;
+    border-radius: 2px;
+    padding: 2px;
+
+    .profile-tooltip {
+      display: none;
+      position: absolute;
+      white-space: nowrap;
+      font-size: 0.5em;
+      color: white;
+      padding: 2px;
+      box-shadow: 1px 1px 3px black;
+      &.profile-edit {
+        background-color: green;
+        top: -105%;
+        right: 40%;
+      }
+      &.profile-delete {
+        background-color: red;
+        top: -105%;
+        right: -105%;
+      }
+    }
+
+    &#edit-user {
+      color: green;
+
+      &:hover {
+        .profile-edit {
+          display: inline-block;
+        }
+      }
+    }
+    &#delete-user {
+      color: red;
+
+      &:hover {
+        .profile-delete {
+          display: inline-block;
+        }
+      }
+
+    }
+
+
   }
 }

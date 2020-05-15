@@ -122,7 +122,7 @@ __SQL;
         return false;
     }
 
-    public function remove_user($id)
+    public function removeUser($id)
     {
         $expenseModel = new ExpenseModel();
         $tables = $expenseModel->getTableList();

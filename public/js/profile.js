@@ -34,7 +34,7 @@ var _addErrorClass = function(element)
 
 var _toggleUserModal = function()
 {
-    _toggleBlack2();
+    _toggleBlack3();
     $('#user-form-modal').toggle();
 };
 
@@ -69,8 +69,8 @@ var _resetPage = function(data)
     $('#profile-user-id').val(data['user-id']);
     $('#profile-username').text(data['username']);
     $('#profile-name').text(data['firstname'] + ' ' + data['lastname']);
-    $('#profile-email').text(data['$email']);
-    $('#profile-city').text(data['$city']);
+    $('#profile-email').text(data['email']);
+    $('#profile-city').text(data['city']);
     $('#edit-user').attr(
         'onclick',
         'drawUserForm(' + data['user-id'] + ');'
@@ -172,6 +172,10 @@ $(function(){
         e.preventDefault();
         editUser();
     });
+
+    /** Intended to move it outside its container so the z-index of the parent don't apply */
+    $formModal = $('#user-form-modal');
+    $formModal.parent().after($formModal);
 
     if ($currentUser.val() !== '') {
         renderUser($currentUser.val());

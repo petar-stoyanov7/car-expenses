@@ -31,10 +31,12 @@ class Admin
 
     public function indexAction()
     {
+        $userForm = new UserForm();
+        $userForm->removeElement('check');
         $viewParams = [
             'title'     => 'Admin panel',
             'carForm'   => new CarForm(),
-            'userForm'  => new UserForm(),
+            'userForm'  => $userForm,
             'userList'  => $this->userModel->listUsers(),
             'carModel'  => $this->carModel,
             'CSS'       => ['admin.css', 'profile.css', 'cars.css'],

@@ -2,9 +2,9 @@ var expenseCache = {};
 
 var _closeDeleteConfirmation = function()
 {
-    $('#delete-confirm').hide();
+    $('#delete-stat-confirm').hide();
     _toggleBlack2();
-    $('#delete-confirm button.delete-yes').attr('onclick', '');
+    $('#delete-stat-confirm button.delete-yes').attr('onclick', '');
 };
 
 var showDeleteConfirmation = function(index)
@@ -12,8 +12,8 @@ var showDeleteConfirmation = function(index)
     var cacheString = $('#detailed-expenses-table').attr('cacheString');
     var data = expenseCache[cacheString]['allExpenses'][index];
     _toggleBlack2();
-    $('#delete-confirm').toggle();
-    $('#delete-confirm button.delete-yes')
+    $('#delete-stat-confirm').toggle();
+    $('#delete-stat-confirm button.delete-yes')
         .attr(
             'onclick',
             'deleteExpense(\'' + data['Date'] + '_' + data['ID'] + '\')'
@@ -215,7 +215,7 @@ $(function(){
         _toggleBlack1();
     });
 
-    $('#delete-confirm .modal-close').click(function(){
+    $('#delete-stat-confirm .modal-close').click(function(){
         $(this).closest('div.expense-details-modal').hide();
         _toggleBlack2();
     });

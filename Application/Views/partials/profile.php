@@ -31,10 +31,21 @@
                 <?= isset($user) ? $user['city'] : ''; ?>
             </span>
     </div>
-    <button id="edit-user">Edit Profile</button>
+    <span class="user-modify-actions">
+        <a id="edit-user">
+            <span class="profile-tooltip profile-edit">Edit user</span>
+            <i class="fas fa-user-edit"></i>
+        </a>
+        <?php if (isset($adminPanel) && $adminPanel) : ?>
+        <a id="delete-user">
+            <span class="profile-tooltip profile-delete">Delete user</span>
+            <i class="fas fa-user-times"></i>
+        </a>
+        <?php endif; ?>
+    </span>
 </div>
 
-<div id="user-form-modal" class="modal-lvl-2">
+<div id="user-form-modal" class="modal-lvl-3">
     <h3>Edit user</h3>
     <?php $View::renderForm($form); ?>
 </div>

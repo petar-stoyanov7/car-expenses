@@ -1,20 +1,18 @@
 <input type="hidden" id="cars-user-id" value="<?= $showCars ? $userId : ''; ?>">
 
-<div class="flex-wrapper cars-list<?= (!$showCars) ? ' hidden' : '' ?>">
-
-</div>
+<div class="flex-wrapper cars-list"></div>
 <button id="add-car">Add car</button>
 
 
 
-<div id="delete-confirm" class="expense-details-modal modal-lvl-3">
+<div id="delete-car-confirm" class="delete-confirm modal-lvl-3">
     <span class="confirm-close" onclick="_closeDeleteConfirmation()"><i class="far fa-times-circle"></i></span>
     <span>Are you sure you want to delete this car? This action is irreversible!</span>
     <button class="delete-yes">Yes</button>
     <button class="delete-no" onclick="_closeDeleteConfirmation()">No</button>
 </div>
 
-<div id="car-form-modal" class="modal-lvl-2">
+<div id="car-form-modal" class="modal-lvl-3">
     <h3 class="title">Edit car:</h3>
     <?php $View::renderForm($carForm) ?>
 </div>
@@ -54,4 +52,7 @@
         <span class="label">Notes: </span>
         <span class="cars-data car-notes"></span>
     </div>
+</div>
+
+<div id="car-black-overlay" class="black-overlay">
 </div>

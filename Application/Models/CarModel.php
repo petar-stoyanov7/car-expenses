@@ -182,7 +182,7 @@ __SQL;
         $this->execute($query, [$id]);
     }
 
-    public function removeCarByUserId($uid) {
+    public function removeUserCars($uid) {
         $query = "DELETE FROM `Cars` WHERE `UID` = ?";
         $this->execute($query, [$uid]);
     }

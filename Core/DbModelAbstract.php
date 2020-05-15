@@ -25,6 +25,9 @@ abstract class DbModelAbstract
         $this->options = [
             PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION, 
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+            /** Some old cyrillic records can be shown only with bellow currently commented code */
+//            PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES latin1',
+            PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8',
         ];
         try {
             $this->connection = new \PDO(

@@ -14,7 +14,7 @@ var carCache = {};
 
 var _toggleCarModal = function()
 {
-    _toggleBlack2();
+    _showBlack3();
     $('#car-form-modal').toggle();
 };
 
@@ -39,8 +39,8 @@ var _resetDeleteModal = function()
 
 var _closeDeleteConfirmation = function()
 {
-    $('#delete-confirm').hide();
-    _toggleBlack2();
+    $('#delete-car-confirm').hide();
+    $('#car-black-overlay').hide();
     _resetDeleteModal();
 };
 
@@ -51,6 +51,7 @@ var _resetCarsContainer = function()
 };
 
 var drawCars = function(cars, userId) {
+    console.log(cars);
     _resetCarsContainer();
     $.each(cars, function (i, data) {
         editCarDiv(data, false);
@@ -98,6 +99,7 @@ var showEditCar = function(userId,carId)
         console.log("Error with car")
         return;
     }
+    console.log($formUserId);
     $formUserId.val(userId);
     $formCarId.val(carId);
     $formYear.val(car['Year']);
@@ -123,9 +125,9 @@ var showDeleteCar = function(carId)
     _resetDeleteModal();
     $('div.profile-car').addClass('hide-car-overlay');
     $('#car-id-'+carId).removeClass('hide-car-overlay').addClass('delete-car-overlay');
-    _toggleBlack2();
-    $('#delete-confirm').toggle();
-    $('#delete-confirm button.delete-yes')
+    $('#car-black-overlay').show();
+    $('#delete-car-confirm').toggle();
+    $('#delete-car-confirm button.delete-yes')
         .attr(
             'onclick',
             'deleteCar(\'' + carId + '\')'
@@ -134,6 +136,7 @@ var showDeleteCar = function(carId)
 
 editCarDiv = function(data, isEdit)
 {
+    console.log(data);
     var carId = data['ID'];
     var userId = data['UID'];
 
@@ -270,7 +273,7 @@ $(function(){
     $formFuel = $('#fuel_id1');
     $formFuel2 = $('#fuel_id2');
     $formNotes = $('#notes');
-    $formUserId = $('#user-id');
+    $formUserId = $('#car-user-id');
     $formCarId = $('#car-id');
     $currentCarUser = $('#cars-user-id');
 
@@ -278,6 +281,11 @@ $(function(){
         e.preventDefault();
         processCar();
     });
+
+    /** Intended to move it outside its container so the z-index of the parent don't apply */
+    $formModal = $('#car-form-modal');
+    $formModal.parent().after($formModal);
+
 
     if ($currentCarUser.val() !== '') {
         renderUserCars($currentCarUser.val());

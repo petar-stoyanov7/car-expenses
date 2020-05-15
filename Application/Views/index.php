@@ -1,22 +1,24 @@
 <div class="container">
-    <h3>Добре <?= $greet . ', ' . $firstName . ' ' . $lastName; ?></h3>
+    <h3>Wellcome <?= "{$firstName} {$lastName}"; ?></h3>
     <div class="content">
-    Брой автомобили: <?= $countCars; ?><br>
-    Общо похарчени за <?= date('Y') . ' : ' . $yearExpense;  ?> лв.<br>
+    Number of cars: <?= $countCars; ?><br>
+    Total spent for <?= date('Y') . ' : ' . $yearExpense;  ?><br>
     </div>
 
 </div>
 <div class="container">
-<h3>Автомобили:</h3>
+<h3>Cars:</h3>
     <div class="flex-wrapper">
     <?php
-    $i = 1;
     foreach ($cars as $car) : ?>
         <div class="element">
-        <h4>Автомобил <?= $i++ ?> :</h4>
-        <?= $car['Brand'] .' ' . $car['Model'] . ' ' . $car['Year']; ?><br>
-        <b>Километри</b>: <?= $car['Mileage']; ?> км<br>
-        <b>Похарчени за <?= date('Y'); ?> година:</b> <?= $statModel->countYearExpensesByUserId($userId,$car['ID']); ?> лв.
+            <h4><?= $car['Brand'] .' ' . $car['Model'] . ' ' . $car['Year']; ?></h4>
+            <div>
+                <b>Mileage:</b> <?= $car['Mileage']; ?> км
+            </div>
+            <div>
+                <b>Spent for year:  <?= date('Y'); ?></b> <?= $car['yearly_spent'] ?>
+            </div>
         </div>
     <?php endforeach; ?>
     </div>
@@ -47,24 +49,23 @@ if (empty($lastFive)) : ?>
 <?php foreach ($lastFive as $array) : ?>
     <tr>
     <td><?= $array['Mileage']; ?></td>
-    <td><?= $carModel->getCarNameById($array['CID']); ?></td>
-    <td><?= translate($expenseModel->getExpenseName($array['Expense_ID'])); ?></td>
-    <?php switch ($array['Expense_ID']) {
-        case 1:
-            $expenseType = $carModel->getFuelName($array['Fuel_ID']);
-            $expenseType = translate($expenseType);
-            break;
-        case 2:
-            $expenseType = $expenseModel->getInsuranceName($array['Insurance_ID']);
-            $expenseType = translate($expenseType);
-            break;			
-        default:
-            $expenseType = '';
-            break;
-    }
-    ?>
-    <td><?= $expenseType; ?></td>
-    <td><?= $array['Price']; ?> лв.</td>
+    <td><?= "{$array['car_brand']} {$array['car_model']}" ?></td>
+    <td><?= $array['expense_name']; ?></td>
+    <td>
+        <?php switch ($array['Expense_ID']) {
+            case 1:
+                echo $array['fuel_name'];
+                break;
+            case 2:
+                echo $array['insurance_name'];
+                break;
+            default:
+                $expenseType = '';
+                break;
+        }
+        ?>
+    </td>
+    <td><?= $array['Price']; ?></td>
     <td><?= $array["Notes"]; ?></td>
     </tr>
 <?php endforeach; ?>	

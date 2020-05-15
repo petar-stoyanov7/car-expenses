@@ -52,7 +52,7 @@
     <a class="delete-expense"><i class="far fa-trash-alt"></i></a>
 </div>
 
-<div id="delete-confirm" class="expense-details-modal modal-lvl-2">
+<div id="delete-stat-confirm" class="expense-details-modal modal-lvl-2 delete-confirm">
     <span class="confirm-close" onclick="_closeDeleteConfirmation()"><i class="far fa-times-circle"></i></span>
     <span>Are you sure you want to delete this expense?!</span>
     <button class="delete-yes">Yes</button>

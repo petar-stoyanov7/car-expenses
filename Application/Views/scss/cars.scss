@@ -24,14 +24,17 @@ button {
   top: 25%;
   left: 40%;
   width: 20%;
-  z-index: $high-z-index;
   background-color: #fff;
   border-radius: 3px;
   box-shadow: 2px 2px 2px black;
   padding: 15px;
 
   h3 {
+    display: inline-block;
     margin-bottom: 10px;
+    background-color: $main-color;
+    padding: 3px;
+    border-radius: 3px;
   }
 
   form {
@@ -70,7 +73,6 @@ button {
 }
 
 div.element.profile-car.delete-car-overlay {
-  z-index: $med-plus-z-index;
   box-shadow: 1px 1px 20px 5px red;
   background-color: #ffe3e3;
 }
@@ -78,4 +80,8 @@ div.element.profile-car.delete-car-overlay {
 div.element.profile-car.hide-car-overlay {
   background-color: #d7c5c5;
   color: #7d6f6f;
+}
+
+#car-black-overlay {
+  z-index: $high-z-index
 }

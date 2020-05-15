@@ -5,6 +5,7 @@ namespace Application\Controllers;
 use Application\Forms\CarForm;
 use Application\Forms\LoginForm;
 use Application\Forms\UserForm;
+use Application\Models\ExpenseModel;
 use \Core\View;
 use \Application\Models\UserModel;
 use \Application\Models\CarModel;
@@ -16,11 +17,13 @@ class Account
 
     private $userModel;
     private $carModel;
+    private $expenseModel;
 
     public function __construct()
     {
         $this->userModel = new UserModel();
-        $this->carModel = new CarModel();    
+        $this->carModel = new CarModel();
+        $this->expenseModel = new ExpenseModel();
     }
     public function indexAction()
     {
@@ -118,7 +121,7 @@ class Account
             $form->populate($userData);
 
             $viewParams = [
-                'title'         => 'Потребителски профил',
+                'title'         => $user['Username']."'s profile",
                 'form'          => $form,
                 'carForm'       => $carForm,
                 'user'          => $userData,
@@ -165,6 +168,24 @@ class Account
                 die();
             }
         }
+    }
+
+    public function deleteAction()
+    {
+        $response['success'] = false;
+        if (!empty($_POST)) {
+            $userId = $_POST['userId'];
+            if ((bool)$_POST['deleteExpenses']) {
+                $this->expenseModel->removeUserExpenses($userId);
+            }
+            if ((bool)$_POST['deleteCars']) {
+                $this->carModel->removeUserCars($userId);
+            }
+            $this->userModel->removeUser($userId);
+            $response['success'] = true;
+        }
+        json_encode($response);
+        die();
     }
 }
 

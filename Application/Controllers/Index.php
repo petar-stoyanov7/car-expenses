@@ -16,20 +16,20 @@ class Index
             $expenseModel = new ExpenseModel();
             $statModel = new StatisticsModel();
             $userId = $_SESSION['user']['ID'];
-            $greet = ($_SESSION['user']['Sex'] === 'male') ? 'дошъл' : 'дошла';
+            $cars = $carModel->listCarsByUserId($userId);
+            foreach ($cars as $index => $car) {
+                $cars[$index]['yearly_spent'] = $statModel->countYearExpensesByUserId($userId,$car['ID']);
+            }
+
             $params = [
                 'userId'        => $userId,
-                'cars'          => $carModel->listCarsByUserId($userId),
-                'greet'         => $greet,
-                'title'         => 'Автомобилни разходи',
+                'cars'          => $cars,
+                'title'         => 'Car Expenses',
                 'lastFive'      => $statModel->getLastByUserId($userId, 5),
                 'countCars'     => $carModel->countCarsByUserId($userId),
                 'yearExpense'   => $statModel->countYearExpensesByUserId($userId),
                 'firstName'     => $_SESSION['user']['Fname'],
                 'lastName'      => $_SESSION['user']['Lname'],
-                'carModel'      => $carModel,
-                'expenseModel'  => $expenseModel,
-                'statModel'     => $statModel,
             ];
             View::render('index.php', $params);
         } else {

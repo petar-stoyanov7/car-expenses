@@ -38,11 +38,19 @@ table.userlist {
   }
 }
 
+h3 {
+  display: inline-block;
+  padding: 5px;
+  margin: 3px 3px 10px;
+  background-color: $main-color;
+  color: white;
+  border-radius: 3px;
+}
+
 #user-summary-modal {
   display: none;
   position: fixed;
-  z-index: $med-z-index;
-  top: 25%;
+  top: 20%;
   left: 33%;
   width: 33%;
   background-color: #fff;
@@ -59,4 +67,22 @@ table.userlist {
   background-color: #fff;
   padding: 15px;
   box-shadow: 2px 2px 2px black;
+}
+
+.modal-close {
+  position: absolute;
+  top: 2%;
+  right: 1%;
+  color: red;
+  cursor: pointer;
+}
+
+div#user-form-modal {
+  width: 20%;
+  left: 35%;
+}
+
+#delete-user-confirm {
+  top: 12%;
+  left: 36%;
 }

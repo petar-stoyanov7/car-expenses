@@ -68,10 +68,9 @@ body {
 
 }
 
-#delete-confirm {
+.delete-confirm {
   display: none;
   position: fixed;
-  z-index: $high-z-index;
   top: 25%;
   left: 34%;
   width: 28%;
@@ -216,22 +215,25 @@ div.container {
     color: white;
     border-radius: 3px;
   }
+}
 
-  .element {
-    margin: 5px;
-    padding: 10px;
-    border-top: 1px solid #e5fcdf;
-    border-left: 1px solid #e5fcdf;
-    box-shadow: 1px 1px 2px #008d03;
+.element {
+  margin: 5px;
+  padding: 10px;
+  border-top: 1px solid #e5fcdf;
+  border-left: 1px solid #e5fcdf;
+  box-shadow: 1px 1px 2px #008d03;
 
-    &>h4 {
-      display: inline-block;
-      margin: 3px;
-    }
-    
-    &:hover {
-      background-color: #d1dbd0;
-    }
+  h4 {
+    display: inline-block;
+    margin: 3px 0 3px 0;
+    padding-left: 3px;
+    padding-right: 3px;
+    background-color: #649f70;
+  }
+
+  &:hover {
+    background-color: #d1dbd0;
   }
 }
 

@@ -34,9 +34,25 @@ class StatisticsModel extends DbModelAbstract
         $year = date('Y');
         $result = [];
         $tableList = $this->expenseModel->getTableList();
+        $queryTemplate = "
+        SELECT 
+        `Expense_%y`.*,
+        `Fuel_Types`.`Name` as `fuel_name`,
+        `Expense_Types`.`Name` as `expense_name`,
+        `Insurance_Types`.`Name` as `insurance_name`,
+        `Cars`.`Brand` as `car_brand`,
+        `Cars`.`Model` as `car_model`
+        FROM 
+        `Expense_%y` 
+        LEFT JOIN `Fuel_Types` ON `Expense_%y`.`Fuel_ID` = `Fuel_Types`.`ID`
+        LEFT JOIN `Expense_Types` ON `Expense_%y`.`Expense_ID` = `Expense_Types`.`ID`
+        LEFT JOIN `Insurance_Types` ON `Expense_%y`.`Insurance_ID` = `Insurance_Types`.`ID`
+        LEFT JOIN `Cars` ON `Expense_%y`.`CID` = `Cars`.`ID`
+        WHERE `Expense_%y`.`UID`= 1
+        ORDER BY `Expense_%y`.`ID` DESC LIMIT 5;
+        ";
         while($limit > 0) {
-            $query = "SELECT * FROM `Expense_{$year}` WHERE `UID`= ?
-                ORDER BY `ID` DESC LIMIT {$limit}";
+            $query = str_replace('%y',$year, $queryTemplate);
             $array = $this->getData($query, [$uid]);
             $result = array_merge($result, $array);
             $limit = $limit - count($array);

@@ -27,15 +27,57 @@ var _toggleBlack1 = function()
 {
     $blackLvl1.toggle();
 };
+var _showBlack1 = function()
+{
+    $blackLvl1.show();
+};
+var _closeBlack1 = function()
+{
+    $blackLvl1.hide();
+};
 
 var _toggleBlack2 = function()
 {
     $blackLvl2.toggle();
 };
+var _showBlack2 = function()
+{
+    $blackLvl2.show();
+};
+var _closeBlack2 = function()
+{
+    $blackLvl2.hide();
+};
 
 var _toggleBlack3 = function()
 {
     $blackLvl3.toggle();
+};
+var _showBlack3 = function()
+{
+    $blackLvl3.show();
+};
+var _closeBlack3 = function()
+{
+    $blackLvl3.hide();
+};
+
+var _closeAllBlack = function()
+{
+    $blackLvl1.hide();
+    $blackLvl2.hide();
+    $blackLvl3.hide();
+};
+
+var _closeAllModals = function()
+{
+    $('.modal-lvl-1,.modal-lvl-2,.modal-lvl-3').hide();
+};
+
+var _closeAll = function()
+{
+    _closeAllBlack();
+    _closeAllModals();
 };
 
 $(function(){
