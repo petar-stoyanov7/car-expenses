@@ -1,0 +1,87 @@
+@import 'variables';
+button {
+  background-color: $button-color;
+  cursor: pointer;
+  margin-top: 10px;
+  color: white;
+  height: 2.2em;
+}
+
+.profile-car {
+  position: relative;
+  width: 30%;
+
+  .cars-actions {
+    position: absolute;
+    top: 1%;
+    right: 1%;
+  }
+}
+
+#car-form-modal {
+  display: none;
+  position: absolute;
+  top: 25%;
+  left: 40%;
+  width: 20%;
+  background-color: #fff;
+  border-radius: 3px;
+  box-shadow: 2px 2px 2px black;
+  padding: 15px;
+
+  h3 {
+    display: inline-block;
+    margin-bottom: 10px;
+    background-color: $main-color;
+    padding: 3px;
+    border-radius: 3px;
+  }
+
+  form {
+    label,input,select,textarea {
+      font-size: 1.2em;
+      margin-bottom: 5px;
+      border-radius: 2px;
+    }
+    .form-wrapper {
+      display: flex;
+    }
+
+    select {
+      width: 11em;
+    }
+
+    textarea {
+      width: 18.4em;
+      height: 6em;
+    }
+
+    label {
+      width: 35%;
+    }
+
+    button {
+      font-size: 1.3em;
+      height: 2em;
+      width: 5em;
+    }
+  }
+}
+
+#car-template {
+  display: none;
+}
+
+div.element.profile-car.delete-car-overlay {
+  box-shadow: 1px 1px 20px 5px red;
+  background-color: #ffe3e3;
+}
+
+div.element.profile-car.hide-car-overlay {
+  background-color: #d7c5c5;
+  color: #7d6f6f;
+}
+
+#car-black-overlay {
+  z-index: $high-z-index
+}

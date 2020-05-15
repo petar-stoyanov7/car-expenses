@@ -8,11 +8,13 @@ class StatisticsForm extends AbstractForm
 {
     private $cars;
     private $expenses;
+    private $userId;
 
-    public function __construct($cars, $expenses)
+    public function __construct($cars, $expenses, $userId)
     {
         $this->cars = $cars;
         $this->expenses = $expenses;
+        $this->userId = $userId;
 
         parent::__construct();
     }
@@ -21,6 +23,16 @@ class StatisticsForm extends AbstractForm
     {
         $this->setMethod('post');
         $this->setTarget('/statistics');
+        $this->setName('get-statistics-form');
+
+        $this->addElement(
+            'hidden',
+            'user-id',
+            [
+                'required' => true
+            ],
+            $this->userId
+        );
 
         $this->addElement(
             'select',
@@ -66,7 +78,7 @@ class StatisticsForm extends AbstractForm
             'button',
             'submit',
             [
-                'label' => 'Display statistics',
+                'label' => 'Display',
                 'required' => false,
                 'classes' => ['submit'],
             ]

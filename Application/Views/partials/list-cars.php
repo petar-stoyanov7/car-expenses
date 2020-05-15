@@ -1,28 +1,62 @@
-<?php
-$cars = $carModel->listCarsByUserId($userId);
-$i = 1;
-foreach ($cars as $car) : ?>
-    <div class='element'>
-    <a href="/cars/delete/cid/<?=$car['ID']; ?>"><span class='edit'><img class='icon' src='/img/icon-delete.png'></span></a>
-    <a href="/cars/edit/cid/<?=$car['ID']; ?>"><span class='edit'><img class='icon' src='/img/icon-edit.png'></span></a>
-    <h4>Автомобил: <?= $i++; ?></h4><br>
-    <b>Марка: </b><?= $car['Brand']; ?><br>
-    <b>Модел: </b><?= $car['Model']; ?><br>
-    <b>Година: </b><?= $car['Year']; ?><br>
-    <b>Цвят: </b><?= $car['Color']; ?><br>
-    <b>Пробег: </b><?= $car['Mileage']; ?> км<br>
-    <?php $fuel1 = $carModel->getFuelName($car['Fuel_ID']); ?>
-    <b>Гориво1: </b><?= translate($fuel1); ?><br>
-    <?php 
-    if (!empty($car['Fuel_ID2'])) {
-        $fuel2 = $carModel->getFuelName($car['Fuel_ID2']);
-        echo '<b>Гориво2: </b>' . translate($fuel2) . '<br>';
-    } 
-    ?>
-    <b>Бележки: </b><?= $car['Notes']; ?>
-    </div>		
-<?php endforeach; ?>
+<input type="hidden" id="cars-user-id" value="<?= $showCars ? $userId : ''; ?>">
 
-<div class="element">
-    <a href="/cars/add/uid/<?= $userId ?>"><img src="/img/icon-add.png" height="110 px" width="110 px"></a>
+<div class="flex-wrapper cars-list"></div>
+<button id="add-car">Add car</button>
+
+
+
+<div id="delete-car-confirm" class="delete-confirm modal-lvl-3">
+    <span class="confirm-close" onclick="_closeDeleteConfirmation()"><i class="far fa-times-circle"></i></span>
+    <span>Are you sure you want to delete this car? This action is irreversible!</span>
+    <div>
+        <input type="checkbox" id="delete-car-expenses">
+        <label for="delete-car-expenses">Delete car's expenses?</label>
+    </div>
+    <button class="delete-yes">Yes</button>
+    <button class="delete-no" onclick="_closeDeleteConfirmation()">No</button>
+</div>
+
+<div id="car-form-modal" class="modal-lvl-3">
+    <h3 class="title">Edit car:</h3>
+    <?php $View::renderForm($carForm) ?>
+</div>
+
+<?php /** the bellow is template, used for JS */ ?>
+<div class="element profile-car" id="car-template">
+    <h4></h4>
+    <div class="cars-actions">
+        <a class="edit-car" onclick="showEditCar()">
+            <i class="fas fa-edit"></i>
+        </a>
+        <a class="delete-car" onclick="showDeleteCar()">
+            <i class="far fa-trash-alt"></i>
+        </a>
+    </div>
+    <div class="flex-wrapper">
+        <span class="label">Year: </span>
+        <span class="cars-data car-year"></span>
+    </div>
+    <div class="flex-wrapper">
+        <span class="label">Color: </span>
+        <span class="cars-data car-color"></span>
+    </div>
+    <div class="flex-wrapper">
+        <span class="label">Mileage: </span>
+        <span class="cars-data car-mileage"></span>
+    </div>
+    <div class="flex-wrapper">
+        <span class="label">Fuel: </span>
+        <span class="cars-data car-fuel"></span>
+    </div>
+    <div class="flex-wrapper hidden">
+        <span class="label">Secondary fuel</span>
+        <span class="cars-data car-fuel2"></span>
+    </div>
+    <div class="flex-wrapper">
+        <span class="label">Notes: </span>
+        <span class="cars-data car-notes"></span>
+    </div>
+</div>
+
+<div id="car-black-overlay" class="black-overlay">
 </div>

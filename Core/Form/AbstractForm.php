@@ -90,11 +90,12 @@ abstract class AbstractForm
 
     public function populate(array $values)
     {
-        /** @var  Element $element */
+        /** @var  Element $Element */
         foreach($this->formElements as $element) {
-            $name = $element->getName();
+            $Element = $element['element'];
+            $name = $Element->getName();
             if (array_key_exists($name, $values)) {
-                $element->setValue($values[$name]);
+                $Element->setValue($values[$name]);
             }
         }
         return $this;
@@ -124,7 +125,7 @@ abstract class AbstractForm
     public function disableElement(string $element)
     {
         if (array_key_exists($element, $this->formElements)) {
-            $this->formElements[$element]->setDisabled(true);
+            $this->formElements[$element]['element']->setDisabled(true);
         }
     }
 
@@ -184,6 +185,15 @@ abstract class AbstractForm
             $this->class = implode(' ', $classes);
         } else {
             $this->class = $classes;
+        }
+    }
+
+    public function addClass(string $class) : void
+    {
+        if (empty($this->class)) {
+            $this->class = $class;
+        } else {
+            $this->class .= ' ' . $class;
         }
     }
 
@@ -370,7 +380,7 @@ abstract class AbstractForm
     public function getElementByName(string $name)
     {
         if (array_key_exists($name, $this->formElements)) {
-            return $this->formElements[$name];
+            return $this->formElements[$name]['element'];
         }
         return null;
     }
@@ -401,7 +411,7 @@ abstract class AbstractForm
     /**
      * @return string
      */
-    public function getMethod() : string
+    public function getMethod()
     {
         return $this->method;
     }
@@ -409,7 +419,7 @@ abstract class AbstractForm
     /**
      * @return string
      */
-    public function getTarget() : string
+    public function getTarget()
     {
         return $this->target;
     }
