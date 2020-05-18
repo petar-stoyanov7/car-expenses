@@ -14,6 +14,7 @@ class LoginForm extends AbstractForm
     public function init()
     {
         $this->setMethod('post');
+        $this->setName('login-form');
         $this->setTarget('/account/login');
         $this->setOptions(
             [
@@ -23,7 +24,7 @@ class LoginForm extends AbstractForm
 
         $this->addElement(
             'text',
-            'username',
+            'login-username',
             [
                 'required'      => true,
                 'placeholder'   => 'Username'
@@ -41,7 +42,7 @@ class LoginForm extends AbstractForm
 
         $this->addElement(
             'button',
-            'submit',
+            'login-submit',
             [
                 'required'  => false,
                 'label'     => 'Login'

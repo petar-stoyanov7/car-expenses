@@ -32,22 +32,22 @@ class Account
     
     public function loginAction()
     {
-        $form = new LoginForm();
-        $viewParams =[
-            'title' => 'Login',
-            'form'  => $form
-        ];
-        
+//        $form = new LoginForm();
+//        $viewParams =[
+//            'title' => 'Login',
+//            'form'  => $form
+//        ];
+//
         if(isset($_POST['username']) && isset($_POST['password'])) {
             $User = new User($_POST['username'],$_POST['password']);
             if ($this->userModel->login($User)) {
-                header("Location: /");
+                $response['success'] = true;
             } else {
-                display_warning("Невалиден потребител/парола");
+                $response['success'] = false;
             }
-        }        
-
-        View::render('/account/login.php', $viewParams);
+            echo json_encode($response);
+        }
+        die();
     }
 
     public function logoutAction()
@@ -61,39 +61,26 @@ class Account
     public function registerAction()
     {
         $form = new UserForm();
-        $form->setOptions(['classes' => 'register-form']);
-        $form->setName('register-form');
-        $form->setTarget('/account/register');
-        $form->removeElement('user-id');
         if(!empty($_POST)) {
-            if ($form->validate($_POST)) {
-                $values = $form->getValues();
-                $user = new User(
-                    $values['username'],
-                    $values['password1'],
-                    $values['password2'],
-                    $values['email1'],
-                    $values['email2'],
-                    $values['firstname'],
-                    $values['lastname'],
-                    $values['city'],
-                    $values['sex']
-                );
-                try {
-                    $this->userModel->addUser($user);
-                } catch(Exception $e) {
-                    display_warning($e->getMessage());
-                }
-            } else {
-                $form->populate($form->getValues());
-            }
-        }
-        $viewParams = [
-            'title' => "Нова регистрация",
-            'form'  => $form
-        ];
+            $values = $form->getValues();
+            $user = new User(
+                $_POST['username'],
+                $_POST['password1'],
+                $_POST['password2'],
+                $_POST['email1'],
+                $_POST['email2'],
+                $_POST['firstname'],
+                $_POST['lastname'],
+                $_POST['city'],
+                $_POST['sex']
+            );
+            if ($this->userModel->addUser($user)) {
+                $this->userModel->login($user);
+                header('Location: /');
+            };
 
-        View::render('account/register.php', $viewParams);
+
+        }
     }
 
     public function profileAction()
@@ -167,6 +154,21 @@ class Account
                 echo json_encode($result);
                 die();
             }
+        }
+    }
+
+    public function getUsersAction()
+    {
+        if (!empty($_POST) && (bool)$_POST['isAjax'] === true ) {
+            $userList = $this->userModel->listUsers();
+            $result['users'] = array_column($userList, 'Username');
+            $result['emails'] = array_column($userList, 'Email');
+            if (!empty($userList)) {
+                echo json_encode($result);
+                die();
+            }
+        } else {
+            header('Location: /');
         }
     }
 

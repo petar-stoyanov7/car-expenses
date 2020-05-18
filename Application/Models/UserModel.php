@@ -46,13 +46,6 @@ __SQL;
     public function addUser($User)
     {
         $users = $this->listUsers();
-        foreach ($users as $user) {
-            if ($User->getProperty("username") === $user["Username"]) {
-                throw new Exception('User already exists');
-            } elseif ($User->getProperty("email1") === $user["Email"]) {
-                throw new Exception('Email is already in use ');
-            }
-        }
         $query = "INSERT INTO `Users` (`Username`,`Password`,`Group`,`Email`,`Fname`,`Lname`,`City`,`Sex`,`Notes`)
                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         $values = [

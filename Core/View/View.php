@@ -45,6 +45,9 @@ class View
                 if (!isset($_SESSION['user'])) {
                     $loginForm = new LoginForm();
                     $registerForm = new UserForm();
+                    $registerForm->setTarget('/account/register');
+                    $registerForm->setName('register-form');
+                    $registerForm->removeElement('user-id');
                 }
                 require($customHeader);
             }

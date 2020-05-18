@@ -1,11 +1,3 @@
-var $userId;
-var $pwd1;
-var $pwd2;
-var $firstName;
-var $lastName;
-var $email;
-var $city;
-var $sex;
 var $currentUser;
 
 var userCache = {};
@@ -17,7 +9,7 @@ var _resetUserForm = function() {
     $pwd2.val('');
     $firstName.val('');
     $lastName.val('');
-    $email.val('');
+    $email1.val('');
     $city.val('');
 };
 
@@ -27,41 +19,10 @@ var _closeModal = function()
     $('#user-form-modal').hide();
 };
 
-var _addErrorClass = function(element)
-{
-    element.closest('div.form-wrapper').addClass('form-error');
-};
-
 var _toggleUserModal = function()
 {
     _toggleBlack3();
     $('#user-form-modal').toggle();
-};
-
-var _checkForm = function()
-{
-    var isValid = true;
-
-    $('#account-edit-form div.form-wrapper').removeClass('form-error');
-
-    if ($pwd1.val() !== $pwd2.val()) {
-        _addErrorClass($pwd1);
-        _addErrorClass($pwd2)
-        isValid = false;
-    }
-    if ($firstName.val() === '') {
-        _addErrorClass($firstName);
-        isValid = false;
-    }
-    if ($lastName.val() === '') {
-        _addErrorClass($lastName);
-        _addErrorClass($lastName);
-    }
-    if ($city.val() === '') {
-        _addErrorClass($city);
-        isValid = false;
-    }
-    return isValid;
 };
 
 var _resetPage = function(data)
@@ -130,7 +91,7 @@ var editUser = function()
             'lastname': $lastName.val(),
             'sex': $sex.val(),
             'city': $city.val(),
-            'email': $email.val(),
+            'email': $email1.val(),
             'password1': $pwd1.val(),
             'password2': $pwd2.val(),
             'user-id': userId
@@ -158,14 +119,7 @@ var editUser = function()
 };
 
 $(function(){
-    $pwd1 = $('#password1');
-    $pwd2 = $('#password2');
-    $firstName = $('#firstname');
-    $lastName = $('#lastname');
-    $email = $('#email1');
-    $city = $('#city');
     $userId = $('#user-id');
-    $sex = $('#sex');
     $currentUser = $('#profile-user-id');
 
     $('#account-edit-form').submit(function(e){

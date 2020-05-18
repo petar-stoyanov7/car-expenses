@@ -304,7 +304,30 @@ input[type=number] {
   -moz-appearance: textfield;
 }
 
-#account-edit-form {
+.form-wrapper {
+  position: relative;
+
+  &.form-error {
+    border: 1px outset red;
+    border-radius: 2px;
+    padding: 3px;
+    background-color: rgba(255, 29, 14, 0.52);
+  }
+
+  span.form-error-message {
+    display: block;
+    position: absolute;
+    top: -30%;
+    left: 59%;
+    background-color: #fff;
+    box-shadow: 1px 1px 1px black;
+    padding: 0 2px 0 2px;
+    border: 1px solid red;
+    border-radius: 3px;
+  }
+}
+
+#account-edit-form,#register-form {
   fieldset {
     margin-bottom: 5px;
   }
@@ -325,6 +348,7 @@ input[type=number] {
 
   .form-wrapper {
     display: flex;
+    position: relative;
 
     input,label {
       font-size: 1.3em;
@@ -338,7 +362,7 @@ input[type=number] {
 
     input[type="checkbox"] + label {
       margin-left: 10px;
-      width: 80%;
+      width: 90%;
     }
 
     button {

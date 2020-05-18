@@ -21,8 +21,6 @@ var _stopLoading = function() {
     }
 };
 
-
-
 var _toggleBlack1 = function()
 {
     $blackLvl1.toggle();
@@ -86,19 +84,7 @@ $(function(){
     $blackLvl3 = $('#black-lvl-3');
     $loadingBlack = $('#loading-black');
     $loadingMessage = $('#loading-message');
-    var loginModal = $('#user-login-modal');
-    var registerModal = $('#user-register-modal');
 
-
-    $('.login-activator').click(function(){
-        $blackLvl1.show();
-        loginModal.show();
-    });
-
-    $('.register-activator').click(function(){
-        $blackLvl1.show();
-        registerModal.show();
-    });
 
     $('.eula-activator').click(function(){
         $('#modal-eula').show();
