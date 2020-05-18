@@ -48,7 +48,7 @@ class StatisticsModel extends DbModelAbstract
         LEFT JOIN `Expense_Types` ON `Expense_%y`.`Expense_ID` = `Expense_Types`.`ID`
         LEFT JOIN `Insurance_Types` ON `Expense_%y`.`Insurance_ID` = `Insurance_Types`.`ID`
         LEFT JOIN `Cars` ON `Expense_%y`.`CID` = `Cars`.`ID`
-        WHERE `Expense_%y`.`UID`= 1
+        WHERE `Expense_%y`.`UID`= ?
         ORDER BY `Expense_%y`.`ID` DESC LIMIT 5;
         ";
         while($limit > 0) {

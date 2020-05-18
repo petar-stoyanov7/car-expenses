@@ -32,12 +32,6 @@ class Account
     
     public function loginAction()
     {
-//        $form = new LoginForm();
-//        $viewParams =[
-//            'title' => 'Login',
-//            'form'  => $form
-//        ];
-//
         if(isset($_POST['username']) && isset($_POST['password'])) {
             $User = new User($_POST['username'],$_POST['password']);
             if ($this->userModel->login($User)) {
