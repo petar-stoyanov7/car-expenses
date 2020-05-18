@@ -30,32 +30,6 @@
     color: white;
     border-radius: 3px;
   }
-
-  form#account-edit-form {
-    font-size: 1em;
-    label,input,select {
-      font-size: 1em;
-    }
-    select {
-      height: 1.4em;
-    }
-
-    label[for="check"] {
-      width: 80%;
-    }
-
-    .form-error {
-      border: 1px outset red;
-      border-radius: 2px;
-      padding: 3px;
-      background-color: rgba(255, 29, 14, 0.52);
-    }
-
-    button {
-      height: 2em;
-      width: 6em;
-    }
-  }
 }
 
 .user-modify-actions {

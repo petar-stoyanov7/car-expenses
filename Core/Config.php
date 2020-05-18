@@ -3,7 +3,7 @@ namespace Core;
 
 class Config
 {
-    private const CONFIG_FILE = '/Application/Config/config.json';
+    const CONFIG_FILE = '/Application/Config/config.json';
     private $config;
 
     public function __construct()
