@@ -23,21 +23,21 @@ class Element
     private $errors;
 
     /** validators */
-    public const VALIDATOR_CHARS_ONLY = 'charsOnly';
-    public const VALIDATOR_LATIN_CHARS_ONLY = 'latinCharsOnly';
-    public const VALIDATOR_CHARS_AND_NUM = 'charsAndNum';
-    public const VALIDATOR_LATIN_CHARS_AND_NUM = 'latinCharsAndNum';
-    public const VALIDATOR_IS_TRUE = 'isTrue';
+    const VALIDATOR_CHARS_ONLY = 'charsOnly';
+    const VALIDATOR_LATIN_CHARS_ONLY = 'latinCharsOnly';
+    const VALIDATOR_CHARS_AND_NUM = 'charsAndNum';
+    const VALIDATOR_LATIN_CHARS_AND_NUM = 'latinCharsAndNum';
+    const VALIDATOR_IS_TRUE = 'isTrue';
 
     /** validator errors */
     private $errorMessages = [];
 
     /** filters */
-    public const FILTER_STRING_TRIM = 'stringTrim';
-    public const FILTER_LOWERCASE = 'lowercase';
-    public const FILTER_UPPERCASE = 'uppercase';
-    public const FILTER_UCFIRST = 'ucfirst';
-    public const FILTER_NULLIFY = 'nullify';
+    const FILTER_STRING_TRIM = 'stringTrim';
+    const FILTER_LOWERCASE = 'lowercase';
+    const FILTER_UPPERCASE = 'uppercase';
+    const FILTER_UCFIRST = 'ucfirst';
+    const FILTER_NULLIFY = 'nullify';
 
     private $validFilters = [
         self::FILTER_STRING_TRIM,
@@ -78,7 +78,7 @@ class Element
         string $name,
         array $params,
         $value = null
-    ) : void
+    )
     {
         $this->setType($type);
         $this->setName($name);
@@ -86,22 +86,22 @@ class Element
         $this->setValue($value);
     }
 
-    public function setType(string $type) : void
+    public function setType(string $type)
     {
         $this->type = $type;
     }
 
-    public function setName(string $name) : void
+    public function setName(string $name)
     {
         $this->name = $name;
     }
 
-    public function setValue($value) : void
+    public function setValue($value)
     {
         $this->value = $value;
     }
 
-    public function setParams(array $params) : void
+    public function setParams(array $params)
     {
         foreach ($params as $key => $param) {
             $method = 'set' . ucfirst($key);
@@ -111,12 +111,12 @@ class Element
         }
     }
 
-    public function setOptions(array $options) : void
+    public function setOptions(array $options)
     {
         $this->options = $options;
     }
 
-    public function setFilters(array $filters) : void
+    public function setFilters(array $filters)
     {
         foreach ($filters as $index => $filter) {
             if (!in_array($filter, $this->validFilters)) {
@@ -126,7 +126,7 @@ class Element
         $this->filters = $filters;
     }
 
-    public function setValidators(array $validators) : void
+    public function setValidators(array $validators)
     {
         foreach ($validators as $index => $validator) {
             if (!in_array($validator, $this->validValidators)) {
@@ -136,7 +136,7 @@ class Element
         $this->validators = $validators;
     }
 
-    public function setClasses($classes) : void
+    public function setClasses($classes)
     {
         if (is_array($classes)) {
             $this->class = implode(' ', $classes);
@@ -150,32 +150,32 @@ class Element
         $this->disabled = $disabled ? 'disabled' : null;
     }
 
-    public function setPlaceholder($text) : void
+    public function setPlaceholder($text)
     {
         $this->placeholder = $text;
     }
 
-    public function setButtonType(string $type) : void
+    public function setButtonType(string $type)
     {
         $this->buttonType = $type;
     }
 
-    public function setOnClick(string $onClick) : void
+    public function setOnClick(string $onClick)
     {
         $this->onClick = $onClick;
     }
 
-    public function setLabel(string $label) : void
+    public function setLabel(string $label)
     {
         $this->label = $label;
     }
 
-    public function setRequired(bool $required) : void
+    public function setRequired(bool $required)
     {
         $this->required = $required;
     }
 
-    public function setErrors($error) : void
+    public function setErrors($error)
     {
         if (is_array($error)) {
             $this->errors = $error;
@@ -184,7 +184,7 @@ class Element
         }
     }
 
-    public function addErrors($error) : void
+    public function addErrors($error)
     {
         if (is_array($error)) {
             $this->errors = array_merge($this->errors, $error);
@@ -193,7 +193,7 @@ class Element
         }
     }
 
-    public function addClass($class) : void
+    public function addClass($class)
     {
         if (empty($this->class)) {
             $this->class = $class;

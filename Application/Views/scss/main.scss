@@ -65,7 +65,6 @@ body {
     padding: 5px 10px 5px 10px;
     border-radius: 3px;
   }
-
 }
 
 .delete-confirm {
@@ -335,6 +334,11 @@ input[type=number] {
 
     label {
       width: 40%;
+    }
+
+    input[type="checkbox"] + label {
+      margin-left: 10px;
+      width: 80%;
     }
 
     button {

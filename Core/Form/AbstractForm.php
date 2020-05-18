@@ -37,7 +37,7 @@ abstract class AbstractForm
         string $name,
         array $params,
         $value = null
-    ) : void
+    )
     {
         $element = new Element($type, $name, $params, $value);
         $this->setElement($element);
@@ -133,7 +133,7 @@ abstract class AbstractForm
     /**
      * @param string $name
      */
-    public function setName(string $name) : void
+    public function setName(string $name)
     {
         $this->name = $name;
     }
@@ -141,7 +141,7 @@ abstract class AbstractForm
     /**
      * @param string $method
      */
-    public function setMethod(string $method) : void
+    public function setMethod(string $method)
     {
         $this->method = $method;
     }
@@ -149,7 +149,7 @@ abstract class AbstractForm
     /**
      * @param string $target
      */
-    public function setTarget(string $target) : void
+    public function setTarget(string $target)
     {
         $this->target = $target;
     }
@@ -157,7 +157,7 @@ abstract class AbstractForm
     /**
      * @param array $options
      */
-    public function setOptions(array $options) : void
+    public function setOptions(array $options)
     {
         foreach ($options as $index => $option) {
             $method = 'set' . ucfirst($index);
@@ -170,7 +170,7 @@ abstract class AbstractForm
     /**
      * @param Element $element
      */
-    public function setElement(Element $element) : void
+    public function setElement(Element $element)
     {
         $this->formElements[$element->getName()] = [
             'element' => $element,
@@ -179,7 +179,7 @@ abstract class AbstractForm
         ];
     }
 
-    public function setClasses($classes) : void
+    public function setClasses($classes)
     {
         if (is_array($classes)) {
             $this->class = implode(' ', $classes);
@@ -188,7 +188,7 @@ abstract class AbstractForm
         }
     }
 
-    public function addClass(string $class) : void
+    public function addClass(string $class)
     {
         if (empty($this->class)) {
             $this->class = $class;
@@ -202,7 +202,7 @@ abstract class AbstractForm
      * @param array $elements
      * @param null $label
      */
-    public function createFieldset(string $fieldsetName, array $elements, $label = null) : void
+    public function createFieldset(string $fieldsetName, array $elements, $label = null)
     {
         $matches = false;
         foreach ($elements as $elementName) {
@@ -220,7 +220,7 @@ abstract class AbstractForm
      * @param $elementName
      * @param $fieldsetName
      */
-    public function setFieldset($elementName, $fieldsetName) : void
+    public function setFieldset($elementName, $fieldsetName)
     {
         $this->formElements[$elementName]['fieldset'] = $fieldsetName;
     }
@@ -230,7 +230,7 @@ abstract class AbstractForm
      * @param array $elements
      * @param null $label
      */
-    public function createGroup(string $groupName, array $elements, $label = null) : void
+    public function createGroup(string $groupName, array $elements, $label = null)
     {
         $matches = false;
         foreach ($elements as $elementName) {
@@ -248,7 +248,7 @@ abstract class AbstractForm
      * @param $elementName
      * @param $groupName
      */
-    public function setGroup($elementName, $groupName) : void
+    public function setGroup($elementName, $groupName)
     {
         $this->formElements[$elementName]['group'] = $groupName;
     }
