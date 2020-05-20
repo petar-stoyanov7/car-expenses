@@ -3,6 +3,7 @@
 namespace Application\Controllers;
 
 use Application\Forms\CarForm;
+use Application\Models\PartsModel;
 use \Core\View;
 use \Application\Models\StatisticsModel;
 use \Application\Models\CarModel;
@@ -71,6 +72,8 @@ class Cars
                 $expenseModel = new ExpenseModel();
                 $expenseModel->removeCarExpenses($carId);
             }
+            $partsModel = new PartsModel();
+            $partsModel->removeByCarId($carId);
             $this->carModel->removeCarById($carId);
             $response['success'] = true;
         } else {

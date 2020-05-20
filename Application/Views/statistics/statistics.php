@@ -1,4 +1,4 @@
-<div class="container">
+<div class="container form-container">
     <h3>Statistic for period:</h3>
     <?php //display_statistics_input($uid); ?>
     <?php $View::renderForm($form); ?>
@@ -22,6 +22,19 @@
             <th>Value</th>
             <th>Notes</th>
             <th>Actions</th>
+        </tr>
+    </table>
+</div>
+
+<div id="parts-info" class="modal-lvl-1">
+    <h4>Parts details:</h4>
+    <table id="detailed-parts-table" class="expenses">
+        <tr>
+            <th>Name</th>
+            <th>Date</th>
+            <th>Car</th>
+            <th>Mileage</th>
+            <th>Age</th>
         </tr>
     </table>
 </div>

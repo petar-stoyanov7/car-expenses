@@ -126,6 +126,28 @@ var deleteExpense = function(expenseString)
     });
 };
 
+var renderPartsData = function(data, cacheString)
+{
+    var table = $('#detailed-parts-table');
+    table.attr('cacheString', cacheString);
+    $('#detailed-parts-table tr.parts-row').remove();
+    if (data.length > 0) {
+        $.each(data, function (index, datarow) {
+            var element = '' +
+                '<tr class="parts-row" id="' + datarow['Date'] + '_' + datarow['ID'] + '" rowIndex="' + index + '">' +
+                '<td>' + datarow['Name'] + '</td>' +
+                '<td>' + datarow['Date'] + '</td>' +
+                '<td>' + datarow['car_name'] + '</td>' +
+                '<td>' + datarow['part_mileage'] + '</td>' +
+                '<td>' + datarow['part_age'] + '</td>' +
+                '</tr>';
+            table.append(element);
+        })
+    }
+    _showBlack1();
+    $('#parts-info').show();
+};
+
 var renderDetailedStatistics = function(data, cacheString)
 {
     var table = $('#detailed-expenses-table');
@@ -161,13 +183,53 @@ var renderStatisticsData = function(data, cacheString)
     renderDetailedStatistics(data['allExpenses'], cacheString);
 };
 
-var getStatisticsData = function() {
+var getPartsData = function()
+{
+    var selectedCar = $('#car').val();
+    var userId = $('#user-id').val();
+    var cacheString = 'stat_' + selectedCar + '_' + userId;
+    _startLoading();
+    if (expenseCache[cacheString] !== undefined) {
+        renderPartsData(expenseCache[cacheString], cacheString);
+        _stopLoading();
+    } else {
+        $.ajax({
+            type: 'POST',
+            url: '/statistics/get-parts',
+            dataType: 'JSON',
+            data: {
+                'user-id': userId,
+                'car': selectedCar,
+                'ajax': 1
+            },
+            success: function(data) {
+                expenseCache[cacheString] = data;
+            },
+            error: function(response) {
+                console.log('Error with parts data');
+                console.log(response);
+                _stopLoading();
+            }
+        }).done(function(){
+            renderPartsData(expenseCache[cacheString], cacheString);
+            _stopLoading();
+        });
+    }
+};
+
+var getStatisticsData = function()
+{
     var selectedCar = $('#car').val();
     var expenseType = $('#expense-type').val();
     var startDate = $('#from').val();
     var endDate = $('#to').val();
     var userId = $('#user-id').val();
-    var cacheString = selectedCar + expenseType + startDate + endDate + userId;
+    var cacheString = 'stat_' +
+        selectedCar + '_' +
+        expenseType + '_ ' +
+        startDate + '_' +
+        endDate + '_' +
+        userId;
     _startLoading();
     if (expenseCache[cacheString] !== undefined) {
         renderStatisticsData(expenseCache[cacheString], cacheString);
@@ -217,4 +279,6 @@ $(function(){
         $(this).closest('div.expense-details-modal').hide();
         _toggleBlack2();
     });
+
+    $('#display-parts').click(getPartsData);
 });

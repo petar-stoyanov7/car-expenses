@@ -2,13 +2,42 @@ var expenseCache = {};
 var cars = {};
 var lastFive = {};
 
-var _hideOptionals = function() {
+var _hideOptionals = function()
+{
     $.each($('.optional-select'), function(i, value){
         $(value).closest('.form-wrapper').hide();
     });
 };
 
-var _showAllFuels = function() {
+var _checkExpenseForm = function()
+{
+    _resetFormErrors('#new-expense-form');
+    isValid = true;
+    if ($("#value").val() === '' || $("#value").val() === null) {
+        _addError($('#value'), 'No value provided!');
+        isValid = false;
+    }
+
+    if (
+        parseInt($('#expense-type').val()) === 1 &&
+        ($('#liters').val() === '' || $('#liters').val() === null)
+    ) {
+        _addError($('#liters'), "Can't be empty!");
+        isValid = false;
+    }
+
+    if (
+        parseInt($('#expense-type').val()) === 5 &&
+        ($('#part-name').val() === '' || $('#part-name').val() === null)
+    ) {
+        _addError($('#part-name'), "Can't be empty!");
+        isValid = false;
+    }
+    return isValid;
+};
+
+var _showAllFuels = function()
+{
     $.each($('#fuel-type option'), function(){
         $(this).show()
     });
@@ -18,6 +47,7 @@ var _resetForm = function() {
     $('#description').val('');
     $('#value').val('');
     $('#liters').val('');
+    $('#part-name').val('');
 };
 
 var displayOption = function(selector) {
@@ -35,15 +65,16 @@ var filterExpenses = function() {
         case "2":
             displayOption('#insurance-type');
             break;
+        case "5":
+            displayOption('#part-name');
+            break;
         default:
             break;
     }
 };
 
 var filterFuels = function(cars) {
-    console.log(cars);
     selectedCar = $('#car-id').val();
-    // fuels = cars[selectedCar].fuels;
     fuels = [cars[selectedCar]['Fuel_ID']];
     if (null !== cars[selectedCar]['Fuel_ID2']) {
         fuels.push(cars[selectedCar]['Fuel_ID2']);
@@ -82,7 +113,6 @@ var getCars = function(userId) {
 
     }).done(function(data){
         filterFuels(cars);
-        console.log(cars);
         _stopLoading();
     });
 };
@@ -92,13 +122,15 @@ var drawLastFive = function(data){
     $('#last-five-expenses tr.dynamic-row').remove();
 
     $.each(data, function(i,datum){
+        if (null === datum['Notes'] || 'null' === datum['Notes']) {
+            datum['Notes'] = '';
+        }
         var row = '<tr class="dynamic-row">' +
-            '<td>'+datum['mileage']+'</td>' +
-            '<td>'+datum['car']+'</td>' +
-            '<td>'+datum['expenseType']+'</td>' +
-            '<td>'+datum['type']+'</td>' +
-            '<td>'+datum['price']+'</td>' +
-            '<td>'+datum['notes']+'</td>' +
+            '<td>'+datum['Mileage']+'</td>' +
+            '<td>'+datum['car_brand']+' '+datum['car_model']+'</td>' +
+            '<td>'+datum['expense_name']+'</td>' +
+            '<td>'+datum['Price']+'</td>' +
+            '<td>'+datum['Notes']+'</td>' +
             '</tr>';
         $table.append(row);
     });
@@ -120,6 +152,7 @@ var processExpense = function()
         "mileage": mileage,
         "liters": $('#liters').val(),
         "value": $('#value').val(),
+        "partName": $('#part-name').val(),
         "description": $('#description').val(),
     };
     $.ajax({
@@ -127,18 +160,18 @@ var processExpense = function()
         dataType: 'json',
         url: '/expense/new-ajax-expense',
         data: formData,
-        error: function(response) {
+        error: function (response) {
             _stopLoading();
             console.log('error with form execution');
             console.log(response);
         }
-    }).done(function(data){
-        cars[carId]['Mileage'] = mileage;
+    }).done(function (data) {
         _resetForm();
-        setMileage(cars);
         if (data['success']) {
-            getLastFive(userId);
+            cars[carId]['Mileage'] = mileage;
+            setMileage(cars);
         }
+        getLastFive(userId);
         _stopLoading();
     });
 };
@@ -167,15 +200,16 @@ $(function(){
     var carSelect = $('#car-id');
     var expenseSelect = $('#expense-type');
     var userId = $('#user-id').val();
-    var dataReady = false;
     var form = $('#new-expense-form');
 
     getCars(userId);
     getLastFive(userId);
 
-    form.submit(function(event){
-        event.preventDefault();
-        processExpense();
+    form.submit(function(e){
+        e.preventDefault();
+        if (_checkExpenseForm()) {
+            processExpense();
+        }
     });
 
     $('#car-id').change(function(){

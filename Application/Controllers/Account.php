@@ -6,6 +6,7 @@ use Application\Forms\CarForm;
 use Application\Forms\LoginForm;
 use Application\Forms\UserForm;
 use Application\Models\ExpenseModel;
+use Application\Models\PartsModel;
 use \Core\View;
 use \Application\Models\UserModel;
 use \Application\Models\CarModel;
@@ -177,6 +178,8 @@ class Account
             if ((bool)$_POST['deleteCars']) {
                 $this->carModel->removeUserCars($userId);
             }
+            $partsModel = new PartsModel();
+            $partsModel->removeByUserId($userId);
             $this->userModel->removeUser($userId);
             $response['success'] = true;
         }

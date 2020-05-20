@@ -10,7 +10,6 @@
             <th>Mileage</th>
             <th>Car</th>
             <th>Expense type</th>
-            <th>Type</th>
             <th>Value</th>
             <th>Notes</th>
         </tr>

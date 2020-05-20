@@ -78,10 +78,26 @@ class StatisticsForm extends AbstractForm
             'button',
             'submit',
             [
-                'label' => 'Display',
-                'required' => false,
-                'classes' => ['submit'],
+                'label'     => 'Display',
+                'required'  => false,
+                'classes'   => ['submit'],
             ]
+        );
+
+        $this->addElement(
+            'button',
+            'display-parts',
+            [
+                'label'         => 'Show parts',
+                'required'      => false,
+                'classes'       => 'show-parts',
+                'buttonType'    => 'button',
+            ]
+        );
+
+        $this->createGroup(
+            'buttons',
+            ['submit', 'display-parts']
         );
 
     }

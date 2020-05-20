@@ -13,10 +13,11 @@ class Expense
 	private $fuelType;
 	private $liters;
 	private $insuranceType;
+	private $partName;
 	private $notes;
 
 	public function __construct(
-	    $userId,
+        $userId,
         $carId,
         $date,
         $mileage,
@@ -24,7 +25,8 @@ class Expense
         $price,
         $fuelType="",
         $liters="",
-        $insurance_type="",
+        $insuranceType="",
+        $partName = "",
         $notes=""
     )
     {
@@ -36,7 +38,8 @@ class Expense
 		$this->price = $price;
 		$this->fuelType = $fuelType;
 		$this->liters = $liters;
-		$this->insuranceType = $insurance_type;
+		$this->insuranceType = $insuranceType;
+		$this->partName = $partName;
 		$this->notes = sanitize($notes,1);
 	}
 

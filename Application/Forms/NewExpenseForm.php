@@ -74,7 +74,7 @@ class NewExpenseForm extends AbstractForm
                 'label'     => 'Fuel type: ',
                 'required'  => false,
                 'options'   => $this->getFuelTypes(),
-                'classes'     => 'optional-select'
+                'classes'   => 'optional-select'
             ]
         );
 
@@ -85,7 +85,7 @@ class NewExpenseForm extends AbstractForm
                 'label'     => 'Insurance Type: ',
                 'required'  => false,
                 'options'   => $this->getInsuranceTypes(),
-                'classes'     => 'optional-select'
+                'classes'   => 'optional-select'
             ]
         );
 
@@ -96,7 +96,18 @@ class NewExpenseForm extends AbstractForm
                 'label'     => 'Insurance Type: ',
                 'required'  => false,
                 'options'   => $this->getInsuranceTypes(),
-                'classes'     => 'optional-select'
+                'classes'   => 'optional-select'
+            ]
+        );
+
+        $this->addElement(
+            'text',
+            'part-name',
+            [
+                'label'         => 'Parts list: ',
+                'required'      => false,
+                'placeholder'   => 'part1, part2, part3',
+                'classes'       => 'optional-select',
             ]
         );
 
@@ -127,7 +138,7 @@ class NewExpenseForm extends AbstractForm
                 'label'         => 'Liters',
                 'required'      => false,
                 'placeholder'   => 'Liters of fuel',
-                'classes'         => 'optional-select'
+                'classes'       => 'optional-select'
             ]
         );
 
@@ -145,8 +156,8 @@ class NewExpenseForm extends AbstractForm
             'textarea',
             'description',
             [
-                'required' => false,
-                'placeholder' => 'Additional info'
+                'required'      => false,
+                'placeholder'   => 'Additional info'
             ]
         );
 
@@ -154,9 +165,9 @@ class NewExpenseForm extends AbstractForm
             'button',
             'submit',
             [
-                'label' => 'Add expense',
-                'required' => false,
-                'classes' => ['submit'],
+                'label'     => 'Add expense',
+                'required'  => false,
+                'classes'   => ['submit'],
             ]
         );
     }

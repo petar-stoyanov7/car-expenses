@@ -2,8 +2,10 @@
 
 namespace Application\Models;
 
+use Application\Classes\Expense;
 use Application\Models\CarModel;
 use Core\DbModelAbstract;
+use Exception;
 
 class ExpenseModel extends DbModelAbstract 
 {    
@@ -130,50 +132,52 @@ class ExpenseModel extends DbModelAbstract
         return $result[0]['Name'];
     }
 
-    public function addExpense($expense)
+    public function addExpense(Expense $Expense)
     {
-        $year = substr($expense->getProperty("date"),0,4);
+        $year = substr($Expense->getProperty("date"),0,4);
         $expenseTables = $this->getTableList();
         if (!array_key_exists($year, $expenseTables)) {
             $this->createTableYear($year);
         }
-        $car = $this->carModel->getCarById($expense->getProperty("carId"));
-        if (empty($expense->getProperty("mileage"))) {
-            $expense->setProperty('mileage', $car['Mileage']);
+        $car = $this->carModel->getCarById($Expense->getProperty("carId"));
+        if (empty($Expense->getProperty("mileage"))) {
+            $Expense->setProperty('mileage', $car['Mileage']);
         }
-        if ($expense->getProperty("price") < 0) {
-            return display_warning("Стойността на разхода не може да е отрицателна!");
-        } elseif ($expense->getProperty("liters") < 0) {
-            return display_warning("Стойността на литрите не може да е отрицателна!");
-        } elseif (($expense->getProperty("expenseType") == 0) &&
-            ($expense->getProperty("fuelType") != $car['Fuel_ID'] && $expense->getProperty("fuelType") != $car['Fuel_ID2'])) {
-            return display_warning("Невалиден вид гориво!");
-        } elseif (empty($expense->getProperty("price"))) {
-            return display_warning("Не е въведена стойност на разхода!");
+        if ($Expense->getProperty("price") < 0) {
+            throw new Exception('Invalid price');
+        } elseif ($Expense->getProperty("liters") < 0) {
+            throw new Exception("Lites can't be negative");
+        } elseif (($Expense->getProperty("expenseType") == 0) &&
+            ($Expense->getProperty("fuelType") != $car['Fuel_ID'] && $Expense->getProperty("fuelType") != $car['Fuel_ID2'])) {
+            throw new Exception("Invalid fuel type");
+        } elseif (empty($Expense->getProperty("price"))) {
+            throw new Exception("No price given");
         } else {
             $query = "INSERT INTO `Expense_{$year}` (
             `UID`, `CID`, `Date`, `Mileage`, `Expense_ID`, `Price`, `Fuel_ID`, `Insurance_ID`, `Liters`, `Notes`)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             $values = [
-                $expense->getProperty("userId"),
-                $expense->getProperty("carId"),
-                $expense->getProperty("date"),
-                $expense->getProperty("mileage"),
-                $expense->getProperty("expenseType"),
-                $expense->getProperty("price"),
-                $expense->getProperty("fuelType"),
-                $expense->getProperty("insuranceType"),
-                $expense->getProperty("liters"),
-                $expense->getProperty("notes"),
+                $Expense->getProperty("userId"),
+                $Expense->getProperty("carId"),
+                $Expense->getProperty("date"),
+                $Expense->getProperty("mileage"),
+                $Expense->getProperty("expenseType"),
+                $Expense->getProperty("price"),
+                $Expense->getProperty("fuelType"),
+                $Expense->getProperty("insuranceType"),
+                $Expense->getProperty("liters"),
+                $Expense->getProperty("notes"),
             ];
-            if ($expense->getProperty("mileage") > $car['Mileage']) {
+            if ($Expense->getProperty("mileage") > $car['Mileage']) {
                 $update = "UPDATE `Cars` SET `Mileage` = ? WHERE `ID` = ?";
-                $updateValues = [$expense->getProperty("mileage"), $expense->getProperty("carId")];
+                $updateValues = [$Expense->getProperty("mileage"), $Expense->getProperty("carId")];
                 $this->execute($update, $updateValues);
             }
-            $this->execute($query, $values);
+            return $this->execute($query, $values);
         }
     }
+
+
 
     public function removeExpense($id, $year)
     {

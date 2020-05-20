@@ -78,6 +78,12 @@ var _closeAll = function()
     _closeAllModals();
 };
 
+var _resetFormErrors = function(formSelector)
+{
+    $(formSelector + ' div.form-wrapper').removeClass('form-error');
+    $(formSelector + ' div.form-wrapper span.form-error-message').remove();
+};
+
 $(function(){
     $blackLvl1 = $('#black-lvl-1');
     $blackLvl2 = $('#black-lvl-2');

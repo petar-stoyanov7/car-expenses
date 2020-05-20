@@ -31,8 +31,9 @@ form {
 
     button {
       height: 2em;
-      width: 7em;
+      width: auto;
       font-size: 1em;
+      margin-right: 10px;
       background-color: $button-color;
       color: white;
       font-weight: bold;
@@ -49,6 +50,26 @@ form {
 
   .element-entry {
     display: block;
+  }
+}
+
+#parts-info {
+  display: none;
+  position: fixed;
+  top: 35%;
+  left: 20%;
+  width: 60%;
+  background: #ededed;
+  box-shadow: 3px 3px 3px #044806;
+  padding: 10px;
+
+  h4 {
+    margin: 5px 5px 10px;
+    background-color: $main-color;
+    color: #fff;
+    display: inline-block;
+    padding: 5px;
+    border-radius: 3px;
   }
 }
 
