@@ -23,6 +23,30 @@ ___SQL;
         $this->execute($sql);
 
         $sql = <<<___SQL
+            CREATE TABLE `Expense_Types` (
+              `ID` int(11) NOT NULL AUTO_INCREMENT,
+              `Name` varchar(50) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+              PRIMARY KEY (`ID`)
+            ) ENGINE=InnoDB AUTO_INCREMENT=1000 DEFAULT CHARSET=utf8;
+___SQL;
+        $this->execute($sql);
+
+        $sql = <<<___SQL
+            INSERT INTO `Expense_Types` 
+            VALUES 
+            (1,'Fuel'),
+            (2,'Insurance'),
+            (3,'Maintenance'),
+            (4,'Tax'),
+            (5,'Parts'),
+            (6,'Fine'),
+            (999,'Other');
+___SQL;
+        $this->execute($sql);
+
+
+
+        $sql = <<<___SQL
             CREATE TABLE IF NOT EXISTS `Cars` (
               `ID` int(11) NOT NULL AUTO_INCREMENT,
               `UID` int(11) DEFAULT NULL COMMENT 'User ID',

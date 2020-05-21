@@ -82,7 +82,9 @@ class Statistics
             $result = $partsModel->getUserPartsData($userId, $carId);
             if (!empty($result)) {
                 foreach ($result as $index => $data) {
-                    $result[$index]['part_age'] = $this->_parseDays($data['part_age']);
+                    $ageString = rtrim($this->_parseDays($data['part_age']),',');
+                    $ageString = rtrim($ageString,', ');
+                    $result[$index]['part_age'] = $ageString;
                 }
             } else {
                 $result = [];
@@ -100,7 +102,8 @@ class Statistics
         if ($days >= 365) {
             $years = explode('.', $days/365)[0];
             $remnant = $days % 365;
-            $string = "{$years} years, " . $this->_parseDays($remnant);
+            $yearString = ((int)$years === 1) ? 'year' : 'years';
+            $string = "{$years} {$yearString}, " . $this->_parseDays($remnant);
         } else if ($days >= 30) {
             $months = explode('.', $days/30)[0];
             $remnant = $days % 30;

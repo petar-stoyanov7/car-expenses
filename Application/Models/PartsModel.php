@@ -82,7 +82,7 @@ ___SQL;
             c.Model,
             CONCAT(c.Brand, ' ', c.Model) as car_name,
             c.Mileage - p.Mileage as part_mileage,
-            CURDATE() - p.Date as part_age
+            DATEDIFF(CURDATE(),p.Date) as part_age
             FROM Parts p
             LEFT JOIN Cars c ON p.CID = c.ID
             WHERE p.UID = ?
