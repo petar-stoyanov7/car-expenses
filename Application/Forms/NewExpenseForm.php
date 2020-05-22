@@ -4,6 +4,7 @@ namespace Application\Forms;
 
 use Application\Models\CarModel;
 use Application\Models\ExpenseModel;
+use Application\Models\PartsModel;
 use Core\Form\AbstractForm;
 
 class NewExpenseForm extends AbstractForm
@@ -108,6 +109,17 @@ class NewExpenseForm extends AbstractForm
                 'required'      => false,
                 'placeholder'   => 'part1, part2, part3',
                 'classes'       => 'optional-select',
+            ]
+        );
+
+        $this->addElement(
+            'multiselect',
+            'replacement-part-name',
+            [
+                'label'     => 'Replacing parts: ',
+                'required'  => false,
+                'classes'   => 'optional-select',
+                'options'   => $this->getUserParts()
             ]
         );
 
@@ -217,6 +229,22 @@ class NewExpenseForm extends AbstractForm
             return $result[0]['Mileage'];
         }
         return null;
+    }
+
+    private function getUserParts()
+    {
+        $result = [];
+        if (empty($this->userId)) {
+            $result = [0 => 'None'];
+        } else {
+            $partsModel = new PartsModel();
+            $parts = $partsModel->getPartsByUserId($this->userId);
+            foreach ($parts as $part) {
+                $result[$part['ID']] = $part['Name'];
+            }
+            $result[0] = 'None';
+        }
+        return $result;
     }
 
     private function _normalize($dbArray)

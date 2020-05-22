@@ -36,21 +36,24 @@ var _checkExpenseForm = function()
     return isValid;
 };
 
-var _showAllFuels = function()
+var _showAllOptions = function(selector)
 {
-    $.each($('#fuel-type option'), function(){
-        $(this).show()
+    $.each($(selector + ' option'), function(){
+        $(this).show();
     });
 };
 
-var _resetForm = function() {
+var _resetForm = function()
+{
     $('#description').val('');
     $('#value').val('');
     $('#liters').val('');
     $('#part-name').val('');
+    $('#replacement-part-name').val('0');
 };
 
-var displayOption = function(selector) {
+var displayOption = function(selector)
+{
     $(selector).closest('.form-wrapper').show();
 };
 
@@ -67,25 +70,39 @@ var filterExpenses = function() {
             break;
         case "5":
             displayOption('#part-name');
+            displayOption('#replacement-part-name');
             break;
         default:
             break;
     }
 };
 
-var filterFuels = function(cars) {
-    selectedCar = $('#car-id').val();
-    fuels = [cars[selectedCar]['Fuel_ID']];
+var filterFuels = function(cars)
+{
+    var selectedCar = $('#car-id').val();
+    var fuels = [cars[selectedCar]['Fuel_ID']];
     if (null !== cars[selectedCar]['Fuel_ID2']) {
         fuels.push(cars[selectedCar]['Fuel_ID2']);
     }
-    _showAllFuels();
+    _showAllOptions('#fuel-type');
     $.each($('#fuel-type option'), function(){
         if (fuels.indexOf($(this).val()) === -1) {
             $(this).hide();
         }
     });
     $('#fuel-type').val(cars[selectedCar]['Fuel_ID']);
+};
+
+var filterParts = function(cars)
+{
+    var selectedCar = $('#car-id').val();
+    var parts = cars[selectedCar]['parts'];
+    _showAllOptions('#replacement-part-name');
+    $.each($('#replacement-part-name option'), function(i,v){
+        if (!parts.hasOwnProperty($(this).val())) {
+            $(this).hide();
+        }
+    });
 };
 
 var setMileage = function(cars) {
@@ -112,12 +129,15 @@ var getCars = function(userId) {
         }
 
     }).done(function(data){
+        drawPartsOptions(cars);
         filterFuels(cars);
+        filterParts(cars);
         _stopLoading();
     });
 };
 
-var drawLastFive = function(data){
+var drawLastFive = function(data)
+{
     $table = $('#last-five-expenses');
     $('#last-five-expenses tr.dynamic-row').remove();
 
@@ -133,6 +153,17 @@ var drawLastFive = function(data){
             '<td>'+datum['Notes']+'</td>' +
             '</tr>';
         $table.append(row);
+    });
+};
+
+var drawPartsOptions = function(cars)
+{
+    $('#replacement-part-name option').remove();
+    var $select = $('#replacement-part-name');
+    $.each(cars, function(_,value){
+        $.each(value['parts'], function(i,val) {
+            $select.append(new Option(val['Name'], val['ID']));
+        });
     });
 };
 
@@ -153,6 +184,7 @@ var processExpense = function()
         "liters": $('#liters').val(),
         "value": $('#value').val(),
         "partName": $('#part-name').val(),
+        "replacementParts": $('#replacement-part-name').val(),
         "description": $('#description').val(),
     };
     $.ajax({
@@ -166,11 +198,15 @@ var processExpense = function()
             console.log(response);
         }
     }).done(function (data) {
-        _resetForm();
         if (data['success']) {
             cars[carId]['Mileage'] = mileage;
             setMileage(cars);
+            if (parseInt($('#expense-type').val()) === 5) {
+                cars = {};
+                getCars(userId);
+            }
         }
+        _resetForm();
         getLastFive(userId);
         _stopLoading();
     });
@@ -214,6 +250,7 @@ $(function(){
 
     $('#car-id').change(function(){
         filterFuels(cars);
+        filterParts(cars);
         setMileage(cars);
     });
     filterExpenses();

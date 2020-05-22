@@ -76,11 +76,13 @@ class Expense
                 case 1:
                     $values['insuranceType'] = null;
                     $values['partName'] = null;
+                    unset($values['replacementParts']);
                     break;
                 case 2:
                     $values['fuelType'] = null;
                     $values['liters'] = null;
                     $values['partName'] = null;
+                    unset($values['replacementParts']);
                     break;
                 case 5:
                     $newPart = true;
@@ -93,6 +95,7 @@ class Expense
                     $values['fuelType'] = null;
                     $values['liters'] = null;
                     $values['partName'] = null;
+                    unset($values['replacementParts']);
                     break;
             }
             $values['description'] = null === $values['description'] ? '' : $values['description'];
@@ -120,6 +123,9 @@ class Expense
             }
             if ($newPart && !empty($expenseId)) {
                 $this->partsModel->addNewParts($Expense, $expenseId);
+                if (!empty($values['replacementParts'])) {
+                    $this->partsModel->removeParts($values['replacementParts']);
+                }
             }
 
         }

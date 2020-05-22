@@ -44,6 +44,10 @@ class PartsModel extends DbModelAbstract
         $this->execute('DELETE FROM `Parts` WHERE `EID` = ? AND `Date` = ?', [$expenseId, $date]);
     }
 
+    public function removeParts(array $partsIds) {
+        $this->execute('DELETE FROM `Parts` WHERE `ID` IN (?)', $partsIds);
+    }
+
     public function addNewParts(Expense $Expense, $expenseId)
     {
         $parts = $Expense->getProperty('partName');

@@ -302,7 +302,7 @@ class Element
 
     public function isSelect() : bool
     {
-        if ($this->type === 'select') {
+        if ($this->type === 'select' || $this->type === 'multiselect') {
             return true;
         }
         return false;

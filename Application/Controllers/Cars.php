@@ -87,9 +87,16 @@ class Cars
     {
         if (isset($_POST['userid'])) {
             $result = [];
+            $partsModel = new PartsModel();
             $cars = $this->carModel->listCarsByUserId($_POST['userid']);
             foreach ($cars as $car) {
+                $partsArray = $partsModel->getPartsByCarId($car['ID']);
+                $parts = [];
+                foreach ($partsArray as $part) {
+                    $parts[$part['ID']] = $part;
+                }
                 $result[$car['ID']] = $car;
+                $result[$car['ID']]['parts'] = $parts;
             }
             echo json_encode($result);
             die();
