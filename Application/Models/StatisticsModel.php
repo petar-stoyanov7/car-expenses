@@ -10,12 +10,14 @@ class StatisticsModel extends DbModelAbstract
 {
     private $carModel;
     private $expenseModel;
+    private $tableList;
 
     public function __construct()
     {
         $this->carModel = new CarModel();
         $this->expenseModel = new ExpenseModel();
-        parent::__construct();        
+        parent::__construct();
+        $this->tableList = $this->getTableList();
     }
 
     public function getTableList()
@@ -33,7 +35,6 @@ class StatisticsModel extends DbModelAbstract
     {
         $year = date('Y');
         $result = [];
-        $tableList = $this->expenseModel->getTableList();
         $queryTemplate = "
         SELECT 
         `Expense_%y`.*,
@@ -57,7 +58,7 @@ class StatisticsModel extends DbModelAbstract
             $result = array_merge($result, $array);
             $limit -= count($array);
             $year--;
-            if (!array_key_exists($year, $tableList)) {
+            if (!array_key_exists($year, $this->tableList)) {
                 //can't go back any further
                 $limit = 0;
             }
@@ -71,43 +72,39 @@ class StatisticsModel extends DbModelAbstract
         $endYear = date("Y", strtotime($end));
         $query = '';
         $params = [];
+        $queryTemplate = "SELECT 
+                %t.*,
+                Cars.Brand as car_brand,
+                Cars.Model as car_model,
+                Fuel_Types.Name as fuel_name,
+                Insurance_Types.Name as insurance_name,
+                Expense_Types.Name as expense_name
+                FROM `%t` 
+                LEFT JOIN Cars ON Cars.ID = %t.CID
+                LEFT JOIN Fuel_Types ON %t.Fuel_ID = Fuel_Types.ID
+                LEFT JOIN Insurance_Types ON %t.Insurance_ID = Insurance_Types.ID
+                LEFT JOIN Expense_Types ON %t.Expense_ID = Expense_Types.ID
+                %w";
 
         if ($startYear === $endYear) {
             $queryDetails = $this->_getWhere($start, $end, $userId, $carId, $expenseId, $startYear);
             $where = $queryDetails['where'];
             $queryParams = $queryDetails['params'];
-            $query = "SELECT 
-                Expense_{$startYear}.*,
-                Cars.Brand as car_brand,
-                Cars.Model as car_model,
-                Fuel_Types.Name as fuel_name,
-                Insurance_Types.Name as insurance_name,
-                Expense_Types.Name as expense_name
-                FROM `Expense_{$startYear}` 
-                LEFT JOIN Cars ON Cars.ID = Expense_{$startYear}.CID
-                LEFT JOIN Fuel_Types ON Expense_{$startYear}.Fuel_ID = Fuel_Types.ID
-                LEFT JOIN Insurance_Types ON Expense_2016.Insurance_ID = Insurance_Types.ID
-                LEFT JOIN Expense_Types ON Expense_{$startYear}.Expense_ID = Expense_Types.ID
-                {$where}";
+            $query = str_replace('%t', 'Expense_'.$startYear, $queryTemplate);
+            $query = str_replace('%w', $where, $query);
             $params = $queryParams;
         } else {
             for ($y = $startYear; $y <= $endYear; $y++) {
+                if (!array_key_exists($y, $this->tableList)) {
+                    continue;
+                }
                 $queryDetails = $this->_getWhere($start, $end, $userId, $carId, $expenseId, $y);
                 $where = $queryDetails['where'];
                 $queryParams = $queryDetails['params'];
-                $query .= "SELECT 
-                Expense_{$y}.*,
-                Cars.Brand as car_brand,
-                Cars.Model as car_model,
-                Fuel_Types.Name as fuel_name,
-                Insurance_Types.Name as insurance_name,
-                Expense_Types.Name as expense_name
-                FROM `Expense_{$y}` 
-                LEFT JOIN Cars ON Cars.ID = Expense_{$y}.CID
-                LEFT JOIN Fuel_Types ON Expense_{$y}.Fuel_ID = Fuel_Types.ID
-                LEFT JOIN Insurance_Types ON Expense_{$y}.Insurance_ID = Insurance_Types.ID
-                LEFT JOIN Expense_Types ON Expense_{$y}.Expense_ID = Expense_Types.ID 
-                {$where} UNION ALL ";
+                $query .= str_replace('%t', 'Expense_'.$y, $queryTemplate);
+                $query = str_replace('%w', $where, $query);
+                $query .= ' UNION ALL ';
+
                 $params = array_merge($params, $queryParams);
             }
             $query = preg_replace('/ UNION ALL $/', '', $query);
@@ -151,6 +148,9 @@ class StatisticsModel extends DbModelAbstract
         } else {
             $query = "SELECT Sum(`Price`) as `Overall`, Sum(`Distance`) as `Distance` FROM (";
             for ($y = $startYear; $y <= $endYear; $y++) {
+                if (!array_key_exists($y, $this->tableList)) {
+                    continue;
+                }
                 $queryDetails = $this->_getWhere($start, $end, $userId, $carId, $expenseId, $y);
                 $where = $queryDetails['where'];
                 $queryParams = $queryDetails['params'];

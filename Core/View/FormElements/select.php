@@ -7,7 +7,8 @@
     <?php if (!empty($class)) : ?>
         class="<?= $class; ?>"
     <?php endif; ?>
-    <?= (bool)$Element->getDisabled() ? 'disabled' : '' ?>
+    <?= (bool)$Element->getDisabled() ? ' disabled' : '' ?>
+    <?= $type === 'multiselect' ? 'multiple' : ''; ?>
 >
     <?php foreach($Element->getOptions() as $index => $option) : ?>
         <?php if($Element->getValue() === $index) :?>

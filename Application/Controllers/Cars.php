@@ -3,6 +3,7 @@
 namespace Application\Controllers;
 
 use Application\Forms\CarForm;
+use Application\Models\PartsModel;
 use \Core\View;
 use \Application\Models\StatisticsModel;
 use \Application\Models\CarModel;
@@ -71,6 +72,8 @@ class Cars
                 $expenseModel = new ExpenseModel();
                 $expenseModel->removeCarExpenses($carId);
             }
+            $partsModel = new PartsModel();
+            $partsModel->removeByCarId($carId);
             $this->carModel->removeCarById($carId);
             $response['success'] = true;
         } else {
@@ -84,9 +87,16 @@ class Cars
     {
         if (isset($_POST['userid'])) {
             $result = [];
+            $partsModel = new PartsModel();
             $cars = $this->carModel->listCarsByUserId($_POST['userid']);
             foreach ($cars as $car) {
+                $partsArray = $partsModel->getPartsByCarId($car['ID']);
+                $parts = [];
+                foreach ($partsArray as $part) {
+                    $parts[$part['ID']] = $part;
+                }
                 $result[$car['ID']] = $car;
+                $result[$car['ID']]['parts'] = $parts;
             }
             echo json_encode($result);
             die();
