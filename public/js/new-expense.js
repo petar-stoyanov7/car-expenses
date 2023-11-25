@@ -212,6 +212,36 @@ var processExpense = function()
     });
 };
 
+var processImport = function()
+{
+    var file = $('#csv-file').prop('files');
+    file = file[0];
+    console.log('f',file);
+    const FR = new FileReader();
+    FR.readAsText(file);
+    FR.addEventListener('load', () => {
+        formData = {
+            userId: $('#user-id').val(),
+            carId: $('#car-import-id').val(),
+            csvContent: FR.result
+        }
+        $.ajax({
+            type: 'POST',
+            dataType: 'json',
+            url: '/expense/import-file',
+            data: formData,
+            success: function(r) {
+                console.log('resp', r);
+                // window.location.reload();
+            },
+            error: function(e) {
+                console.log('error import', e);
+            }
+        });
+        console.log(formData);
+    })
+}
+
 var getLastFive = function(userId) {
     $.ajax({
         type: 'POST',
@@ -237,6 +267,7 @@ $(function(){
     var expenseSelect = $('#expense-type');
     var userId = $('#user-id').val();
     var form = $('#new-expense-form');
+    var importForm = $('#import-expense-form');
 
     getCars(userId);
     getLastFive(userId);
@@ -246,6 +277,11 @@ $(function(){
         if (_checkExpenseForm()) {
             processExpense();
         }
+    });
+
+    importForm.submit(function(e) {
+        e.preventDefault();
+        processImport();
     });
 
     $('#car-id').change(function(){

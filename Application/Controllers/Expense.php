@@ -4,12 +4,14 @@
 namespace Application\Controllers;
 
 use Application\Forms\NewExpenseForm;
+use Application\Forms\ImportExpenseForm;
 use Application\Models\PartsModel;
 use \Core\View;
 use \Application\Models\CarModel;
 use \Application\Models\ExpenseModel;
 use \Application\Models\StatisticsModel;
 use \Application\Classes\Expense as ExpenseClass;
+use DateTime;
 use Exception;
 
 
@@ -38,11 +40,13 @@ class Expense
         if (isset($_SESSION['user'])) {
             $userId = $_SESSION['user']['ID'];
             $form = new NewExpenseForm($userId);
+            $form2 = new ImportExpenseForm($userId);
             $viewParams = [
                 'title' => 'New expense',
-                'form'  => $form,
-                'JS'    => ['new-expense.js'],
-                'CSS'   => ['new-expense.css']
+                'form' => $form,
+                'form2' => $form2,
+                'JS' => ['new-expense.js'],
+                'CSS' => ['new-expense.css']
             ];
             View::render('expense/new-expense.php', $viewParams);
         } else {
@@ -57,7 +61,7 @@ class Expense
             $date = $_POST['date'];
             $expenseId = $_POST['expenseId'];
             $year = explode('-', $date)[0];
-            $this->expenseModel->removeExpense($expenseId,$year);
+            $this->expenseModel->removeExpense($expenseId, $year);
             $this->partsModel->removeByExpenseId($expenseId, $date);
             $result['success'] = true;
         }
@@ -72,7 +76,7 @@ class Expense
         if (!empty($_POST)) {
             $values = nullify($_POST);
             $type = (int)$values['expenseType'];
-            switch($type) {
+            switch ($type) {
                 case 1:
                     $values['insuranceType'] = null;
                     $values['partName'] = null;
@@ -129,6 +133,94 @@ class Expense
             }
 
         }
+        echo json_encode($response);
+        die();
+    }
+
+    public function importFileAction()
+    {
+        if (
+            empty($_POST)
+            || empty($_POST['carId'])
+            || empty($_POST['csvContent'])
+            || empty($_POST['userId'])
+        ) {
+            echo "Incomplete form";
+            die();
+        }
+
+        $response['success'] = true;
+
+        $csvContent = $_POST['csvContent'];
+        $content = explode(PHP_EOL, $csvContent);
+        if (!is_array($content) || empty($csvContent)) {
+            echo "Invalid content";
+            die();
+        }
+
+        foreach ($content as $row) {
+            $exp = explode(':', $row);
+            if (!is_array($exp)) {
+                continue;
+            }
+            $Expense = new ExpenseClass();
+            $Expense->setUserId($_POST['userId']);
+            $Expense->setCarId($_POST['carId']);
+            $Expense->setMileage($exp[0]);
+            $date = new DateTime($exp[5]);
+            $Expense->setDate($date->format('Y-m-d'));
+            $Expense->setPrice($exp[3]);
+
+            if (!empty($exp[4])) {
+                $Expense->setNotes($exp[4]);
+            }
+
+            $type = strtolower($exp[1]);
+            switch (mb_strtolower($exp[1])) {
+                case 'го':
+                    $Expense->setExpenseType(2);
+                    $Expense->setInsuranceType(1);
+                    break;
+                case 'каско':
+                    $Expense->setExpenseType(2);
+                    $Expense->setInsuranceType(2);
+                    break;
+                case 'бенз':
+                case 'бензин':
+                    $Expense->setExpenseType(1);
+                    $Expense->setFuelType(1);
+                    $Expense->setLiters($exp[3]);
+                    break;
+                case 'газ':
+                case 'гз':
+                case 'lpg':
+                    $Expense->setExpenseType(1);
+                    $Expense->setFuelType(3);
+                    $Expense->setLiters($exp[3]);
+                    break;
+                case 'ремонт':
+                    $Expense->setExpenseType(3);
+                    break;
+                case 'tax':
+                case 'данък':
+                    $Expense->setExpenseType(4);
+                    break;
+                case 'fine':
+                case 'глоба':
+                    $Expense->setExpenseType(6);
+                    break;
+                default:
+                    $Expense->setExpenseType(999);
+                    break;
+            }
+
+            try {
+                $this->expenseModel->addExpense($Expense);
+            } catch (Exception $e) {
+                $response['success'] = false;
+            }
+        }
+
         echo json_encode($response);
         die();
     }

@@ -18,6 +18,7 @@ class Element
     private $label;
     private $required;
     private $disabled;
+    private $accept;
     private $filters;
     private $validators;
     private $errors;
@@ -94,6 +95,11 @@ class Element
     public function setName(string $name)
     {
         $this->name = $name;
+    }
+
+    public function setAccept(string $accept)
+    {
+        $this->accept = $accept;
     }
 
     public function setValue($value)
@@ -311,6 +317,11 @@ class Element
     public function getName() : string
     {
         return $this->name;
+    }
+
+    public function getAccept() : string
+    {
+        return $this->accept;
     }
 
     public function getType() : string

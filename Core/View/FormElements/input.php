@@ -26,6 +26,9 @@
         <?php if (!empty($class)) : ?>
             class="<?= $class; ?>"
         <?php endif; ?>
+        <?php if ($type === "file") : //TODO: if you don't rework this hack - please fix it!?>
+            accept=".csv"
+        <?php endif; ?>
         <?php if (!empty($placeholder)) : ?>
             placeholder="<?=$placeholder; ?>"
         <?php endif; ?>
