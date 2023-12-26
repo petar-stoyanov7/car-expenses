@@ -189,14 +189,14 @@ class Expense
                 case 'бензин':
                     $Expense->setExpenseType(1);
                     $Expense->setFuelType(1);
-                    $Expense->setLiters($exp[3]);
+                    $Expense->setLiters($exp[2]);
                     break;
                 case 'газ':
                 case 'гз':
                 case 'lpg':
                     $Expense->setExpenseType(1);
                     $Expense->setFuelType(3);
-                    $Expense->setLiters($exp[3]);
+                    $Expense->setLiters($exp[2]);
                     break;
                 case 'ремонт':
                     $Expense->setExpenseType(3);
